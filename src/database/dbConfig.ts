@@ -5,9 +5,9 @@ const pool = new Pool({
     connectionString: config.DATABASE_URL
 });
 
-const query = async (text: string, params: string[], callback: () => void) => {
+async function query<T>(text: string, params: Array<T>) {
     const start = Date.now();
-    const res: Promise<> = await pool.query(text, params, callback);
+    const res = await pool.query(text, params);
     const duration = Date.now() - start;
     if (res) {
         console.log('executed query', { text, duration, rows: res.rowCount});
