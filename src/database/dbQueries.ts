@@ -16,8 +16,31 @@ export class DatabaseQueries {
 
     constructor(tableName: TableName) {
         this.tableName = tableName
+        this.createTables();
     }
-    
+
+    async createTables() {
+        const createFreezerTableQuery = `CREATE TABLE IF NOT EXISTS freezer (
+            id SERIAL PRIMARY KEY,
+            name varchar(30) NOT NULL UNIQUE,
+            description varchar(100)
+        );`;
+        await query(createFreezerTableQuery);
+
+        const createItemTableQuery = `CREATE TABLE IF NOT EXISTS item (
+            id SERIAL PRIMARY KEY,
+            name varchar(30) NOT NULL UNIQUE,
+            description varchar(100),
+            units integer,
+            exp_date date
+        );`;
+        const freezerCategoryItemTable = `CREATE TABLE IF NOT EXISTS freezer_category_item (
+            freezer_id REFERENCES freezer (id) ON DELETE CASCADE,
+            category_id REFERENCES category (id) ON DELETE CASCADE,
+            item_id REFERENCES item (id) ON DELETE CASCADE
+        );`;
+    }
+
     async getItems() {
         return await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
     }
