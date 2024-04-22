@@ -5,7 +5,7 @@ const pool = new Pool({
     connectionString: config.DATABASE_URL
 });
 
-async function query<T>(text: string, params: Array<T>) {
+export async function query<T>(text: string, params?: Array<T>) {
     const start = Date.now();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
@@ -16,5 +16,3 @@ async function query<T>(text: string, params: Array<T>) {
         console.log('something went wrong!');
     }
 };
-
-module.exports = { query };

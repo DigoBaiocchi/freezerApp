@@ -1,8 +1,9 @@
 import express, { RequestHandler, Router, type Request, type Response } from "express";
-import { getRouter } from "../controllers/items";
+import { data } from "../controllers/items";
 
 const router:Router = Router();
 
-router.get('/', getRouter);
+router.get('/', data.getItem);
+router.post('/', data.postItem);
 
 export default router;
