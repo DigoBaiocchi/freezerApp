@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { DatabaseQueries, PostProps } from "../database/dbQueries";
 
-const itemQueries = new DatabaseQueries('items');
+const itemQueries = new DatabaseQueries('item');
 
 const getItem: RequestHandler = async (req, res) => {
     const response = await itemQueries.getItems();
