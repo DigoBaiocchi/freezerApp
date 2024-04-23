@@ -16,7 +16,7 @@ export class DatabaseQueries {
 
     constructor(tableName: TableName) {
         this.tableName = tableName
-        this.createTables();
+        // this.createTables();
     }
 
     async createTables() {
@@ -55,6 +55,12 @@ export class DatabaseQueries {
         return await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
     }
 
+    async getAllById(id: number) {
+        const selectQuery = `SELECT ${this.tableName}_id as id FROM freezer_category_item WHERE ${this.tableName}_id = ${id}`;
+        const result = await query<number[]>(selectQuery).then(data => data?.rows);
+        return result?.map(data => data.id);
+    }
+
     async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostProps) {
         const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} (name, description) VALUES ($1, $2)`;
         const itemInsertQuery = `INSERT INTO ${this.tableName} (name, description, units, exp_date) VALUES ($1, $2, $3, $4) RETURNING *`;
@@ -77,6 +83,19 @@ export class DatabaseQueries {
                 break;
             default:
                 throw new Error('Please select a valid table, currently the valid tables are: freezer, category and item.');
+        }
+    }
+
+    async deleteItem(id: number) {
+        const deleteQuery = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
+
+        switch(this.tableName) {
+            case 'freezer':
+                await query(deleteQuery);
+            case 'category':
+                await query(deleteQuery);
+            case 'item':
+                await query(deleteQuery);
         }
     }
 }
