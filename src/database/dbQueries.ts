@@ -75,34 +75,38 @@ export class DatabaseQueries extends CreateDatabaseTables {
     }
 
     private async getCollectionById(collectionReference:TableName, collectionTarget: TableName, id: number) {
-        const selectQUery = `SELECT ${collectionTarget}_id AS id FROM freezer_category_item WHERE ${collectionReference}_id = $1`;
+        const selectQUery = `SELECT ${collectionTarget}_id AS id 
+                            FROM freezer_category_item 
+                            WHERE ${collectionReference}_id = $1`;
         const result = await query(selectQUery, [id]).then(data => data?.rows);
 
         return result?.map(data => data.id);
     }
 
     public async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostProps) {
-        const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} (name, description) VALUES ($1, $2)`;
-        const itemInsertQuery = `INSERT INTO ${this.tableName} (name, description, units, exp_date) VALUES ($1, $2, $3, $4) RETURNING *`;
+        const itemInsertQuery = `INSERT INTO ${this.tableName} 
+                                (name, description, units, exp_date) 
+                                VALUES ($1, $2, $3, $4) RETURNING *`;
         const freezerCategoryItemInsertQuery = `INSERT INTO freezer_category_item 
                                                 (freezer_id, category_id, item_id, item_total, item_exp_date)
                                                 VALUES ($1, $2, $3);`;
+        
+        if (this.tableName === 'freezer' || this.tableName === 'category') {
+            if (freezerId !== undefined || categoryId !== undefined || itemTotal !== undefined || expDate !== undefined) {
+                throw new Error("Unexpected parameters to update freezer or category table");
+            }
 
-        switch (this.tableName) {
-            case 'freezer':
-                await query(freezerCategoryInsertQuery, [name, description]);
-                break;
-            case 'category':
-                await query(freezerCategoryInsertQuery, [name, description]);
-                break; 
-            case 'item':
-                await query(itemInsertQuery, [name, description, itemTotal, expDate]).then(data => {
-                    console.log(data?.rows);
-                    query(freezerCategoryItemInsertQuery, [freezerId, categoryId, data?.rows[0].id]);
-                });
-                break;
-            default:
-                throw new Error('Please select a valid table, currently the valid tables are: freezer, category and item.');
+            const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} (name, description) VALUES ($1, $2)`;
+            await query(freezerCategoryInsertQuery, [name, description]);
+        } else if (this.tableName === 'item') {
+            if (freezerId === undefined || categoryId === undefined || itemTotal === undefined || expDate === undefined) {
+                throw new Error("Unexpected parameters to update item table");
+            }
+
+            await query(itemInsertQuery, [name, description, itemTotal, expDate]).then(data => {
+                console.log(data?.rows);
+                query(freezerCategoryItemInsertQuery, [freezerId, categoryId, data?.rows[0].id]);
+            });
         }
     }
 
@@ -117,7 +121,7 @@ export class DatabaseQueries extends CreateDatabaseTables {
             const baseUpdateQuery = `UPDATE ${this.tableName} SET 
                                         name = $1
                                         description = $2 
-                                        WHERE id = $3;`;
+                                    WHERE id = $3;`;
 
             await query(baseUpdateQuery, [id, name, description]);
         } else if (this.tableName === 'item') {
