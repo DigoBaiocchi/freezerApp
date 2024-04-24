@@ -17,15 +17,15 @@ export type UpdateFreezerCategoryParams = {
     description: string;
 };
 
-export type UpdateItemParams = {
+export type UpdateParams = {
     id: number;
     name: string;
     description: string;
-    units: number;
-    expDate: Date;
+    units?: number;
+    expDate?: Date;
 };
 
-type UpdateParams = UpdateFreezerCategoryParams | UpdateItemParams;
+// type UpdateParams = UpdateFreezerCategoryParams | UpdateItemParams;
 
 class CreateDatabaseTables {
     protected async createTables() {
@@ -106,46 +106,34 @@ export class DatabaseQueries extends CreateDatabaseTables {
         }
     }
 
-    // getUpdateProps(id: number, name: string, description: string): UpdateParams;
-    // getUpdateProps(id: number, name: string, description: string, units: number, expDate: Date): UpdateParams;
+    // updateItem({id, name, description}: UpdateFreezerCategoryParams): void;
+    // updateItem({id, name, description, units, expDate}: UpdateItemParams): void;
 
-    // getUpdateProps(id: number, name: string, description: string, units?: number, expDate?: Date): UpdateParams {
-    //     if (this.tableName === 'freezer' || this.tableName === 'category') {
-    //         if (units !== undefined || expDate !== undefined) {
-    //             throw new Error("Unexpected parameters for category");
-    //         }
-    //         return { id, name, description } as UpdateFreezerCategoryParams;
-    //     } else if (this.tableName === 'item') {
-    //         if (units === undefined || expDate === undefined) {
-    //             throw new Error("Unexpected parameters for item");
-    //         }
-    //         return { id, name, description, units, expDate } as UpdateItemParams;
-    //     }
-    //     throw new Error("Invalid table name");
-    // }
+    public async updateItem({ id, name, description, units, expDate }: UpdateParams) {
+        if (this.tableName === 'freezer' || this.tableName === 'category') {
+            if (units !== undefined || expDate !== undefined) {
+                throw new Error("Unexpected parameters to update freezer or category table");
+            }
+            const baseUpdateQuery = `UPDATE ${this.tableName} SET 
+                                        name = $1
+                                        description = $2 
+                                        WHERE id = $3;`;
 
-    public async updateItem({id, name, description, units, expDate}: UpdateParams) {
-        const baseUpdateQuery = `UPDATE ${this.tableName} SET 
-                                    name = $1
-                                    description = $2 
-                                WHERE id = $3;`;
-        const itemUpdateQuery = `UPDATE ${this.tableName} SET 
-                                    name = $1
-                                    description = $2 
-                                    units = $3
-                                    exp_date = $4
-                                WHERE id = $5;`;
-        
-        switch (this.tableName) {
-            case "freezer":
-                await query(baseUpdateQuery, [id, name, description]);
-                break;
-            case "category":
-                await query(baseUpdateQuery, [id, name, description]);
-            case "item":
-                await query(baseUpdateQuery, [id, name, description, units, expDate]);
-            default:
-                break;
+            await query(baseUpdateQuery, [id, name, description]);
+        } else if (this.tableName === 'item') {
+            if (units === undefined || expDate === undefined) {
+                throw new Error("Unexpected parameters to update item table");
+            }
+            const itemUpdateQuery = `UPDATE ${this.tableName} SET 
+                                        name = $1
+                                        description = $2 
+                                        units = $3
+                                        exp_date = $4
+                                    WHERE id = $5;`;
+
+            await query(itemUpdateQuery, [id, name, description, units, expDate]);
+        } else {
+            throw new Error("Invalid table name");
         }
     }
 
