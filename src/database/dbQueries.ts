@@ -2,7 +2,7 @@ import { query } from "./dbConfig";
 
 type TableName = 'freezer' | 'category' | 'item';
 
-export type PostProps = {
+export type PostParams = {
     name: string;
     description: string;
     freezerId?: number;
@@ -83,7 +83,7 @@ export class DatabaseQueries extends CreateDatabaseTables {
         return result?.map(data => data.id);
     }
 
-    public async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostProps) {
+    public async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
                                 (name, description, units, exp_date) 
                                 VALUES ($1, $2, $3, $4) RETURNING *`;

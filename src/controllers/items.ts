@@ -1,22 +1,22 @@
 import { RequestHandler } from "express";
-import { DatabaseQueries, PostProps } from "../database/dbQueries";
+import { DatabaseQueries, PostParams } from "../database/dbQueries";
 
 const itemQueries = new DatabaseQueries('item');
 
-const getItem: RequestHandler = async (req, res) => {
+const getItems: RequestHandler = async (req, res) => {
     const response = await itemQueries.getItems();
     
     return res.status(200).json({data: response});
 };
 
 const postItem: RequestHandler = async (req, res) => {
-    const postInfo: PostProps = {
-        name: 'Another item 2',
-        description: '',
-        freezerId: 1,
-        categoryId: 1,
-        itemTotal: 5,
-        expDate: new Date()
+    const postInfo: PostParams = {
+        name: req.body.name,
+        description: req.body.description,
+        freezerId: req.body.freezerId,
+        categoryId: req.body.categoriesId,
+        itemTotal: req.body.itemTotal,
+        expDate: req.body.expDatege,
     };
     
     await itemQueries.postItem(postInfo);
@@ -24,4 +24,4 @@ const postItem: RequestHandler = async (req, res) => {
     return res.status(201).json(postInfo);
 };
 
-export const data = { getItem, postItem };
+export const data = { getItems, postItem };
