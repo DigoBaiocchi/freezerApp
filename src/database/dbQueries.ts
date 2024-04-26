@@ -86,27 +86,36 @@ export class DatabaseQueries extends CreateDatabaseTables {
     public async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
                                 (name, description, units, exp_date) 
-                                VALUES ($1, $2, $3, $4) RETURNING *`;
+                                VALUES ($1, $2, $3, $4) 
+                                RETURNING *;`;
         const freezerCategoryItemInsertQuery = `INSERT INTO freezer_category_item 
                                                 (freezer_id, category_id, item_id, item_total, item_exp_date)
-                                                VALUES ($1, $2, $3);`;
+                                                VALUES ($1, $2, $3);
+                                                RETURNING *;`;
         
         if (this.tableName === 'freezer' || this.tableName === 'category') {
             if (freezerId !== undefined || categoryId !== undefined || itemTotal !== undefined || expDate !== undefined) {
                 throw new Error("Unexpected parameters to update freezer or category table");
             }
 
-            const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} (name, description) VALUES ($1, $2)`;
-            await query(freezerCategoryInsertQuery, [name, description]);
+            const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} 
+                                                (name, description) 
+                                                VALUES ($1, $2)
+                                                RETURNING *;`;
+            const addFreezerOrCategory = await query(freezerCategoryInsertQuery, [name, description]).then(data => data?.rows[0]);
+            
+            return addFreezerOrCategory;
         } else if (this.tableName === 'item') {
             if (freezerId === undefined || categoryId === undefined || itemTotal === undefined || expDate === undefined) {
                 throw new Error("Unexpected parameters to update item table");
             }
 
-            await query(itemInsertQuery, [name, description, itemTotal, expDate]).then(data => {
-                console.log(data?.rows);
-                query(freezerCategoryItemInsertQuery, [freezerId, categoryId, data?.rows[0].id]);
-            });
+            const addItem = await query(itemInsertQuery, [name, description, itemTotal, expDate]).then(data => data?.rows[0]);
+            
+            // Adding to freezer_category_item table
+            await query(freezerCategoryItemInsertQuery, [freezerId, categoryId, addItem.id]);
+
+            return addItem;
         }
     }
 
@@ -119,23 +128,23 @@ export class DatabaseQueries extends CreateDatabaseTables {
                 throw new Error("Unexpected parameters to update freezer or category table");
             }
             const baseUpdateQuery = `UPDATE ${this.tableName} SET 
-                                        name = $1
+                                        name = $1,
                                         description = $2 
                                     WHERE id = $3;`;
 
-            await query(baseUpdateQuery, [id, name, description]);
+            await query(baseUpdateQuery, [name, description, id]);
         } else if (this.tableName === 'item') {
             if (units === undefined || expDate === undefined) {
                 throw new Error("Unexpected parameters to update item table");
             }
             const itemUpdateQuery = `UPDATE ${this.tableName} SET 
-                                        name = $1
-                                        description = $2 
-                                        units = $3
+                                        name = $1,
+                                        description = $2,
+                                        units = $3,
                                         exp_date = $4
                                     WHERE id = $5;`;
 
-            await query(itemUpdateQuery, [id, name, description, units, expDate]);
+            await query(itemUpdateQuery, [name, description, units, expDate, id]);
         } else {
             throw new Error("Invalid table name");
         }
