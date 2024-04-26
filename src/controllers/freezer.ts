@@ -12,18 +12,19 @@ const getFreezers: RequestHandler = async (req, res) => {
 const postFreezer: RequestHandler = async (req, res) => {
     const { name, description } = req.body as PostParams;
     
-    await freezerQueries.postItem({ name, description });
+    const newData = await freezerQueries.postItem({ name, description });
 
-    return res.status(201).json({ name, description });
+    return res.status(201).json({ newData });
 };
 
 const updateFreezer: RequestHandler<{ id: number }> = async (req, res) => {
     const id = req.params.id;
     const { name, description } = req.body as UpdateParams;
+    const updatedData = { id, name, description };
 
-    await freezerQueries.updateItem({ id, name, description });
+    await freezerQueries.updateItem(updatedData);
 
-    return res.status(200).json(`Freezer successfully updated`);
+    return res.status(200).json({ msg: `Freezer successfully updated`, updatedData });
 };
 
 const deleteFreezer: RequestHandler<{ id: number }> = async (req, res) => {
@@ -31,7 +32,7 @@ const deleteFreezer: RequestHandler<{ id: number }> = async (req, res) => {
 
     await freezerQueries.deleteItem(id);
 
-    return res.status(200).json(`Freezer successfully deleted`)
+    return res.status(200).json({ msg: `Freezer successfully deleted` })
 };
 
 export const freezerRouter = { getFreezers, postFreezer, updateFreezer, deleteFreezer };
