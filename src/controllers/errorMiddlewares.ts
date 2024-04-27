@@ -13,7 +13,7 @@ export const notUniqueName = (tableName: TableName): RequestHandler => {
     return async (req, res, next) => {
         const database = new DatabaseQueries(tableName);
         const items = await database.getItems();
-        const checkIfNameExists = items.map(data => data.name).includes(req.body.name);
+        const checkIfNameExists = items.map(data => data.name.toLowerCase()).includes(req.body.name.toLowerCase());
         
         if (checkIfNameExists) {
             return res.status(400).json({ error: "Name already exists" });

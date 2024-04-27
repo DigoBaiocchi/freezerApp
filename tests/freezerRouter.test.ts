@@ -80,7 +80,7 @@ describe('PUT /freezer/:id', () => {
                                 .put(`/freezer/0`)
                                 .set('accept', 'application/json')
                                 .send({
-                                    "name": "Freezer Test",
+                                    "name": "Freezer test",
                                     "description": "",
                                 })
         
