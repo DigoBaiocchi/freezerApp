@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { freezerRouter } from "../controllers/freezer";
+import { successfulMiddlewares } from "../controllers/successfulMiddlewares";
 import { incorrectId, missingName, notUniqueName } from "../controllers/errorMiddlewares";
+import { TableName } from "../database/dbQueries";
 
 const router:Router = Router();
+const tableName:TableName = "freezer";
 
+router.get('/', successfulMiddlewares.getDataByTableName(tableName));
 
-router.get('/', freezerRouter.getFreezers);
+router.post('/', missingName, notUniqueName(tableName), successfulMiddlewares.postDataByTableName(tableName));
 
-router.post('/', missingName, notUniqueName('freezer'), freezerRouter.postFreezer);
+router.put('/:id', incorrectId(tableName), successfulMiddlewares.updateDataByTableName(tableName));
 
-router.put('/:id', incorrectId('freezer'), freezerRouter.updateFreezer);
-
-router.delete('/:id', incorrectId('freezer'), freezerRouter.deleteFreezer);
+router.delete('/:id', incorrectId(tableName), successfulMiddlewares.deleteDataByTableName(tableName));
 
 export default router;
