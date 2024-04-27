@@ -1,6 +1,6 @@
 import { query } from "./dbConfig";
 
-type TableName = 'freezer' | 'category' | 'item';
+export type TableName = 'freezer' | 'category' | 'item';
 
 export type PostParams = {
     name: string;
@@ -17,7 +17,7 @@ export type UpdateFreezerCategoryParams = {
     description: string;
 };
 
-export type UpdateParams = {
+export type DatabaseParams = {
     id: number;
     name: string;
     description: string;
@@ -71,7 +71,8 @@ export class DatabaseQueries extends CreateDatabaseTables {
     }
 
     public async getItems() {
-        return await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
+        const selectData = await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
+        return selectData as DatabaseParams[];
     }
 
     private async getCollectionById(collectionReference:TableName, collectionTarget: TableName, id: number) {
@@ -122,7 +123,7 @@ export class DatabaseQueries extends CreateDatabaseTables {
     // updateItem({id, name, description}: UpdateFreezerCategoryParams): void;
     // updateItem({id, name, description, units, expDate}: UpdateItemParams): void;
 
-    public async updateItem({ id, name, description, units, expDate }: UpdateParams) {
+    public async updateItem({ id, name, description, units, expDate }: DatabaseParams) {
         if (this.tableName === 'freezer' || this.tableName === 'category') {
             if (units !== undefined || expDate !== undefined) {
                 throw new Error("Unexpected parameters to update freezer or category table");

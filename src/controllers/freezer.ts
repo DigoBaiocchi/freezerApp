@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { DatabaseQueries, type PostParams, type UpdateParams } from "../database/dbQueries";
+import { DatabaseQueries, type PostParams, type DatabaseParams } from "../database/dbQueries";
 
 const freezerQueries = new DatabaseQueries('freezer');
 
@@ -19,7 +19,7 @@ const postFreezer: RequestHandler = async (req, res) => {
 
 const updateFreezer: RequestHandler<{ id: number }> = async (req, res) => {
     const id = req.params.id;
-    const { name, description } = req.body as UpdateParams;
+    const { name, description } = req.body as DatabaseParams;
     const updatedData = { id, name, description };
 
     await freezerQueries.updateItem(updatedData);
