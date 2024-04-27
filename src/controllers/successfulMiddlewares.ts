@@ -60,7 +60,7 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
 
         await database.updateItem(updatedData);
     
-        return res.status(200).json({ msg: `Freezer successfully updated`, updatedData });
+        return res.status(200).json({ msg: `${tableName} successfully updated`, updatedData });
     };
 } 
 
@@ -71,7 +71,7 @@ const deleteDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
 
         await database.deleteItem(id);
     
-        return res.status(200).json({ msg: `Freezer successfully deleted` })
+        return res.status(200).json({ msg: `${tableName} successfully deleted` })
     };
 } 
 

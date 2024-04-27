@@ -4,7 +4,7 @@ import { incorrectId, missingName, notUniqueName } from "../controllers/errorMid
 import { TableName } from "../database/dbQueries";
 
 const router:Router = Router();
-const tableName:TableName = "freezer";
+const tableName:TableName = "category";
 
 router.get('/', 
     successfulMiddlewares.getDataByTableName(tableName)

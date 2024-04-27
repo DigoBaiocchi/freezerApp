@@ -10,7 +10,7 @@ afterEach((done) => {
 });
 
 let newData: UpdateFreezerCategoryParams;
-const tableName: TableName = "freezer";
+const tableName: TableName = "category";
 
 describe(`POST /${tableName}`, () => {
     const path = `/${tableName}`;
