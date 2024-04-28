@@ -7,7 +7,7 @@ export type PostParams = {
     description: string;
     freezerId?: number;
     categoryId?: number;
-    itemTotal?: number;
+    units?: number;
     expDate?: Date;
 };
 
@@ -84,18 +84,18 @@ export class DatabaseQueries extends CreateDatabaseTables {
         return result?.map(data => data.id);
     }
 
-    public async postItem({name, description, freezerId, categoryId, itemTotal, expDate}: PostParams) {
+    public async postItem({name, description, freezerId, categoryId, units, expDate}: PostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
                                 (name, description, units, exp_date) 
                                 VALUES ($1, $2, $3, $4) 
                                 RETURNING *;`;
         const freezerCategoryItemInsertQuery = `INSERT INTO freezer_category_item 
-                                                (freezer_id, category_id, item_id, item_total, item_exp_date)
-                                                VALUES ($1, $2, $3);
+                                                (freezer_id, category_id, item_id)
+                                                VALUES ($1, $2, $3)
                                                 RETURNING *;`;
         
         if (this.tableName === 'freezer' || this.tableName === 'category') {
-            if (freezerId !== undefined || categoryId !== undefined || itemTotal !== undefined || expDate !== undefined) {
+            if (freezerId !== undefined || categoryId !== undefined || units !== undefined || expDate !== undefined) {
                 throw new Error("Unexpected parameters to update freezer or category table");
             }
 
@@ -107,11 +107,11 @@ export class DatabaseQueries extends CreateDatabaseTables {
             
             return addFreezerOrCategory;
         } else if (this.tableName === 'item') {
-            if (freezerId === undefined || categoryId === undefined || itemTotal === undefined || expDate === undefined) {
+            if (freezerId === undefined || categoryId === undefined || units === undefined || expDate === undefined) {
                 throw new Error("Unexpected parameters to update item table");
             }
 
-            const addItem = await query(itemInsertQuery, [name, description, itemTotal, expDate]).then(data => data?.rows[0]);
+            const addItem = await query(itemInsertQuery, [name, description, units, expDate]).then(data => data?.rows[0]);
             
             // Adding to freezer_category_item table
             await query(freezerCategoryItemInsertQuery, [freezerId, categoryId, addItem.id]);

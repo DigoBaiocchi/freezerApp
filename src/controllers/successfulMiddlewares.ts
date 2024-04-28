@@ -23,9 +23,9 @@ const postDataByTableName = (tableName: TableName): RequestHandler => {
                 name,
                 description,
                 freezerId: req.body.freezerId,
-                categoryId: req.body.categoriesId,
-                itemTotal: req.body.itemTotal,
-                expDate: req.body.expDatege,
+                categoryId: req.body.categoryId,
+                units: req.body.units,
+                expDate: req.body.expDate,
             };
         } else {
             throw new Error("Incorrect table name selected");
