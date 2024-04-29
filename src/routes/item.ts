@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { successfulMiddlewares } from "../controllers/successfulMiddlewares";
-import { incorrectId, missingName, notUniqueName } from "../controllers/errorMiddlewares";
+import { errorMiddlewares } from "../controllers/errorMiddlewares";
 import { TableName } from "../database/dbQueries";
 
 const router:Router = Router();
@@ -11,18 +11,18 @@ router.get('/',
 );
 
 router.post('/', 
-    missingName, 
-    notUniqueName(tableName), 
+    errorMiddlewares.missingRequiredParam(tableName), 
+    errorMiddlewares.notUniqueName(tableName), 
     successfulMiddlewares.postDataByTableName(tableName)
 );
 
 router.put('/:id', 
-    incorrectId(tableName), 
+    errorMiddlewares.incorrectId(tableName), 
     successfulMiddlewares.updateDataByTableName(tableName)
 );
 
 router.delete('/:id', 
-    incorrectId(tableName), 
+    errorMiddlewares.incorrectId(tableName), 
     successfulMiddlewares.deleteDataByTableName(tableName)
 );
 

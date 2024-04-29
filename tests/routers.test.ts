@@ -401,6 +401,39 @@ describe('Items tests', () => {
             expect(response.body.error).toBe("No name provided");
         });
     
+        it(`404 error - Incorrect item params provided`, async () => {
+            const response = await request(app)
+                                    .post(path)
+                                    .set('accept', 'application/json')
+                                    .send({
+                                        "name": `${tableName} test 2`,
+                                        "description": "",
+                                        "freezerId": newFreezerData.id * 100,
+                                        "categoryId": newCategoryData.id,
+                                        "units": 1,
+                                        "expDate": "2024-04-27"
+                                    })
+            console.log(response.body.error)
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe("Incorrect item params provided");
+        });
+    
+        it(`404 error - Incorrect item params provided`, async () => {
+            const response = await request(app)
+                                    .post(path)
+                                    .set('accept', 'application/json')
+                                    .send({
+                                        "name": `${tableName} test 3`,
+                                        "description": "",
+                                        "freezerId": newFreezerData.id,
+                                        "units": 1,
+                                        "expDate": "2024-04-27"
+                                    })
+            
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe("Incorrect item params provided");
+        });
+    
         it(`400 error - trying to add not unique name`, async () => {
             const response = await request(app)
                                     .post(path)
