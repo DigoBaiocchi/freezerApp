@@ -343,11 +343,6 @@ describe('Items tests', () => {
         // delete category data
         await request(app)
                 .delete(`/category/${newCategoryData.id}`)
-    
-        // server.close(() => {
-        //     console.log('Server closed!');
-        //     done();
-        // });
     });
     
     let newData: DatabaseParams;
@@ -490,6 +485,8 @@ describe('Items tests', () => {
                                     .send({
                                         "name": `${tableName} Test 2`,
                                         "description": "New Description",
+                                        "freezerId": newFreezerData.id,
+                                        "categoryId": newCategoryData.id,
                                         "units": 1,
                                         "expDate": "2024-04-27"
                                     });
@@ -506,6 +503,8 @@ describe('Items tests', () => {
                                     .send({
                                         "name": `${tableName} Test`,
                                         "description": "",
+                                        "freezerId": newFreezerData.id,
+                                        "categoryId": newCategoryData.id,
                                         "units": 1,
                                         "expDate": "2024-04-27"
                                     })

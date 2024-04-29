@@ -51,6 +51,8 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
                 id,
                 name,
                 description,
+                freezerId: req.body.freezerId,
+                categoryId: req.body.categoryId,
                 units: req.body.units,
                 expDate: req.body.expDate,
             };

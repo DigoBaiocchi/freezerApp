@@ -21,6 +21,8 @@ export type DatabaseParams = {
     id: number;
     name: string;
     description: string;
+    freezerId?: number;
+    categoryId?: number;
     units?: number;
     expDate?: Date;
 };
@@ -123,9 +125,10 @@ export class DatabaseQueries extends CreateDatabaseTables {
     // updateItem({id, name, description}: UpdateFreezerCategoryParams): void;
     // updateItem({id, name, description, units, expDate}: UpdateItemParams): void;
 
-    public async updateItem({ id, name, description, units, expDate }: DatabaseParams) {
+    public async updateItem({ id, name, description, freezerId, categoryId, units, expDate }: DatabaseParams) {
+        console.log({ id, name, description, freezerId, categoryId, units, expDate })
         if (this.tableName === 'freezer' || this.tableName === 'category') {
-            if (units !== undefined || expDate !== undefined) {
+            if (freezerId !== undefined || categoryId !== undefined || units !== undefined || expDate !== undefined) {
                 throw new Error("Unexpected parameters to update freezer or category table");
             }
             const baseUpdateQuery = `UPDATE ${this.tableName} SET 
@@ -135,7 +138,7 @@ export class DatabaseQueries extends CreateDatabaseTables {
 
             await query(baseUpdateQuery, [name, description, id]);
         } else if (this.tableName === 'item') {
-            if (units === undefined || expDate === undefined) {
+            if (freezerId === undefined || categoryId === undefined || units === undefined || expDate === undefined) {
                 throw new Error("Unexpected parameters to update item table");
             }
             const itemUpdateQuery = `UPDATE ${this.tableName} SET 
@@ -144,8 +147,14 @@ export class DatabaseQueries extends CreateDatabaseTables {
                                         units = $3,
                                         exp_date = $4
                                     WHERE id = $5;`;
+            const freezerCategoryItemUpdateQuery = `UPDATE freezer_category_item SET
+                                                        freezer_id = $1,
+                                                        category_id = $2,
+                                                        item_id = $3
+                                                    WHERE item_id = $3;`;
 
             await query(itemUpdateQuery, [name, description, units, expDate, id]);
+            await query(freezerCategoryItemUpdateQuery, [freezerId, categoryId, id]);
         } else {
             throw new Error("Invalid table name");
         }
