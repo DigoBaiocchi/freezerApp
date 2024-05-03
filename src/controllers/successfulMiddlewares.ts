@@ -1,10 +1,20 @@
 import { RequestHandler } from "express";
 import { DatabaseQueries, type PostParams, type DatabaseParams, TableName } from "../database/dbQueries";
+import { FreezerCategoryQueries } from "../database/freezerCategoryDbQueries";
+import { ItemQueries } from "../database/itemDbQueries";
 
 const getDataByTableName = (tableName: TableName): RequestHandler => {
     return async (req, res) => {
-        const database = new DatabaseQueries(tableName);
-        const response = await database.getItems();
+        let response;
+        if (tableName === 'freezer' || tableName === 'category') {
+            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            response = freezerCategoryDb.getData();
+        } else if (tableName === 'item') {
+            const itemDb = new ItemQueries();
+            response = itemDb.getData();
+        } else {
+            throw new Error("Incorrect table name selected");
+        }
         
         return res.status(200).json({data: response});
     };
@@ -13,13 +23,15 @@ const getDataByTableName = (tableName: TableName): RequestHandler => {
 const postDataByTableName = (tableName: TableName): RequestHandler => {
     return async (req, res) => {
         const { name, description } = req.body as PostParams;
-        const database = new DatabaseQueries(tableName);
-        let addedData: PostParams;
-
+        let newData;
+        
         if (tableName === 'freezer' || tableName === 'category') {
-            addedData = { name, description };
+            // const database = new DatabaseQueries(tableName);
+            const addedData = { name, description };
+            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            newData = await freezerCategoryDb.postData(addedData);
         } else if (tableName === 'item') {
-            addedData = {
+            const addedData = {
                 name,
                 description,
                 freezerId: req.body.freezerId,
@@ -27,11 +39,11 @@ const postDataByTableName = (tableName: TableName): RequestHandler => {
                 units: req.body.units,
                 expDate: req.body.expDate,
             };
+            const itemDb = new ItemQueries();
+            newData = await itemDb.postData(addedData);
         } else {
             throw new Error("Incorrect table name selected");
         }
-
-        const newData = await database.postItem(addedData);
     
         return res.status(201).json({ newData });
     };
@@ -65,6 +77,14 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
         return res.status(200).json({ msg: `${tableName} successfully updated`, updatedData });
     };
 } 
+
+const updateItemQuantity = (): RequestHandler<{ id: number }> => {
+    return async (req, res) => {
+        const database = new DatabaseQueries('item');
+        const id = req.params.id;
+
+    };
+}
 
 const deleteDataByTableName = (tableName: TableName): RequestHandler<{ id: number }> => {
     return async (req, res) => {

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { DatabaseQueries, type TableName } from "../database/dbQueries";
+import { DatabaseParams, DatabaseQueries, freezerCategoryItemData, type TableName } from "../database/dbQueries";
 
 const missingRequiredParam = (tableName: TableName): RequestHandler => {
     return async (req, res, next) => {
@@ -17,12 +17,12 @@ const missingRequiredParam = (tableName: TableName): RequestHandler => {
 
             if (updatedFreezerId || updatedCategoryId) {
                 const freezerDatabase = new DatabaseQueries('freezer');
-                const freezerData = await freezerDatabase.getItems();
+                const freezerData = await freezerDatabase.getItems() as DatabaseParams[];
                 checkFreezerId = freezerData.map(freezer => freezer.id).includes(updatedFreezerId);
                 console.log('freezer id', updatedFreezerId, checkFreezerId)
                 
                 const categoryDatabase = new DatabaseQueries('category');
-                const categoryData = await categoryDatabase.getItems();
+                const categoryData = await categoryDatabase.getItems() as DatabaseParams[];
                 checkCategoryId = categoryData.map(category => category.id).includes(updatedCategoryId);
                 console.log('category id', updatedCategoryId, checkCategoryId)
             }
@@ -39,8 +39,17 @@ const missingRequiredParam = (tableName: TableName): RequestHandler => {
 const notUniqueName = (tableName: TableName): RequestHandler => {
     return async (req, res, next) => {
         const database = new DatabaseQueries(tableName);
-        const items = await database.getItems();
-        const checkIfNameExists = items.map(data => data.name.toLowerCase()).includes(req.body.name.toLowerCase());
+        let checkIfNameExists: boolean;
+
+        if (tableName === 'freezer' || tableName === 'category') {
+            const data = await database.getItems() as DatabaseParams[];
+            checkIfNameExists = data.map(data => data.name.toLowerCase()).includes(req.body.name.toLowerCase());
+        } else if (tableName === 'item') {
+            const data = await database.getItems() as freezerCategoryItemData[];
+            checkIfNameExists = data.map(data => data.itemname.toLowerCase()).includes(req.body.name.toLowerCase());
+        } else {
+            throw new Error("Invalid table name");
+        }
         
         if (checkIfNameExists) {
             return res.status(400).json({ error: "Name already exists" });
@@ -53,8 +62,17 @@ const notUniqueName = (tableName: TableName): RequestHandler => {
 const incorrectId = (tableName: TableName): RequestHandler<{ id: number }> => {
     return async (req, res, next) => {
         const database = new DatabaseQueries(tableName);
-        const items = await database.getItems();
-        const checkIfIdExists = items.map(data => data.id).includes(Number(req.params.id));
+        let checkIfIdExists: boolean;
+
+        if (tableName === 'freezer' || tableName === 'category') {
+            const data = await database.getItems() as DatabaseParams[];
+            checkIfIdExists = data.map(data => data.id).includes(Number(req.params.id));
+        } else if (tableName === 'item') {
+            const data = await database.getItems() as freezerCategoryItemData[];
+            checkIfIdExists = data.map(data => data.itemid).includes(Number(req.params.id));
+        } else {
+            throw new Error("Invalid table name");
+        }
         
         if (!checkIfIdExists) {
             return res.status(400).json({ error: "Id param does not exist" });
