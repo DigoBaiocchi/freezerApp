@@ -27,6 +27,18 @@ export type DatabaseParams = {
     expDate?: Date;
 };
 
+export type freezerCategoryItemData = {
+    freezerid: number;
+    freezername: string;
+    categoryid: number;
+    categoryname: string;
+    itemid: number;
+    itemname: string;
+    itemdescription: string;
+    itemunits: number;
+    itemexpdate: Date;
+};
+
 // type UpdateParams = UpdateFreezerCategoryParams | UpdateItemParams;
 
 class CreateDatabaseTables {
@@ -73,8 +85,32 @@ export class DatabaseQueries extends CreateDatabaseTables {
     }
 
     public async getItems() {
-        const selectData = await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
-        return selectData as DatabaseParams[];
+        if (this.tableName === 'freezer' || this.tableName === 'category') {
+            const selectData = await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
+            return selectData as DatabaseParams[];
+        } else if (this.tableName === 'item') {
+            const selectDataQuery = `SELECT
+                                        freezer.id as freezerId,
+                                        freezer.name as freezerName,
+                                        category.id as categoryId,
+                                        category.name as categoryName,
+                                        item.id as itemId,
+                                        item.name as itemName,
+                                        item.description as itemDescription,
+                                        item.units as itemUnits,
+                                        item.exp_date as itemExpDate
+                                    FROM freezer_category_item
+                                    LEFT JOIN item
+                                        ON item.id = freezer_category_item.item_id
+                                    LEFT JOIN category
+                                        ON category.id = freezer_category_item.category_id
+                                    LEFT JOIN freezer
+                                        ON freezer.id = freezer_category_item.freezer_id;`;
+            
+            return await query(selectDataQuery).then(response => response?.rows) as freezerCategoryItemData[];
+        } else {
+            throw new Error("Invalid table name");
+        }
     }
 
     private async getCollectionById(collectionReference:TableName, collectionTarget: TableName, id: number) {
@@ -160,6 +196,12 @@ export class DatabaseQueries extends CreateDatabaseTables {
         }
     }
 
+    public async updateItemUnits({ id, units }: { id: number; units: number; }) {
+        const updateItemQuery = `UPDATE items SET units = $1 WHERE id = $2;`;
+
+        await query(updateItemQuery, [id, units]);
+    }
+
     public async deleteItem(id: number) {
         const deleteQuery = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
 
@@ -177,3 +219,4 @@ export class DatabaseQueries extends CreateDatabaseTables {
         }
     }
 }
+
