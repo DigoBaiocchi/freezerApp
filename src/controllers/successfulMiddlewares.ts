@@ -26,7 +26,6 @@ const postDataByTableName = (tableName: TableName): RequestHandler => {
         let newData;
         
         if (tableName === 'freezer' || tableName === 'category') {
-            // const database = new DatabaseQueries(tableName);
             const addedData = { name, description };
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             newData = await freezerCategoryDb.postData(addedData);
@@ -54,12 +53,14 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
         const database = new DatabaseQueries(tableName);
         const id = req.params.id;
         const { name, description } = req.body as DatabaseParams;
-        let updatedData:DatabaseParams;
+        let updatedData;
 
         if (tableName === 'freezer' || tableName === 'category') {
-            updatedData = { id, name, description };
+            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            updatedData = freezerCategoryDb.updateData({ id, name, description });
         } else if (tableName === 'item') {
-            updatedData = {
+            const itemDb = new ItemQueries();
+            updatedData = await itemDb.updateData({
                 id,
                 name,
                 description,
@@ -67,12 +68,10 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
                 categoryId: req.body.categoryId,
                 units: req.body.units,
                 expDate: req.body.expDate,
-            };
+            }) ;
         } else {
             throw new Error("Incorrect table name selected");
         }
-
-        await database.updateItem(updatedData);
     
         return res.status(200).json({ msg: `${tableName} successfully updated`, updatedData });
     };
@@ -89,9 +88,19 @@ const updateItemQuantity = (): RequestHandler<{ id: number }> => {
 const deleteDataByTableName = (tableName: TableName): RequestHandler<{ id: number }> => {
     return async (req, res) => {
         const id = req.params.id;
-        const database = new DatabaseQueries(tableName);
+        
+        if (tableName === 'freezer' || tableName === 'category') {
+            const database = new FreezerCategoryQueries(tableName);
 
-        await database.deleteItem(id);
+            await database.deleteData(id);
+        } else if (tableName === 'item') {
+            const database = new ItemQueries();
+
+            await database.deleteData(id);
+        } else {
+            throw new Error("Incorrect table name selected");
+        }
+
     
         return res.status(200).json({ msg: `${tableName} successfully deleted` })
     };

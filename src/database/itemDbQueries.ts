@@ -84,21 +84,26 @@ export class ItemQueries {
                                     description = $2,
                                     units = $3,
                                     exp_date = $4
-                                WHERE id = $5;`;
+                                WHERE id = $5
+                                RETURNING *;`;
         const freezerCategoryItemUpdateQuery = `UPDATE freezer_category_item SET
                                                     freezer_id = $1,
                                                     category_id = $2,
                                                     item_id = $3
                                                 WHERE item_id = $3;`;
 
-        await query(itemUpdateQuery, [name, description, units, expDate, id]);
+        const updatedItem = await query(itemUpdateQuery, [name, description, units, expDate, id]).then(data => data?.rows[0]);
         await query(freezerCategoryItemUpdateQuery, [freezerId, categoryId, id]);   
+
+        return updatedItem as ItemData;
     }
 
     public async updateItemUnits({ id, units }: { id: number; units: number; }) {
-        const updateItemQuery = `UPDATE items SET units = $1 WHERE id = $2;`;
+        const updateItemQuery = `UPDATE items SET units = $1 WHERE id = $2 RETURNING *;`;
 
-        await query(updateItemQuery, [id, units]);
+        const updatedItem = await query(updateItemQuery, [id, units]).then(data => data?.rows[0]);
+
+        return updatedItem as ItemData;
     }
 
     public async deleteData(id: number) {
