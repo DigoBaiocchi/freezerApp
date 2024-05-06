@@ -513,6 +513,28 @@ describe('Items tests', () => {
             expect(response.body.error).toBe("Id param does not exist");
         });
     });
+
+    describe(`PATCH /item/update-units/:id`, () => {
+        const path = `/item/update-units`;
+
+        afterAll((done) => {
+            server.close(() => {
+                console.log('Server Closed!');
+                done();
+            });
+        });
+
+        it('Update item units successfully', async () => {
+            const response = await request(app)
+                                    .patch(`${path}/${newData.id}`)
+                                    .set('accept', 'application/json')
+                                    .send({ "units": 15});
+                                    
+            expect(response.status).toBe(200);
+            expect(response.body.msg).toBe("Item units updated successfully");
+            expect(response.body.updatedItem.units).toBe(15);
+        });
+    });
     
     describe(`DELETE /item/:id`, () => {
         const tableName: TableName = "item";

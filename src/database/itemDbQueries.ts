@@ -99,9 +99,9 @@ export class ItemQueries {
     }
 
     public async updateItemUnits({ id, units }: { id: number; units: number; }) {
-        const updateItemQuery = `UPDATE items SET units = $1 WHERE id = $2 RETURNING *;`;
+        const updateItemQuery = `UPDATE item SET units = $1 WHERE id = $2 RETURNING *;`;
 
-        const updatedItem = await query(updateItemQuery, [id, units]).then(data => data?.rows[0]);
+        const updatedItem = await query(updateItemQuery, [units, id]).then(data => data?.rows[0]);
 
         return updatedItem as ItemData;
     }

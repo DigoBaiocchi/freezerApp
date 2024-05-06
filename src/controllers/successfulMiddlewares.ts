@@ -79,8 +79,11 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
 
 const updateItemQuantity = (): RequestHandler<{ id: number }> => {
     return async (req, res) => {
-        const database = new DatabaseQueries('item');
-        const id = req.params.id;
+        const database = new ItemQueries();
+        console.log(`Id: ${req.params.id} - updated units: ${req.body.units}`)
+        const updatedItem = await database.updateItemUnits({ id: req.params.id, units: req.body.units });
+
+        return res.status(200).json({ msg: `Item units updated successfully`, updatedItem });
 
     };
 }
@@ -94,6 +97,7 @@ const deleteDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
 
             await database.deleteData(id);
         } else if (tableName === 'item') {
+            console.log(tableName);
             const database = new ItemQueries();
 
             await database.deleteData(id);
@@ -111,4 +115,5 @@ export const successfulMiddlewares = {
     postDataByTableName, 
     updateDataByTableName, 
     deleteDataByTableName,
+    updateItemQuantity,
 };

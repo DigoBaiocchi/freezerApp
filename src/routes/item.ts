@@ -21,6 +21,10 @@ router.put('/:id',
     successfulMiddlewares.updateDataByTableName(tableName)
 );
 
+router.patch('/update-units/:id',
+    successfulMiddlewares.updateItemQuantity()
+);
+
 router.delete('/:id', 
     errorMiddlewares.incorrectId(tableName), 
     successfulMiddlewares.deleteDataByTableName(tableName)
