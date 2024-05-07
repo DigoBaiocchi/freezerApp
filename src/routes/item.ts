@@ -22,6 +22,7 @@ router.put('/:id',
 );
 
 router.patch('/update-units/:id',
+    errorMiddlewares.incorrectId(tableName), 
     successfulMiddlewares.updateItemQuantity()
 );
 

@@ -529,10 +529,20 @@ describe('Items tests', () => {
                                     .patch(`${path}/${newData.id}`)
                                     .set('accept', 'application/json')
                                     .send({ "units": 15});
-                                    
+
             expect(response.status).toBe(200);
             expect(response.body.msg).toBe("Item units updated successfully");
             expect(response.body.updatedItem.units).toBe(15);
+        });
+    
+        it('400 error - id param does not exist', async () => {
+            const response = await request(app)
+                                    .patch(`${path}/0`)
+                                    .set('accept', 'application/json')
+                                    .send({ "units": 10})
+            
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe("Id param does not exist");
         });
     });
     
