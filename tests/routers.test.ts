@@ -2,14 +2,7 @@ import request from 'supertest';
 import { app, server } from '../src/app';
 import { type DatabaseParams, type TableName, type UpdateFreezerCategoryParams } from '../src/database/dbQueries';
 
-describe("Freezer tests", () => {
-    // afterAll((done) => {
-    //     server.close(() => {
-    //         console.log('Server closed!');
-    //         done();
-    //     });
-    // });
-    
+describe("Freezer tests", () => {    
     let newData: UpdateFreezerCategoryParams;
     
     describe(`POST /freezer`, () => {
@@ -157,14 +150,7 @@ describe("Freezer tests", () => {
     });
 });
 
-describe('Categories tests', () => {
-    // afterAll((done) => {
-    //     server.close(() => {
-    //         console.log('Server closed!');
-    //         done();
-    //     });
-    // });
-    
+describe('Categories tests', () => {    
     let newData: UpdateFreezerCategoryParams;
     const tableName: TableName = "category";
     

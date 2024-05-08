@@ -44,32 +44,44 @@ export type freezerCategoryItemData = {
 class CreateDatabaseTables {
     protected async createTables() {
         const createFreezerTableQuery = `CREATE TABLE IF NOT EXISTS freezer (
-            id SERIAL PRIMARY KEY,
+            id uuid DEFAULT gen_random_uuid(),
             name varchar(30) NOT NULL UNIQUE,
-            description varchar(100)
+            PRIMARY KEY (id)
         );`;
         await query(createFreezerTableQuery);
     
         const createCategoryTableQuery = `CREATE TABLE IF NOT EXISTS category (
-            id SERIAL PRIMARY KEY,
+            id uuid DEFAULT gen_random_uuid(),
             name varchar(30) NOT NULL UNIQUE,
-            description varchar(100)
+            PRIMARY KEY (id)
         );`;
         await query(createCategoryTableQuery);
     
         const createItemTableQuery = `CREATE TABLE IF NOT EXISTS item (
-            id SERIAL PRIMARY KEY,
+            id uuid DEFAULT gen_random_uuid(),
             name varchar(30) NOT NULL UNIQUE,
-            description varchar(100),
-            units integer,
-            exp_date date
+            PRIMARY KEY (id)
         );`;
         await query(createItemTableQuery);
     
+        const createUnitTableQuery = `CREATE TABLE IF NOT EXISTS unit (
+            id uuid DEFAULT gen_random_uuid(),
+            name varchar(30) NOT NULL UNIQUE,
+            PRIMARY KEY (id)
+        );`;
+        await query(createUnitTableQuery);
+    
         const createFreezerCategoryItemTable = `CREATE TABLE IF NOT EXISTS freezer_category_item (
-            freezer_id integer REFERENCES freezer (id) ON DELETE CASCADE,
-            category_id integer REFERENCES category (id) ON DELETE CASCADE,
-            item_id integer REFERENCES item (id) ON DELETE CASCADE
+            id uuid DEFAULT gen_random_uuid(),
+            freezer_id uuid REFERENCES freezer (id) ON DELETE CASCADE,
+            category_id uuid REFERENCES category (id) ON DELETE CASCADE,
+            item_id uuid REFERENCES item (id) ON DELETE CASCADE,
+            unit_id uuid REFERENCES unit (id) ON DELETE CASCADE,
+            entry_date date,
+            exp_date date,
+            quantity integer,
+            description varchar(100),
+            PRIMARY KEY (id)
         );`;
         await query(createFreezerCategoryItemTable);
     }
