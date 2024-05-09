@@ -1,23 +1,19 @@
 import { query } from "./dbConfig";
 
 export type ItemPostParams = {
-    name: string;
-    description: string;
     freezerId: number;
     categoryId: number;
-    units: number;
+    itemId: number;
+    unitId: number;
+    quantity: number;
+    entryDate: Date;
     expDate: Date;
+    description: string;
 };
 
 export type ItemData = {
     id: number;
-    name: string;
-    description: string;
-    freezerId: number;
-    categoryId: number;
-    units: number;
-    expDate: Date;
-};
+} & ItemPostParams;
 
 export type freezerCategoryItemData = {
     freezerid: number;
@@ -32,10 +28,10 @@ export type freezerCategoryItemData = {
 };
 
 export class ItemQueries {
-    private tableName: 'item';
+    private tableName: 'freezer_category_item';
 
     public constructor() {
-        this.tableName = 'item';
+        this.tableName = 'freezer_category_item';
     }
 
     public async getData() {
@@ -46,62 +42,83 @@ export class ItemQueries {
                                     category.name as categoryName,
                                     item.id as itemId,
                                     item.name as itemName,
-                                    item.description as itemDescription,
-                                    item.units as itemUnits,
-                                    item.exp_date as itemExpDate
+                                    unit.id as unitId,
+                                    unit.name as unitName,
+                                    freezer_category_item.quantity as quantity,
+                                    freezer_category_item.entry_date as entryDate,
+                                    freezer_category_item.exp_date as expDate,
+                                    freezer_category_item.description as description
                                 FROM freezer_category_item
                                 LEFT JOIN item
                                     ON item.id = freezer_category_item.item_id
                                 LEFT JOIN category
                                     ON category.id = freezer_category_item.category_id
                                 LEFT JOIN freezer
-                                    ON freezer.id = freezer_category_item.freezer_id;`;
+                                    ON freezer.id = freezer_category_item.freezer_id
+                                LEFT JOIN unit
+                                    ON unit.id = freezer_category_item.unit_id;`;
         
         return await query(selectDataQuery).then(response => response?.rows) as freezerCategoryItemData[];
     }
 
-    public async postData({name, description, freezerId, categoryId, units, expDate}: ItemPostParams) {
+    public async postData({
+        freezerId, 
+        categoryId, 
+        itemId, 
+        unitId, 
+        quantity,
+        entryDate, 
+        expDate,
+        description, 
+    }: ItemPostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
-                                (name, description, units, exp_date) 
-                                VALUES ($1, $2, $3, $4) 
+                                (freezer_id, category_id, item_id, unit_id, entry_date, exp_date, quantity, description) 
+                                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
                                 RETURNING *;`;
-        const freezerCategoryItemInsertQuery = `INSERT INTO freezer_category_item 
-                                                (freezer_id, category_id, item_id)
-                                                VALUES ($1, $2, $3)
-                                                RETURNING *;`;
 
-        const addedItem = await query(itemInsertQuery, [name, description, units, expDate]).then(data => data?.rows[0]);
-        
-        // Adding to freezer_category_item table
-        await query(freezerCategoryItemInsertQuery, [freezerId, categoryId, addedItem.id]);
+        const addedItem = await query(
+            itemInsertQuery, 
+            [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description]
+        ).then(data => data?.rows[0]);
 
         return addedItem as ItemData;
     }
 
-    public async updateData({ id, name, description, freezerId, categoryId, units, expDate }: ItemData) {
+    public async updateData({
+        id,
+        freezerId, 
+        categoryId, 
+        itemId, 
+        unitId, 
+        quantity,
+        entryDate, 
+        expDate,
+        description, 
+    }: ItemData) {
         const itemUpdateQuery = `UPDATE ${this.tableName} SET 
-                                    name = $1,
-                                    description = $2,
-                                    units = $3,
-                                    exp_date = $4
-                                WHERE id = $5
+                                    freezer_id = $1,
+                                    category_id = $2,
+                                    item_id = $3,
+                                    unit_id = $4,
+                                    entry_date = $5,
+                                    exp_date = $6,
+                                    quantity = $7,
+                                    description = $8
+                                WHERE id = $9
                                 RETURNING *;`;
-        const freezerCategoryItemUpdateQuery = `UPDATE freezer_category_item SET
-                                                    freezer_id = $1,
-                                                    category_id = $2,
-                                                    item_id = $3
-                                                WHERE item_id = $3;`;
 
-        const updatedItem = await query(itemUpdateQuery, [name, description, units, expDate, id]).then(data => data?.rows[0]);
-        await query(freezerCategoryItemUpdateQuery, [freezerId, categoryId, id]);   
+        const updatedItem = await query(
+            itemUpdateQuery, 
+            [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description, id]
+        ).then(data => data?.rows[0]);
 
         return updatedItem as ItemData;
     }
 
-    public async updateItemUnits({ id, units }: { id: number; units: number; }) {
-        const updateItemQuery = `UPDATE item SET units = $1 WHERE id = $2 RETURNING *;`;
+    public async updateItemUnits({ id, quantity }: { id: number; quantity: number; }) {
+        const updateItemQuery = `UPDATE ${this.tableName} SET quantity = $1 WHERE id = $2 RETURNING *;`;
 
-        const updatedItem = await query(updateItemQuery, [units, id]).then(data => data?.rows[0]);
+        const updatedItem = await query(updateItemQuery, [quantity, id]).then(data => data?.rows[0]);
 
         return updatedItem as ItemData;
     }

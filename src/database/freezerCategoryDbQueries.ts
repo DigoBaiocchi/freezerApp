@@ -1,23 +1,22 @@
 import { query } from "./dbConfig";
 
-type freezerCategoryTables = "freezer" | "category";
-type CategoryItemTables = "category" | "item";
+type freezerCategoryItemTables = "freezer" | "category" | "item";
+type CollectionReferenceTables = "freezer" | "category";
+type CollectionTargetTables = "category" | "item";
 
 export type freezerCategoryData = {
     id: number;
     name: string;
-    description: string;
 };
 
 export type freezerCategoryPostParams = {
     name: string;
-    description: string;
 };
 
 export class FreezerCategoryQueries {
-    private tableName: freezerCategoryTables
+    private tableName: freezerCategoryItemTables
 
-    public constructor(tableName: freezerCategoryTables) {
+    public constructor(tableName: freezerCategoryItemTables) {
         this.tableName = tableName;
     }
 
@@ -26,7 +25,7 @@ export class FreezerCategoryQueries {
         return selectData as freezerCategoryData[];
     }
 
-    private async getDataById(collectionReference:freezerCategoryTables, collectionTarget: CategoryItemTables, id: number) {
+    private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: number) {
         const selectQUery = `SELECT ${collectionTarget}_id AS id 
                             FROM freezer_category_item 
                             WHERE ${collectionReference}_id = $1`;
@@ -35,22 +34,21 @@ export class FreezerCategoryQueries {
         return result?.map(data => data.id);
     }
 
-    public async postData({ name, description }: freezerCategoryPostParams) {
+    public async postData(name: string) {
         const freezerCategoryInsertQuery = `INSERT INTO ${this.tableName} 
-                                            (name, description) 
-                                            VALUES ($1, $2)
+                                            (name) 
+                                            VALUES ($1)
                                             RETURNING *;`;
-        const addFreezerOrCategory = await query(freezerCategoryInsertQuery, [name, description]).then(data => data?.rows[0]);
+        const addFreezerOrCategory = await query(freezerCategoryInsertQuery, [name]).then(data => data?.rows[0]);
         
         return addFreezerOrCategory as freezerCategoryData;
     }
 
-    public async updateData({ id, name, description }: freezerCategoryData) {
+    public async updateData({ id, name }: freezerCategoryData) {
         const baseUpdateQuery = `UPDATE ${this.tableName} SET 
                                     name = $1,
-                                    description = $2 
-                                WHERE id = $3;`;
-        const updatedData = await query(baseUpdateQuery, [name, description, id]).then(data => data?.rows[0]);
+                                WHERE id = $2;`;
+        const updatedData = await query(baseUpdateQuery, [name, id]).then(data => data?.rows[0]);
 
         return updatedData as freezerCategoryData;
     }
@@ -66,6 +64,8 @@ export class FreezerCategoryQueries {
             case 'category':
                 const productsId = await this.getDataById("category", "item", id);
                 productsId?.forEach(data => this.deleteData(data.id));
+                return await query(deleteQuery, [id]);
+            case 'item':
                 return await query(deleteQuery, [id]);
             default:
                 throw new Error("tableName must be freezer or category");
