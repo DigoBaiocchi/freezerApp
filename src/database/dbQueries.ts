@@ -77,10 +77,10 @@ class CreateDatabaseTables {
             category_id uuid REFERENCES category (id) ON DELETE CASCADE,
             item_id uuid REFERENCES item (id) ON DELETE CASCADE,
             unit_id uuid REFERENCES unit (id) ON DELETE CASCADE,
-            entry_date date,
-            exp_date date,
-            quantity integer,
-            description varchar(100),
+            entry_date date NOT NULL,
+            exp_date date NOT NULL,
+            quantity integer NOT NULL,
+            description varchar(100) DEFAULT '',
             PRIMARY KEY (id)
         );`;
         await query(createFreezerCategoryItemTable);
