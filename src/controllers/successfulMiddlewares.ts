@@ -1,15 +1,16 @@
 import { RequestHandler } from "express";
-import { DatabaseQueries, type PostParams, type DatabaseParams, TableName } from "../database/dbQueries";
-import { FreezerCategoryQueries } from "../database/freezerCategoryDbQueries";
+import { FreezerCategoryQueries, IndividualTables } from "../database/freezerCategoryDbQueries";
 import { ItemPostParams, ItemQueries } from "../database/itemDbQueries";
 
-const getDataByTableName = (tableName: TableName): RequestHandler => {
+export type AllTableNames = IndividualTables | 'freezer_category_item';
+
+const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
         let response;
-        if (tableName === 'freezer' || tableName === 'category') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             response = freezerCategoryDb.getData();
-        } else if (tableName === 'item') {
+        } else if (tableName === 'freezer_category_item') {
             const itemDb = new ItemQueries();
             response = itemDb.getData();
         } else {
@@ -20,11 +21,11 @@ const getDataByTableName = (tableName: TableName): RequestHandler => {
     };
 };
 
-const postDataByTableName = (tableName: TableName): RequestHandler => {
+const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
         let newData;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const name: string = req.body.name;
             const addedData = name;
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
@@ -61,13 +62,12 @@ const postDataByTableName = (tableName: TableName): RequestHandler => {
     };
 };
 
-const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: number }> => {
+const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
     return async (req, res) => {
-        const database = new DatabaseQueries(tableName);
-        const id: number = req.params.id;
+        const id: string = req.params.id;
         let updatedData;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const name: string = req.body.name;
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             
@@ -103,7 +103,7 @@ const updateDataByTableName = (tableName: TableName): RequestHandler<{ id: numbe
     };
 } 
 
-const updateItemQuantity = (): RequestHandler<{ id: number }> => {
+const updateItemQuantity = (): RequestHandler<{ id: string }> => {
     return async (req, res) => {
         const database = new ItemQueries();
         console.log(`Id: ${req.params.id} - updated quantity: ${req.body.quantity}`)
@@ -114,7 +114,7 @@ const updateItemQuantity = (): RequestHandler<{ id: number }> => {
     };
 }
 
-const deleteDataByTableName = (tableName: TableName): RequestHandler<{ id: number }> => {
+const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
     return async (req, res) => {
         const id = req.params.id;
         

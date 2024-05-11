@@ -1,11 +1,12 @@
 import { query } from "./dbConfig";
 
-type freezerCategoryItemTables = "freezer" | "category" | "item";
+export type IndividualTables = "freezer" | "category" | "item" | 'unit';
+
 type CollectionReferenceTables = "freezer" | "category";
 type CollectionTargetTables = "category" | "item";
 
 export type freezerCategoryData = {
-    id: number;
+    id: string;
     name: string;
 };
 
@@ -14,9 +15,9 @@ export type freezerCategoryPostParams = {
 };
 
 export class FreezerCategoryQueries {
-    private tableName: freezerCategoryItemTables
+    private tableName: IndividualTables
 
-    public constructor(tableName: freezerCategoryItemTables) {
+    public constructor(tableName: IndividualTables) {
         this.tableName = tableName;
     }
 
@@ -25,7 +26,7 @@ export class FreezerCategoryQueries {
         return selectData as freezerCategoryData[];
     }
 
-    private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: number) {
+    private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: string) {
         const selectQUery = `SELECT ${collectionTarget}_id AS id 
                             FROM freezer_category_item 
                             WHERE ${collectionReference}_id = $1`;
@@ -46,14 +47,14 @@ export class FreezerCategoryQueries {
 
     public async updateData({ id, name }: freezerCategoryData) {
         const baseUpdateQuery = `UPDATE ${this.tableName} SET 
-                                    name = $1,
+                                    name = $1
                                 WHERE id = $2;`;
         const updatedData = await query(baseUpdateQuery, [name, id]).then(data => data?.rows[0]);
 
         return updatedData as freezerCategoryData;
     }
 
-    public async deleteData(id: number) {
+    public async deleteData(id: string) {
         const deleteQuery = `DELETE FROM ${this.tableName} WHERE id = $1`;
 
         switch(this.tableName) {
@@ -66,6 +67,8 @@ export class FreezerCategoryQueries {
                 productsId?.forEach(data => this.deleteData(data.id));
                 return await query(deleteQuery, [id]);
             case 'item':
+                return await query(deleteQuery, [id]);
+            case 'unit':
                 return await query(deleteQuery, [id]);
             default:
                 throw new Error("tableName must be freezer or category");

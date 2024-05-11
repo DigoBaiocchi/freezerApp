@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { successfulMiddlewares } from "../controllers/successfulMiddlewares";
 import { errorMiddlewares } from "../controllers/errorMiddlewares";
-import { TableName } from "../database/dbQueries";
+import { IndividualTables } from "../database/freezerCategoryDbQueries";
 
 const router:Router = Router();
-const tableName:TableName = "freezer";
+const tableName:IndividualTables = "freezer";
 
 router.get('/', 
     successfulMiddlewares.getDataByTableName(tableName)

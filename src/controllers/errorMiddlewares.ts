@@ -1,28 +1,30 @@
 import { RequestHandler } from "express";
-import { DatabaseParams, DatabaseQueries, freezerCategoryItemData, type TableName } from "../database/dbQueries";
+import { FreezerCategoryQueries, freezerCategoryData, type IndividualTables } from "../database/freezerCategoryDbQueries";
+import { ItemQueries, type freezerCategoryItemData } from "../database/itemDbQueries";
+import { AllTableNames } from "./successfulMiddlewares";
 
-const missingRequiredParam = (tableName: TableName): RequestHandler => {
+const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
     return async (req, res, next) => {
         if (!req.body.name || req.body.name === '') {
             return res.status(400).json({ error: "No name provided" });
         }
 
-        if (tableName === 'item') {
+        if (tableName === 'freezer_category_item') {
             const { freezerId, categoryId, units, expDate } = req.body;
             
-            const updatedFreezerId: number = freezerId || 0;
+            const updatedFreezerId: string = freezerId || 0;
             let checkFreezerId: boolean = !updatedFreezerId || true;
-            const updatedCategoryId: number = categoryId || 0;
+            const updatedCategoryId: string = categoryId || 0;
             let checkCategoryId: boolean = !updatedCategoryId || true;
 
             if (updatedFreezerId || updatedCategoryId) {
-                const freezerDatabase = new DatabaseQueries('freezer');
-                const freezerData = await freezerDatabase.getItems() as DatabaseParams[];
+                const freezerDatabase = new FreezerCategoryQueries('freezer');
+                const freezerData = await freezerDatabase.getData() as freezerCategoryData[];
                 checkFreezerId = freezerData.map(freezer => freezer.id).includes(updatedFreezerId);
                 console.log('freezer id', updatedFreezerId, checkFreezerId)
                 
-                const categoryDatabase = new DatabaseQueries('category');
-                const categoryData = await categoryDatabase.getItems() as DatabaseParams[];
+                const categoryDatabase = new FreezerCategoryQueries('category');
+                const categoryData = await categoryDatabase.getData() as freezerCategoryData[];
                 checkCategoryId = categoryData.map(category => category.id).includes(updatedCategoryId);
                 console.log('category id', updatedCategoryId, checkCategoryId)
             }
@@ -36,17 +38,14 @@ const missingRequiredParam = (tableName: TableName): RequestHandler => {
     };
 } 
 
-const notUniqueName = (tableName: TableName): RequestHandler => {
+const notUniqueName = (tableName: IndividualTables): RequestHandler => {
     return async (req, res, next) => {
-        const database = new DatabaseQueries(tableName);
+        const database = new FreezerCategoryQueries(tableName);
         let checkIfNameExists: boolean;
 
-        if (tableName === 'freezer' || tableName === 'category') {
-            const data = await database.getItems() as DatabaseParams[];
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+            const data = await database.getData() as freezerCategoryData[];
             checkIfNameExists = data.map(data => data.name.toLowerCase()).includes(req.body.name.toLowerCase());
-        } else if (tableName === 'item') {
-            const data = await database.getItems() as freezerCategoryItemData[];
-            checkIfNameExists = data.map(data => data.itemname.toLowerCase()).includes(req.body.name.toLowerCase());
         } else {
             throw new Error("Invalid table name");
         }
@@ -59,17 +58,18 @@ const notUniqueName = (tableName: TableName): RequestHandler => {
     };
 }
 
-const incorrectId = (tableName: TableName): RequestHandler<{ id: number }> => {
+const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
     return async (req, res, next) => {
-        const database = new DatabaseQueries(tableName);
         let checkIfIdExists: boolean;
 
-        if (tableName === 'freezer' || tableName === 'category') {
-            const data = await database.getItems() as DatabaseParams[];
-            checkIfIdExists = data.map(data => data.id).includes(Number(req.params.id));
-        } else if (tableName === 'item') {
-            const data = await database.getItems() as freezerCategoryItemData[];
-            checkIfIdExists = data.map(data => data.itemid).includes(Number(req.params.id));
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+            const database = new FreezerCategoryQueries(tableName);
+            const data = await database.getData() as freezerCategoryData[];
+            checkIfIdExists = data.map(data => data.id).includes(req.params.id);
+        } else if (tableName === 'freezer_category_item') {
+            const database = new ItemQueries();
+            const data = await database.getData() as freezerCategoryItemData[];
+            checkIfIdExists = data.map(data => data.itemid).includes(req.params.id);
         } else {
             throw new Error("Invalid table name");
         }
