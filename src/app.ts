@@ -6,6 +6,7 @@ import { config } from './utils/config';
 import freezerRouter from './routes/freezer';
 import categoryRouter from './routes/category';
 import itemsRouter from './routes/item';
+import unitRouter from './routes/unit';
 
 dotenv.config({ path: '.env.development.local' });
 
@@ -17,6 +18,7 @@ app.use(json());
 app.use('/freezer', freezerRouter);
 app.use('/category', categoryRouter);
 app.use('/item', itemsRouter);
+app.use('/unit', unitRouter);
 
 app.use((err:Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).json({message: err.message})

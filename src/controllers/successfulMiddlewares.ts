@@ -118,7 +118,7 @@ const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
     return async (req, res) => {
         const id = req.params.id;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const database = new FreezerCategoryQueries(tableName);
 
             await database.deleteData(id);
