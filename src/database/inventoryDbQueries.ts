@@ -1,6 +1,6 @@
 import { query } from "./dbConfig";
 
-export type ItemPostParams = {
+export type InventoryPostParams = {
     freezerId: string;
     categoryId: string;
     itemId: string;
@@ -11,20 +11,24 @@ export type ItemPostParams = {
     description: string;
 };
 
-export type ItemData = {
+export type InventoryData = {
     id: string;
-} & ItemPostParams;
+} & InventoryPostParams;
 
-export type freezerCategoryItemData = {
+export type DetailedInventoryData = {
+    id: string;
     freezerid: string;
     freezername: string;
     categoryid: string;
     categoryname: string;
     itemid: string;
     itemname: string;
+    unitid: string;
+    unitname: string;
+    quantity: number;
+    entrydate: Date;
+    expdate: Date;
     itemdescription: string;
-    itemunits: number;
-    itemexpdate: Date;
 };
 
 export class ItemQueries {
@@ -36,6 +40,7 @@ export class ItemQueries {
 
     public async getData() {
         const selectDataQuery = `SELECT
+                                    inventory.id
                                     freezer.id as freezerId,
                                     freezer.name as freezerName,
                                     category.id as categoryId,
@@ -58,7 +63,7 @@ export class ItemQueries {
                                 LEFT JOIN unit
                                     ON unit.id = inventory.unit_id;`;
         
-        return await query(selectDataQuery).then(response => response?.rows) as freezerCategoryItemData[];
+        return await query(selectDataQuery).then(response => response?.rows) as DetailedInventoryData[];
     }
 
     public async postData({
@@ -70,7 +75,7 @@ export class ItemQueries {
         entryDate, 
         expDate,
         description, 
-    }: ItemPostParams) {
+    }: InventoryPostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
                                 (freezer_id, category_id, item_id, unit_id, entry_date, exp_date, quantity, description) 
                                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
@@ -81,7 +86,7 @@ export class ItemQueries {
             [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description]
         ).then(data => data?.rows[0]);
 
-        return addedItem as ItemData;
+        return addedItem as InventoryData;
     }
 
     public async updateData({
@@ -94,7 +99,7 @@ export class ItemQueries {
         entryDate, 
         expDate,
         description, 
-    }: ItemData) {
+    }: InventoryData) {
         const itemUpdateQuery = `UPDATE ${this.tableName} SET 
                                     freezer_id = $1,
                                     category_id = $2,
@@ -112,7 +117,7 @@ export class ItemQueries {
             [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description, id]
         ).then(data => data?.rows[0]);
 
-        return updatedItem as ItemData;
+        return updatedItem as InventoryData;
     }
 
     public async updateItemUnits({ id, quantity }: { id: string; quantity: number; }) {
@@ -120,7 +125,7 @@ export class ItemQueries {
 
         const updatedItem = await query(updateItemQuery, [quantity, id]).then(data => data?.rows[0]);
 
-        return updatedItem as ItemData;
+        return updatedItem as InventoryData;
     }
 
     public async deleteData(id: string) {

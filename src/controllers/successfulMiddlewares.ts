@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { FreezerCategoryQueries, IndividualTables } from "../database/nonInventoryDbQueries";
-import { ItemPostParams, ItemQueries } from "../database/inventoryDbQueries";
+import { InventoryPostParams, ItemQueries } from "../database/inventoryDbQueries";
 
 export type AllTableNames = IndividualTables | 'inventory';
 
@@ -40,7 +40,7 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
                 entryDate,
                 expDate,
                 description,
-            } = req.body as ItemPostParams;
+            } = req.body as InventoryPostParams;
 
             const addedData = {
                 freezerId,
@@ -82,7 +82,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
                 entryDate,
                 expDate,
                 description,
-            } = req.body as ItemPostParams;
+            } = req.body as InventoryPostParams;
             const itemDb = new ItemQueries();
             updatedData = await itemDb.updateData({
                 id,

@@ -5,12 +5,12 @@ export type IndividualTables = "freezer" | "category" | "item" | 'unit';
 type CollectionReferenceTables = "freezer" | "category";
 type CollectionTargetTables = "category" | "item";
 
-export type freezerCategoryData = {
+export type NonInventoryData = {
     id: string;
     name: string;
 };
 
-export type freezerCategoryPostParams = {
+export type NonInventoryPostParams = {
     name: string;
 };
 
@@ -23,7 +23,7 @@ export class FreezerCategoryQueries {
 
     public async getData() {
         const selectData = await query(`SELECT * FROM ${this.tableName}`).then(response => response?.rows);
-        return selectData as freezerCategoryData[];
+        return selectData as NonInventoryData[];
     }
 
     private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: string) {
@@ -42,16 +42,16 @@ export class FreezerCategoryQueries {
                                             RETURNING *;`;
         const addFreezerOrCategory = await query(freezerCategoryInsertQuery, [name]).then(data => data?.rows[0]);
         
-        return addFreezerOrCategory as freezerCategoryData;
+        return addFreezerOrCategory as NonInventoryData;
     }
 
-    public async updateData({ id, name }: freezerCategoryData) {
+    public async updateData({ id, name }: NonInventoryData) {
         const baseUpdateQuery = `UPDATE ${this.tableName} SET 
                                     name = $1
                                 WHERE id = $2;`;
         const updatedData = await query(baseUpdateQuery, [name, id]).then(data => data?.rows[0]);
 
-        return updatedData as freezerCategoryData;
+        return updatedData as NonInventoryData;
     }
 
     public async deleteData(id: string) {
