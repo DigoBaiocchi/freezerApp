@@ -7,6 +7,7 @@ import freezerRouter from './routes/freezer';
 import categoryRouter from './routes/category';
 import itemsRouter from './routes/item';
 import unitRouter from './routes/unit';
+import { CreateDatabaseTables } from "./database/createTablesQueries";
 
 dotenv.config({ path: '.env.development.local' });
 
@@ -25,6 +26,8 @@ app.use((err:Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
+    const createDatabase = new CreateDatabaseTables();
+    createDatabase.createTables();
     res.send('FreezerApp');
 });
 

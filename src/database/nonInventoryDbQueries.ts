@@ -28,7 +28,7 @@ export class FreezerCategoryQueries {
 
     private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: string) {
         const selectQUery = `SELECT ${collectionTarget}_id AS id 
-                            FROM freezer_category_item 
+                            FROM inventory 
                             WHERE ${collectionReference}_id = $1`;
         const result = await query(selectQUery, [id]).then(data => data?.rows);
     

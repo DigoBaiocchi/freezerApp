@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app, server } from '../src/app';
-import { IndividualTables, freezerCategoryData } from '../src/database/freezerCategoryDbQueries';
+import { IndividualTables, freezerCategoryData } from '../src/database/nonInventoryDbQueries';
 
 describe("Freezer tests", () => {    
     let newData: freezerCategoryData;

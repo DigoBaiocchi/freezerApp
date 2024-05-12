@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { successfulMiddlewares } from "../controllers/successfulMiddlewares";
 import { errorMiddlewares } from "../controllers/errorMiddlewares";
-import { IndividualTables } from "../database/freezerCategoryDbQueries";
+import { IndividualTables } from "../database/nonInventoryDbQueries";
 
 const router:Router = Router();
 const tableName:IndividualTables = "freezer";

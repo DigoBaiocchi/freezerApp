@@ -28,10 +28,10 @@ export type freezerCategoryItemData = {
 };
 
 export class ItemQueries {
-    private tableName: 'freezer_category_item';
+    private tableName: 'inventory';
 
     public constructor() {
-        this.tableName = 'freezer_category_item';
+        this.tableName = 'inventory';
     }
 
     public async getData() {
@@ -44,19 +44,19 @@ export class ItemQueries {
                                     item.name as itemName,
                                     unit.id as unitId,
                                     unit.name as unitName,
-                                    freezer_category_item.quantity as quantity,
-                                    freezer_category_item.entry_date as entryDate,
-                                    freezer_category_item.exp_date as expDate,
-                                    freezer_category_item.description as description
-                                FROM freezer_category_item
+                                    inventory.quantity as quantity,
+                                    inventory.entry_date as entryDate,
+                                    inventory.exp_date as expDate,
+                                    inventory.description as description
+                                FROM inventory
                                 LEFT JOIN item
-                                    ON item.id = freezer_category_item.item_id
+                                    ON item.id = inventory.item_id
                                 LEFT JOIN category
-                                    ON category.id = freezer_category_item.category_id
+                                    ON category.id = inventory.category_id
                                 LEFT JOIN freezer
-                                    ON freezer.id = freezer_category_item.freezer_id
+                                    ON freezer.id = inventory.freezer_id
                                 LEFT JOIN unit
-                                    ON unit.id = freezer_category_item.unit_id;`;
+                                    ON unit.id = inventory.unit_id;`;
         
         return await query(selectDataQuery).then(response => response?.rows) as freezerCategoryItemData[];
     }

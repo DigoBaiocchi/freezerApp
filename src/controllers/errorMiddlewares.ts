@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { FreezerCategoryQueries, freezerCategoryData, type IndividualTables } from "../database/freezerCategoryDbQueries";
-import { ItemQueries, type freezerCategoryItemData } from "../database/itemDbQueries";
+import { FreezerCategoryQueries, freezerCategoryData, type IndividualTables } from "../database/nonInventoryDbQueries";
+import { ItemQueries, type freezerCategoryItemData } from "../database/inventoryDbQueries";
 import { AllTableNames } from "./successfulMiddlewares";
 
 const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
@@ -9,7 +9,7 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
             return res.status(400).json({ error: "No name provided" });
         }
 
-        if (tableName === 'freezer_category_item') {
+        if (tableName === 'inventory') {
             const { freezerId, categoryId, units, expDate } = req.body;
             
             const updatedFreezerId: string = freezerId || 0;
@@ -66,7 +66,7 @@ const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: string }> =
             const database = new FreezerCategoryQueries(tableName);
             const data = await database.getData() as freezerCategoryData[];
             checkIfIdExists = data.map(data => data.id).includes(req.params.id);
-        } else if (tableName === 'freezer_category_item') {
+        } else if (tableName === 'inventory') {
             const database = new ItemQueries();
             const data = await database.getData() as freezerCategoryItemData[];
             checkIfIdExists = data.map(data => data.itemid).includes(req.params.id);

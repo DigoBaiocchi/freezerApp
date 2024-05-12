@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { FreezerCategoryQueries, IndividualTables } from "../database/freezerCategoryDbQueries";
-import { ItemPostParams, ItemQueries } from "../database/itemDbQueries";
+import { FreezerCategoryQueries, IndividualTables } from "../database/nonInventoryDbQueries";
+import { ItemPostParams, ItemQueries } from "../database/inventoryDbQueries";
 
-export type AllTableNames = IndividualTables | 'freezer_category_item';
+export type AllTableNames = IndividualTables | 'inventory';
 
 const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
@@ -10,7 +10,7 @@ const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             response = freezerCategoryDb.getData();
-        } else if (tableName === 'freezer_category_item') {
+        } else if (tableName === 'inventory') {
             const itemDb = new ItemQueries();
             response = itemDb.getData();
         } else {
@@ -30,7 +30,7 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
             const addedData = name;
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             newData = await freezerCategoryDb.postData(addedData);
-        } else if (tableName === 'freezer_category_item') {
+        } else if (tableName === 'inventory') {
             const {
                 freezerId,
                 categoryId,
@@ -72,7 +72,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
             const freezerCategoryDb = new FreezerCategoryQueries(tableName);
             
             updatedData = freezerCategoryDb.updateData({ id, name });
-        } else if (tableName === 'freezer_category_item') {
+        } else if (tableName === 'inventory') {
             const {
                 freezerId,
                 categoryId,
@@ -122,7 +122,7 @@ const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
             const database = new FreezerCategoryQueries(tableName);
 
             await database.deleteData(id);
-        } else if (tableName === 'freezer_category_item') {
+        } else if (tableName === 'inventory') {
             console.log(tableName);
             const database = new ItemQueries();
 
