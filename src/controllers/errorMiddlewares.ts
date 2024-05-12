@@ -5,10 +5,7 @@ import { AllTableNames } from "./successfulMiddlewares";
 
 const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
     return async (req, res, next) => {
-        if (!req.body.name || req.body.name === '') {
-            return res.status(400).json({ error: "No name provided" });
-        }
-
+        
         if (tableName === 'inventory') {
             const { freezerId, categoryId, itemId, unitId } = req.body;
             
@@ -20,7 +17,7 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
             let checkItemId: boolean = !updatedItemId || true;
             const updatedUnitId: string = unitId || 0;
             let checkUnitId: boolean = !updatedUnitId || true;
-
+            
             if (updatedFreezerId || updatedCategoryId || checkItemId || checkUnitId) {
                 const freezerDatabase = new NonInventoryQueries('freezer');
                 const freezerData = await freezerDatabase.getData() as NonInventoryData[];
@@ -42,12 +39,17 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
                 checkUnitId = unitData.map(category => category.id).includes(updatedUnitId);
                 console.log('category id', updatedUnitId, checkUnitId)
             }
-
+            
             if(!checkFreezerId || !checkCategoryId || !checkItemId || !checkUnitId) {
                 return res.status(404).json({ error: "Incorrect item params provided" });
             }
+        } else {
+            if (!req.body.name || req.body.name === '') {
+                console.log(tableName)
+                return res.status(400).json({ error: "No name provided" });
+            }
         }
-    
+        
         next();
     };
 } 
@@ -84,6 +86,7 @@ const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: string }> =
             const database = new InventoryQueries();
             const data = await database.getData() as DetailedInventoryData[];
             checkIfIdExists = data.map(data => data.id).includes(req.params.id);
+            console.log(checkIfIdExists, req.params.id)
         } else {
             throw new Error("Invalid table name");
         }

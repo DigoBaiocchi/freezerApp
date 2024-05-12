@@ -737,7 +737,7 @@ describe('Inventory tests', () => {
                                     .send({
                                         "freezerId": newFreezerData.id,
                                         "categoryId": newCategoryData.id,
-                                        "itemId": newItemData,
+                                        "itemId": newItemData.id,
                                         "unitId": newUnitData.id,
                                         "entryDate": "2024-04-27",
                                         "expDate": "2024-05-30",
@@ -770,8 +770,8 @@ describe('Inventory tests', () => {
         });
     });
 
-    describe(`PATCH /${tableName}/update-units/:id`, () => {
-        const path = `/${tableName}/update-units`;
+    describe(`PATCH /${tableName}/update-quantity/:id`, () => {
+        const path = `/${tableName}/update-quantity`;
 
         afterAll((done) => {
             server.close(() => {
@@ -780,7 +780,7 @@ describe('Inventory tests', () => {
             });
         });
 
-        it(`Update ${tableName} units successfully`, async () => {
+        it(`Update ${tableName} quantity successfully`, async () => {
             const response = await request(app)
                                     .patch(`${path}/${newData.id}`)
                                     .set('accept', 'application/json')
@@ -788,7 +788,7 @@ describe('Inventory tests', () => {
 
             expect(response.status).toBe(200);
             expect(response.body.msg).toBe("Item quantity updated successfully");
-            expect(response.body.updatedItem.units).toBe(15);
+            expect(response.body.updatedItem.quantity).toBe(15);
         });
     
         it('400 error - id param does not exist', async () => {

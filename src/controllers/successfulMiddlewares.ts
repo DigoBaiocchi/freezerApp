@@ -110,7 +110,7 @@ const updateItemQuantity = (): RequestHandler<{ id: string }> => {
         const database = new InventoryQueries();
         console.log(`Id: ${req.params.id} - updated quantity: ${req.body.quantity}`)
         const updatedItem = await database.updateItemUnits({ id: req.params.id, quantity: req.body.quantity });
-
+        console.log(updatedItem)
         return res.status(200).json({ msg: `Item quantity updated successfully`, updatedItem });
 
     };
