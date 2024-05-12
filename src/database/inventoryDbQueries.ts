@@ -17,13 +17,9 @@ export type InventoryData = {
 
 export type DetailedInventoryData = {
     id: string;
-    freezerid: string;
     freezername: string;
-    categoryid: string;
     categoryname: string;
-    itemid: string;
     itemname: string;
-    unitid: string;
     unitname: string;
     quantity: number;
     entrydate: Date;
@@ -31,7 +27,7 @@ export type DetailedInventoryData = {
     itemdescription: string;
 };
 
-export class ItemQueries {
+export class InventoryQueries {
     private tableName: 'inventory';
 
     public constructor() {
@@ -40,14 +36,10 @@ export class ItemQueries {
 
     public async getData() {
         const selectDataQuery = `SELECT
-                                    inventory.id
-                                    freezer.id as freezerId,
+                                    inventory.id,
                                     freezer.name as freezerName,
-                                    category.id as categoryId,
                                     category.name as categoryName,
-                                    item.id as itemId,
                                     item.name as itemName,
-                                    unit.id as unitId,
                                     unit.name as unitName,
                                     inventory.quantity as quantity,
                                     inventory.entry_date as entryDate,

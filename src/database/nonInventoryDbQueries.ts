@@ -14,7 +14,7 @@ export type NonInventoryPostParams = {
     name: string;
 };
 
-export class FreezerCategoryQueries {
+export class NonInventoryQueries {
     private tableName: IndividualTables
 
     public constructor(tableName: IndividualTables) {

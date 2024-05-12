@@ -1,17 +1,19 @@
 import { RequestHandler } from "express";
-import { FreezerCategoryQueries, IndividualTables } from "../database/nonInventoryDbQueries";
-import { InventoryPostParams, ItemQueries } from "../database/inventoryDbQueries";
+import { NonInventoryQueries, type IndividualTables, type NonInventoryData } from "../database/nonInventoryDbQueries";
+import { type DetailedInventoryData, type InventoryPostParams, InventoryQueries } from "../database/inventoryDbQueries";
 
 export type AllTableNames = IndividualTables | 'inventory';
 
+type ResponseType = Promise<DetailedInventoryData[]> | Promise<NonInventoryData[]>;
+
 const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
-        let response;
+        let response: ResponseType;
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
-            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            const freezerCategoryDb = new NonInventoryQueries(tableName);
             response = freezerCategoryDb.getData();
         } else if (tableName === 'inventory') {
-            const itemDb = new ItemQueries();
+            const itemDb = new InventoryQueries();
             response = itemDb.getData();
         } else {
             throw new Error("Incorrect table name selected");
@@ -28,7 +30,7 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const name: string = req.body.name;
             const addedData = name;
-            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            const freezerCategoryDb = new NonInventoryQueries(tableName);
             newData = await freezerCategoryDb.postData(addedData);
         } else if (tableName === 'inventory') {
             const {
@@ -52,7 +54,7 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
                 expDate,
                 description,
             };
-            const itemDb = new ItemQueries();
+            const itemDb = new InventoryQueries();
             newData = await itemDb.postData(addedData);
         } else {
             throw new Error("Incorrect table name selected");
@@ -69,7 +71,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
         
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const name: string = req.body.name;
-            const freezerCategoryDb = new FreezerCategoryQueries(tableName);
+            const freezerCategoryDb = new NonInventoryQueries(tableName);
             
             updatedData = freezerCategoryDb.updateData({ id, name });
         } else if (tableName === 'inventory') {
@@ -83,7 +85,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
                 expDate,
                 description,
             } = req.body as InventoryPostParams;
-            const itemDb = new ItemQueries();
+            const itemDb = new InventoryQueries();
             updatedData = await itemDb.updateData({
                 id,
                 freezerId,
@@ -105,7 +107,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
 
 const updateItemQuantity = (): RequestHandler<{ id: string }> => {
     return async (req, res) => {
-        const database = new ItemQueries();
+        const database = new InventoryQueries();
         console.log(`Id: ${req.params.id} - updated quantity: ${req.body.quantity}`)
         const updatedItem = await database.updateItemUnits({ id: req.params.id, quantity: req.body.quantity });
 
@@ -119,12 +121,12 @@ const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
         const id = req.params.id;
         
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
-            const database = new FreezerCategoryQueries(tableName);
+            const database = new NonInventoryQueries(tableName);
 
             await database.deleteData(id);
         } else if (tableName === 'inventory') {
             console.log(tableName);
-            const database = new ItemQueries();
+            const database = new InventoryQueries();
 
             await database.deleteData(id);
         } else {

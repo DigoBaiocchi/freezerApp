@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { FreezerCategoryQueries, type NonInventoryData, type IndividualTables } from "../database/nonInventoryDbQueries";
-import { ItemQueries, type DetailedInventoryData } from "../database/inventoryDbQueries";
+import { NonInventoryQueries, type NonInventoryData, type IndividualTables } from "../database/nonInventoryDbQueries";
+import { InventoryQueries, type DetailedInventoryData } from "../database/inventoryDbQueries";
 import { AllTableNames } from "./successfulMiddlewares";
 
 const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
@@ -10,26 +10,40 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
         }
 
         if (tableName === 'inventory') {
-            const { freezerId, categoryId, units, expDate } = req.body;
+            const { freezerId, categoryId, itemId, unitId } = req.body;
             
             const updatedFreezerId: string = freezerId || 0;
             let checkFreezerId: boolean = !updatedFreezerId || true;
             const updatedCategoryId: string = categoryId || 0;
             let checkCategoryId: boolean = !updatedCategoryId || true;
+            const updatedItemId: string = itemId || 0;
+            let checkItemId: boolean = !updatedItemId || true;
+            const updatedUnitId: string = unitId || 0;
+            let checkUnitId: boolean = !updatedUnitId || true;
 
-            if (updatedFreezerId || updatedCategoryId) {
-                const freezerDatabase = new FreezerCategoryQueries('freezer');
+            if (updatedFreezerId || updatedCategoryId || checkItemId || checkUnitId) {
+                const freezerDatabase = new NonInventoryQueries('freezer');
                 const freezerData = await freezerDatabase.getData() as NonInventoryData[];
                 checkFreezerId = freezerData.map(freezer => freezer.id).includes(updatedFreezerId);
                 console.log('freezer id', updatedFreezerId, checkFreezerId)
                 
-                const categoryDatabase = new FreezerCategoryQueries('category');
+                const categoryDatabase = new NonInventoryQueries('category');
                 const categoryData = await categoryDatabase.getData() as NonInventoryData[];
                 checkCategoryId = categoryData.map(category => category.id).includes(updatedCategoryId);
                 console.log('category id', updatedCategoryId, checkCategoryId)
+                
+                const itemDatabase = new NonInventoryQueries('item');
+                const itemData = await itemDatabase.getData() as NonInventoryData[];
+                checkItemId = itemData.map(category => category.id).includes(updatedItemId);
+                console.log('category id', updatedItemId, checkItemId)
+                
+                const unitDatabase = new NonInventoryQueries('unit');
+                const unitData = await unitDatabase.getData() as NonInventoryData[];
+                checkUnitId = unitData.map(category => category.id).includes(updatedUnitId);
+                console.log('category id', updatedUnitId, checkUnitId)
             }
 
-            if(!checkFreezerId || !checkCategoryId) {
+            if(!checkFreezerId || !checkCategoryId || !checkItemId || !checkUnitId) {
                 return res.status(404).json({ error: "Incorrect item params provided" });
             }
         }
@@ -40,7 +54,7 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
 
 const notUniqueName = (tableName: IndividualTables): RequestHandler => {
     return async (req, res, next) => {
-        const database = new FreezerCategoryQueries(tableName);
+        const database = new NonInventoryQueries(tableName);
         let checkIfNameExists: boolean;
 
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
@@ -63,13 +77,13 @@ const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: string }> =
         let checkIfIdExists: boolean;
 
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
-            const database = new FreezerCategoryQueries(tableName);
+            const database = new NonInventoryQueries(tableName);
             const data = await database.getData() as NonInventoryData[];
             checkIfIdExists = data.map(data => data.id).includes(req.params.id);
         } else if (tableName === 'inventory') {
-            const database = new ItemQueries();
+            const database = new InventoryQueries();
             const data = await database.getData() as DetailedInventoryData[];
-            checkIfIdExists = data.map(data => data.itemid).includes(req.params.id);
+            checkIfIdExists = data.map(data => data.id).includes(req.params.id);
         } else {
             throw new Error("Invalid table name");
         }
