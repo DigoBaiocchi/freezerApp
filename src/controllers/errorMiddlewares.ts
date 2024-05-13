@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { NonInventoryQueries, type NonInventoryData, type IndividualTables } from "../database/nonInventoryDbQueries";
 import { InventoryQueries, type DetailedInventoryData } from "../database/inventoryDbQueries";
 import { AllTableNames } from "./successfulMiddlewares";
+import { checkForMissingRequiredParams } from "../utils/utils";
 
 const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
     return async (req, res, next) => {
@@ -19,25 +20,10 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
             let checkUnitId: boolean = !updatedUnitId || true;
             
             if (updatedFreezerId || updatedCategoryId || checkItemId || checkUnitId) {
-                const freezerDatabase = new NonInventoryQueries('freezer');
-                const freezerData = await freezerDatabase.getData() as NonInventoryData[];
-                checkFreezerId = freezerData.map(freezer => freezer.id).includes(updatedFreezerId);
-                console.log('freezer id', updatedFreezerId, checkFreezerId)
-                
-                const categoryDatabase = new NonInventoryQueries('category');
-                const categoryData = await categoryDatabase.getData() as NonInventoryData[];
-                checkCategoryId = categoryData.map(category => category.id).includes(updatedCategoryId);
-                console.log('category id', updatedCategoryId, checkCategoryId)
-                
-                const itemDatabase = new NonInventoryQueries('item');
-                const itemData = await itemDatabase.getData() as NonInventoryData[];
-                checkItemId = itemData.map(category => category.id).includes(updatedItemId);
-                console.log('category id', updatedItemId, checkItemId)
-                
-                const unitDatabase = new NonInventoryQueries('unit');
-                const unitData = await unitDatabase.getData() as NonInventoryData[];
-                checkUnitId = unitData.map(category => category.id).includes(updatedUnitId);
-                console.log('category id', updatedUnitId, checkUnitId)
+                checkFreezerId = await checkForMissingRequiredParams('freezer', updatedFreezerId);
+                checkCategoryId = await checkForMissingRequiredParams('category', updatedCategoryId);
+                checkItemId = await checkForMissingRequiredParams('item', updatedItemId);
+                checkUnitId = await checkForMissingRequiredParams('unit', updatedUnitId);
             }
             
             if(!checkFreezerId || !checkCategoryId || !checkItemId || !checkUnitId) {
