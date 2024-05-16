@@ -1,5 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
+import Form from '../components/Form'
 
 export const Route = createFileRoute('/freezer')({
-  component: () => <div>Hello freezer!</div>
+  component: () => {
+    return (
+      <>
+        <div>Hello freezer!</div>
+        <Form name='freezer' />
+      </>
+    )
+  }
 })
