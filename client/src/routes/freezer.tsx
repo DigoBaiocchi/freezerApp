@@ -1,16 +1,5 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
+import { createFileRoute } from '@tanstack/react-router'
 
-const About = () => {
-  return (
-    <div className="p-2">Hello from About!</div>
-
-  );
-}
-
-
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/freezer',
-  component: About,
-});
+export const Route = createFileRoute('/freezer')({
+  component: () => <div>Hello freezer!</div>
+})

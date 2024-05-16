@@ -5,7 +5,7 @@ const Root = () => {
     return (
         <>
             <div>
-                <Link to="/">
+                <Link to="/home">
                     Home
                 </Link>
                 <Link to="/freezer">

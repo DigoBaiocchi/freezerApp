@@ -1,17 +1,5 @@
-import { createRoute } from "@tanstack/react-router";
-import { Route as rootRoute } from "./__root";
+import { createFileRoute } from '@tanstack/react-router'
 
-const Index = () => {
-    return (
-        <div>
-            <h3>Welcome home!</h3>
-        </div>
-    );
-}
-
-
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/category',
-  component: Index,
-});
+export const Route = createFileRoute('/category')({
+  component: () => <div>Hello category!</div>
+})
