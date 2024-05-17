@@ -1,6 +1,8 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
-import { json } from 'body-parser';
+import bodyParser, { json } from 'body-parser';
+import session from 'express-session'; 
+import cors from 'cors';
 import { config } from './utils/config';
 
 import freezerRouter from './routes/freezer';
@@ -16,6 +18,30 @@ export const app:Express = express();
 const port = config.PORT;
 
 app.use(json());
+
+app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
+
+app.use(
+    session ({
+        secret: "secret-key",
+        cookie: { 
+            maxAge: 1000 * 60 * 60 * 24,
+            secure: false
+        },
+        resave: false,
+        saveUninitialized: false,
+    })
+);
 
 app.use('/freezer', freezerRouter);
 app.use('/category', categoryRouter);
