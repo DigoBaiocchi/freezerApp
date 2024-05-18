@@ -4,7 +4,11 @@ type Name = {
   name: string;
 }
 
-function Form({ name }: Name) {
+type FormParams = {
+  postFunction: (name: string) => void;
+} & Name;
+
+function Form({ name, postFunction }: FormParams) {
     const formFactory = createFormFactory<Name>({
       defaultValues: {
         name: '',
@@ -16,6 +20,7 @@ function Form({ name }: Name) {
       },
       onSubmit: async ({ value }) => {
         console.log(`${name}: ${value.name}`);
+        postFunction(value.name);
         value.name = '';
       }
     });
