@@ -4,21 +4,18 @@ import { type DetailedInventoryData, type InventoryPostParams, InventoryQueries 
 
 export type AllTableNames = IndividualTables | 'inventory';
 
-type ResponseType = Promise<DetailedInventoryData[]> | Promise<NonInventoryData[]>;
-
 const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
-        let response: ResponseType;
+        let response;
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const freezerCategoryDb = new NonInventoryQueries(tableName);
-            response = freezerCategoryDb.getData();
+            response = await freezerCategoryDb.getData();
         } else if (tableName === 'inventory') {
             const itemDb = new InventoryQueries();
-            response = itemDb.getData();
+            response = await itemDb.getData();
         } else {
             throw new Error("Incorrect table name selected");
         }
-        
         return res.status(200).json({data: response});
     };
 };
