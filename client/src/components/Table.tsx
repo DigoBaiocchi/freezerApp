@@ -20,7 +20,10 @@ export function Table({ tableName }: TableProps) {
 
     const { isPending, error, data} = useQuery({
         queryKey: ['data'],
-        queryFn: () => apiCalls.getCall().then((res) => res.data),
+        queryFn: () => apiCalls.getCall().then((res) => {
+            console.log("getCall data is:", res.data)
+            return res.data;
+        }),
     });
 
     const deleteMutation = useMutation({
@@ -30,6 +33,7 @@ export function Table({ tableName }: TableProps) {
             queryClient.invalidateQueries({ queryKey: ['data'] });
             queryClient.refetchQueries({ queryKey: ['data'] });
         },
+        retry: 3
     });
     
     const columnHelper = createColumnHelper<IndiviualTable>();

@@ -1,16 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
 import Form from '../components/Form'
-import { ApiCalls } from '../api/api';
+import { Table } from '../components/Table';
+import { IndividualTables } from '../api/api';
 
-const apiCalls = new ApiCalls('category');
+const tableName: IndividualTables = 'category';
 
-export const Route = createFileRoute('/category')({
-    component: () => {
-        return (
-            <>
-                <div>Hello category!</div>
-                <Form name='category' postFunction={name => apiCalls.postCall(name)}/>
-            </>
-        )
-    }
+export const Route = createFileRoute(`/${tableName}`)({
+  component: () => {
+    return (
+      <>
+        <div>Hello {tableName}!</div>
+        <Form tableName={tableName} />
+        <Table tableName={tableName} />
+      </>
+    )
+  }
 })
