@@ -1,6 +1,7 @@
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Input from "./Input";
 
 type IndiviualTable = {
     id: string;
@@ -36,6 +37,17 @@ export function Table({ tableName }: TableProps) {
             queryClient.invalidateQueries({ queryKey: ['data', tableName] });
         }
     });
+
+    const updateMutation = useMutation<void, Error, IndiviualTable>({
+        mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
+        onSuccess: () => {
+            console.log('Invalidating queries for:', ['data', tableName]);
+            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
+        }
+    });
     
     const columnHelper = createColumnHelper<IndiviualTable>();
     
@@ -43,11 +55,11 @@ export function Table({ tableName }: TableProps) {
         columnHelper.accessor('id', {
             id: 'id',
             header: 'ID',
-            cell: props => props.getValue(),
+            cell: props => props.getValue()
         }),
         columnHelper.accessor('name', {
             header: 'Name',
-            cell: props => props.getValue()
+            cell: props => <Input inputName={props.getValue()} />,
         }),
         columnHelper.display({
             id: 'update',
