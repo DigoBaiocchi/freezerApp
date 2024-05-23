@@ -12,7 +12,7 @@ export class ApiCalls {
     }
 
     async postCall(name: string) {
-        axios.post(this.apiUrl, {
+        return axios.post(this.apiUrl, {
                 name: name
               })
               .then(response => console.log(response))
@@ -26,7 +26,7 @@ export class ApiCalls {
     }
 
     async updateCall(id: string, name: string) {
-        axios.put(`${this.apiUrl}/${id}`, {
+        return axios.put(`${this.apiUrl}/${id}`, {
                 name: name
             })
             .then(response => console.log(response))
@@ -34,7 +34,7 @@ export class ApiCalls {
     }
 
     async deleteCall(id: string) {
-        axios.delete(`${this.apiUrl}/${id}`)
+        return axios.delete(`${this.apiUrl}/${id}`)
                 .then(response => console.log(response))
                 .catch(error => console.log(error))
     }

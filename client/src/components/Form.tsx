@@ -17,9 +17,8 @@ function Form({ tableName }: TableName) {
   const addDataMutation = useMutation({
     mutationFn: (name: string) => apiCalls.postCall(name),
     onSuccess: () => {
-      console.log('Invalidating queries for:', ['data']);
-      queryClient.invalidateQueries({ queryKey: ['data' ]});
-      queryClient.refetchQueries({ queryKey: ['data'] });
+      console.log('Invalidating queries for:', ['data', tableName]);
+      queryClient.invalidateQueries({ queryKey: ['data', tableName], exact: true });
     }
   });
 
@@ -33,9 +32,8 @@ function Form({ tableName }: TableName) {
     defaultValues: {
       name: '',
     },
-    onSubmit: async ({ value }) => {
-      console.log(`${name}: ${value.name}`);
-      // postFunction(value.name);
+    onSubmit: ({ value }) => {
+      console.log(`${tableName}: ${value.name}`);
       addDataMutation.mutate(value.name);
       value.name = '';
     }
@@ -76,7 +74,7 @@ function Form({ tableName }: TableName) {
         </div>
         <form.Subscribe 
           selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+          children={([_canSubmit, isSubmitting]) => (
             <button type='submit' disabled={addDataMutation.isPending}>
               {isSubmitting ? '...' : 'Submit'}
             </button>
