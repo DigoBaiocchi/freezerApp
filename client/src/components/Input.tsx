@@ -15,7 +15,7 @@ export default function Input({ inputName, inputId, updateInput, tableName }: In
     const [updateData, setUpdateData] = useState(updateInput);
     const apiCalls = new ApiCalls(tableName);
     const queryClient = useQueryClient();
-
+    // console.log(updateData)
     const handleChange = (e: { target: { value: SetStateAction<string>; }; }) => {
         setInputValue(e.target.value);
     };
@@ -28,17 +28,13 @@ export default function Input({ inputName, inputId, updateInput, tableName }: In
         }
     });
     
-    // useEffect(() => {
-        // }, [inputName]);
-        
-    console.log(updateData)
     useEffect(() => {
-        console.log(inputValue);
-        // if (updateData) {
-            updateMutation.mutate({ id: inputId, name: inputValue })
-            // setInputValue(inputName);
-            setUpdateData(false);
-            // console.log(updateInput)
+    //     console.log(inputValue);
+    //     // if (updateData) {
+        updateMutation.mutate({ id: inputId, name: inputValue })
+    //         // setInputValue(inputName);
+            // setUpdateData(false);
+    //         // console.log(updateInput)
         // }
     }, [inputValue]);
 

@@ -17,7 +17,6 @@ type TableProps = {
 
 export function Table({ tableName }: TableProps) {
     const apiCalls = new ApiCalls(tableName);
-    const [inputData, setInputData] = useState([]);
     const [updateInput, setUpdateInput] = useState(false);
 
     const queryClient = useQueryClient();
@@ -36,20 +35,6 @@ export function Table({ tableName }: TableProps) {
             console.log('Invalidating queries for:', ['data', tableName]);
             queryClient.invalidateQueries({ queryKey: ['data', tableName] });
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
-        }
-    });
-
-    const updateMutation = useMutation<void, Error, IndiviualTable>({
-        mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
-        onSuccess: () => {
-            console.log('Invalidating queries for:', ['data', tableName]);
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
-        }
     });
     
     const columnHelper = createColumnHelper<IndiviualTable>();
