@@ -2,8 +2,9 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
+import { useState } from "react";
 
-type IndiviualTable = {
+export type IndiviualTable = {
     id: string;
     name: string;
 };
@@ -16,6 +17,8 @@ type TableProps = {
 
 export function Table({ tableName }: TableProps) {
     const apiCalls = new ApiCalls(tableName);
+    const [inputData, setInputData] = useState([]);
+    const [updateInput, setUpdateInput] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -59,12 +62,18 @@ export function Table({ tableName }: TableProps) {
         }),
         columnHelper.accessor('name', {
             header: 'Name',
-            cell: props => <Input inputName={props.getValue()} />,
+            cell: props => 
+                <Input 
+                    inputName={props.getValue()} 
+                    inputId={props.cell.row.original.id}
+                    updateInput={updateInput}
+                    tableName={tableName}
+                />,
         }),
         columnHelper.display({
             id: 'update',
             header: 'update',
-            cell: () => <button>Update</button>
+            cell: () => <button onClick={() => setUpdateInput(true)}>Update</button>
         }),
         columnHelper.display({
             id: 'delete',
@@ -77,8 +86,13 @@ export function Table({ tableName }: TableProps) {
         })
     ];
 
-    const table = useReactTable({ columns, data, getCoreRowModel: getCoreRowModel() });
-    
+    const table = useReactTable({ 
+        columns, 
+        data, 
+        getCoreRowModel: getCoreRowModel(), 
+        // onRowSelectionChange: 
+    });
+    // console.log(table.getState());
     if (isPending) return <div>Loading...</div>;
 
     if (error) return <div>{`An error has ocurred: ${error.message}`}</div>;
