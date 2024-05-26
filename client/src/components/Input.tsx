@@ -1,44 +1,38 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SetStateAction, useEffect, useState } from "react";
+import { UseMutationResult } from "@tanstack/react-query";
+import { SetStateAction, useState } from "react";
 import { type IndiviualTable } from "./Table";
-import { ApiCalls, type IndividualTables } from "../api/api";
+import { Row } from "@tanstack/react-table";
 
 type InputProps = {
-    inputName: string;
-    inputId: string;
-    updateInput: boolean;
-    tableName: IndividualTables;
+    getValue: () => string;
+    row: Row<IndiviualTable>;
+    updateName: UseMutationResult<void, Error, IndiviualTable>
 };
 
-export default function Input({ inputName, inputId, updateInput, tableName }: InputProps) {
-    const [inputValue, setInputValue] = useState(inputName);
-    const [updateData, setUpdateData] = useState(updateInput);
-    const apiCalls = new ApiCalls(tableName);
-    const queryClient = useQueryClient();
-    // console.log(updateData)
+export default function TestInput({ getValue, row, updateName }: InputProps) {
+    const initialValue = getValue();
+    const [value, setValue] = useState(initialValue);
+
     const handleChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-        setInputValue(e.target.value);
+        setValue(e.target.value);
     };
-    
-    const updateMutation = useMutation<void, Error, IndiviualTable>({
-        mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
-        onSuccess: () => {
-            console.log('Invalidating queries for:', ['data', tableName]);
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
+
+    const onBlur = () => {
+        // Check if name hasn't changed
+        if (value === initialValue) {
+            return;
         }
-    });
-    
-    useEffect(() => {
-    //     console.log(inputValue);
-    //     // if (updateData) {
-        updateMutation.mutate({ id: inputId, name: inputValue })
-    //         // setInputValue(inputName);
-            // setUpdateData(false);
-    //         // console.log(updateInput)
-        // }
-    }, [inputValue]);
+
+        const id = row.getAllCells()[0].getValue() as string;
+        updateName.mutate({id, name: value});
+        setValue(getValue());
+    }
+
+    if (updateName.isPending) {
+        <input type="text" value={"Updating"} onChange={handleChange} onBlur={onBlur} />
+    }
 
     return (
-        <input type="text" value={inputValue} onChange={handleChange} />
+        <input type="text" value={value} onChange={handleChange} onBlur={onBlur} />
     );
 }
