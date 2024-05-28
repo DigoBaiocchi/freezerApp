@@ -2,9 +2,9 @@ import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, InventoryTable } from "../api/api";
 import type { FieldApi } from '@tanstack/react-form';
-import { IndiviualTable } from "./Table";
+import Select from "./Select";
 
-type InventoryFields = {
+export type InventoryFields = {
   freezer: string;
   category: string;
   item: string;
@@ -13,6 +13,20 @@ type InventoryFields = {
   expDate: Date;
   quantity: number;
   description: string;
+};
+
+type IndividualTableNames = {
+    freezer: 'freezer',
+    category: 'category',
+    item: 'item',
+    unit: 'unit'
+};
+
+const individualTableNames: IndividualTableNames = {
+    freezer: 'freezer',
+    category: 'category',
+    item: 'item',
+    unit: 'unit'
 };
 
 function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
@@ -34,38 +48,41 @@ export default function InventoryForm() {
     const date = new Date();
 
     const freezerData = useQuery({
-        queryKey: ['freezerData'],
+        queryKey: [`${individualTableNames.freezer}Data`],
         queryFn: () => {
-            const freezerApi = new ApiCalls('freezer');
+            const apiCall = new ApiCalls(individualTableNames.freezer);
 
-            return  freezerApi.getCall().then(res => res.data);
+            return  apiCall.getCall().then(res => {
+                console.log(res.data)
+                return res.data;
+            });
         }
     });
 
     const categoryData = useQuery({
-        queryKey: ['categoryData'],
+        queryKey: [`${individualTableNames.category}Data`],
         queryFn: () => {
-            const categoryApi = new ApiCalls('category');
+            const apiCall = new ApiCalls(individualTableNames.category);
 
-            return  categoryApi.getCall().then(res => res.data);
+            return  apiCall.getCall().then(res => res.data);
         }
     });
 
     const itemData = useQuery({
-        queryKey: ['itemData'],
+        queryKey: [`${individualTableNames.item}Data`],
         queryFn: () => {
-            const itemApi = new ApiCalls('item');
+            const apiCall = new ApiCalls(individualTableNames.item);
 
-            return  itemApi.getCall().then(res => res.data);
+            return  apiCall.getCall().then(res => res.data);
         }
     });
 
     const unitData = useQuery({
-        queryKey: ['unitData'],
+        queryKey: [`${individualTableNames.unit}Data`],
         queryFn: () => {
-            const unitApi = new ApiCalls('unit');
+            const apiCall = new ApiCalls(individualTableNames.unit);
 
-            return  unitApi.getCall().then(res => res.data);
+            return  apiCall.getCall().then(res => res.data);
         }
     });
 
@@ -126,7 +143,24 @@ export default function InventoryForm() {
         >
             <div>
                 <form.Field 
-                    name="freezer"
+                    name={individualTableNames.freezer}
+                    validators={{
+                        onChange: ({ value }) => {
+                            console.log(value);
+                            return ''
+                        }
+                    }}
+                    children={(field)  => (
+                    <>
+                        <Select tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
+                        <FieldInfo field={field} />
+                    </>
+                    )}
+                />
+            </div>
+            <div>
+                <form.Field 
+                    name={individualTableNames.category}
                     validators={{
                         onChange: ({ value }) => {
                             console.log(value);
@@ -135,12 +169,7 @@ export default function InventoryForm() {
                     }}
                     children={(field) => (
                     <>
-                        <select name="freezer" id="freezer" onChange={(e) => field.handleChange(e.target.value)}>
-                            <option value="" disabled selected>Choose a freezer</option>
-                            {freezerData.data.map((data: IndiviualTable) => (
-                                <option value={data.id}>{data.name}</option>
-                            ))}
-                        </select>
+                        <Select tableName={individualTableNames.category} field={field} data={categoryData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}
@@ -148,16 +177,33 @@ export default function InventoryForm() {
             </div>
             <div>
                 <form.Field 
-                    name="category"
+                    name={individualTableNames.item}
+                    validators={{
+                        onChange: ({ value }) => {
+                            console.log(value);
+                            return ''
+                        }
+                    }}
                     children={(field) => (
                     <>
-                        <label htmlFor={field.name}>Category:</label>
-                        <input 
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        />
+                        <Select tableName={individualTableNames.item} field={field} data={itemData.data} />
+                        <FieldInfo field={field} />
+                    </>
+                    )}
+                />
+            </div>
+            <div>
+                <form.Field 
+                    name={individualTableNames.unit}
+                    validators={{
+                        onChange: ({ value }) => {
+                            console.log(value);
+                            return ''
+                        }
+                    }}
+                    children={(field) => (
+                    <>
+                        <Select tableName={individualTableNames.unit} field={field} data={unitData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}
@@ -168,12 +214,13 @@ export default function InventoryForm() {
                     name="entryDate"
                     children={(field) => (
                     <>
-                        <label htmlFor={field.name}>Category:</label>
+                        <label htmlFor={field.name}>Exp Date:</label>
                         <input 
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                            name={field.name}
+                            value={field.state.value}
+                            onBlur={field.handleBlur}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            type="date"
                         />
                         <FieldInfo field={field} />
                     </>
