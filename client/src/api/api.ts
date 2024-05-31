@@ -2,21 +2,64 @@ import axios from "axios";
 
 export type IndividualTables = "freezer" | "category" | "item" | 'unit';
 
+export type InventoryTable = 'inventory';
+
+export type DatabaseTables = IndividualTables | InventoryTable;
+
+type InventoryPostParams = {
+    freezerId: string;
+    categoryId: string;
+    itemId: string;
+    unitId: string;
+    entryDate: Date;
+    expDate: Date;
+    quantity: number;
+    description: string;
+};
+
 export class ApiCalls {
-    individualTable: IndividualTables;
+    databaseTable: DatabaseTables;
     apiUrl: string;
 
-    constructor(individualTable: IndividualTables) {
-        this.individualTable = individualTable;
-        this.apiUrl = `http://localhost:3000/${this.individualTable}`;
+    constructor(databaseTable: DatabaseTables) {
+        this.databaseTable = databaseTable;
+        this.apiUrl = `http://localhost:3000/${this.databaseTable}`;
     }
 
     async postCall(name: string) {
         return axios.post(this.apiUrl, {
-                name: name
+                name
               })
               .then(response => console.log(response))
               .catch(error => console.log(error))
+    }
+
+    async postInventoryCall({ ...params }: InventoryPostParams) {
+        const { 
+            freezerId,
+            categoryId,
+            itemId,
+            unitId,
+            entryDate,
+            expDate,
+            quantity,
+            description,
+        } = params;
+
+        return axios.post(this.apiUrl, {
+            freezerId,
+            categoryId,
+            itemId,
+            unitId,
+            entryDate,
+            expDate,
+            quantity,
+            description,
+        })
+        .then(response => console.log(response))
+        .catch(error => {
+            throw new Error(error)
+        })
     }
 
     async getCall() {

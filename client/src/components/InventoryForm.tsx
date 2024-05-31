@@ -9,8 +9,8 @@ export type InventoryFields = {
   category: string;
   item: string;
   unit: string;
-  entryDate: Date;
-  expDate: Date;
+  entryDate: string;
+  expDate: string;
   quantity: number;
   description: string;
 };
@@ -105,8 +105,8 @@ export default function InventoryForm() {
             category: '',
             item: '',
             unit: '',
-            entryDate: date,
-            expDate: date,
+            entryDate: date.toISOString().split('T')[0],
+            expDate: date.toISOString().split('T')[0],
             quantity: 0,
             description: '',
         }
@@ -118,8 +118,8 @@ export default function InventoryForm() {
             category: '',
             item: '',
             unit: '',
-            entryDate: date,
-            expDate: date,
+            entryDate: date.toISOString().split('T')[0],
+            expDate: date.toISOString().split('T')[0],
             quantity: 0,
             description: '',
         },
@@ -209,9 +209,39 @@ export default function InventoryForm() {
                     )}
                 />
             </div>
-            {/* <div>
+            <div>
                 <form.Field 
                     name="entryDate"
+                    validators={{
+                        onChange: ({ value }) => {
+                            console.log(value);
+                            return value;
+                        }
+                    }}
+                    children={(field) => (
+                    <>
+                        <label htmlFor={field.name}>Entry Date:</label>
+                        <input 
+                            name={field.name}
+                            value={field.state.value}
+                            onBlur={field.handleBlur}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            type="date"
+                        />
+                        <FieldInfo field={field} />
+                    </>
+                    )}
+                />
+            </div>
+            <div>
+                <form.Field 
+                    name="expDate"
+                    validators={{
+                        onChange: ({ value }) => {
+                            console.log(value);
+                            return value;
+                        }
+                    }}
                     children={(field) => (
                     <>
                         <label htmlFor={field.name}>Exp Date:</label>
@@ -226,7 +256,7 @@ export default function InventoryForm() {
                     </>
                     )}
                 />
-            </div> */}
+            </div>
             <form.Subscribe 
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([_canSubmit, isSubmitting]) => (
