@@ -1,6 +1,6 @@
 import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiCalls, InventoryTable } from "../api/api";
+import { ApiCalls, InventoryPostParams, InventoryTable } from "../api/api";
 import type { FieldApi } from '@tanstack/react-form';
 import Select from "./Select";
 
@@ -11,7 +11,7 @@ export type InventoryFields = {
   unit: string;
   entryDate: string;
   expDate: string;
-  quantity: number;
+  quantity: string;
   description: string;
 };
 
@@ -86,13 +86,8 @@ export default function InventoryForm() {
         }
     });
 
-    console.log('FreezerData: ', freezerData.data);
-    console.log('categoryData: ', categoryData.data);
-    console.log('itemData: ', itemData.data);
-    console.log('unitData: ', unitData.data);
-
     const addDataMutation = useMutation({
-        mutationFn: (name: string) => apiCalls.postCall(name),
+        mutationFn: ({...params}: InventoryPostParams) => apiCalls.postInventoryCall({...params}),
         onSuccess: () => {
         console.log('Invalidating queries for:', ['data', tableName]);
         queryClient.invalidateQueries({ queryKey: ['data', tableName], exact: true });
@@ -107,7 +102,7 @@ export default function InventoryForm() {
             unit: '',
             entryDate: date.toISOString().split('T')[0],
             expDate: date.toISOString().split('T')[0],
-            quantity: 0,
+            quantity: '0',
             description: '',
         }
     });
@@ -120,15 +115,33 @@ export default function InventoryForm() {
             unit: '',
             entryDate: date.toISOString().split('T')[0],
             expDate: date.toISOString().split('T')[0],
-            quantity: 0,
+            quantity: '0',
             description: '',
         },
         onSubmit: ({ value }) => {
-        console.log(`${tableName}: ${value.freezer}`);
-        console.log(`${tableName}: ${value.category}`);
-        // addDataMutation.mutate(value.name);
-        value.freezer = '';
-        value.category = '';
+            console.log(`Freezer: ${value.freezer}`);
+            console.log(`Category: ${value.category}`);
+            console.log(`description: ${value.description}`);
+            console.log('Submitting form.')
+            addDataMutation.mutate({
+                freezerId: value.freezer,
+                categoryId: value.category,
+                itemId: value.item,
+                unitId: value.unit,
+                entryDate: new Date(value.entryDate),
+                expDate: new Date(value.expDate),
+                quantity: +value.quantity,
+                description: value.description
+            });
+
+            value.freezer = '';
+            value.category = '';
+            value.item = '';
+            value.unit = '';
+            value.entryDate = date.toISOString().split('T')[0];
+            value.expDate = date.toISOString().split('T')[0];
+            value.quantity = '0';
+            value.description = '';
         }
     });
 
@@ -136,20 +149,14 @@ export default function InventoryForm() {
         <>
         <form 
             onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            form.handleSubmit();
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
             }}
         >
             <div>
                 <form.Field 
                     name={individualTableNames.freezer}
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return ''
-                        }
-                    }}
                     children={(field)  => (
                     <>
                         <Select tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
@@ -161,12 +168,6 @@ export default function InventoryForm() {
             <div>
                 <form.Field 
                     name={individualTableNames.category}
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return ''
-                        }
-                    }}
                     children={(field) => (
                     <>
                         <Select tableName={individualTableNames.category} field={field} data={categoryData.data} />
@@ -178,12 +179,6 @@ export default function InventoryForm() {
             <div>
                 <form.Field 
                     name={individualTableNames.item}
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return ''
-                        }
-                    }}
                     children={(field) => (
                     <>
                         <Select tableName={individualTableNames.item} field={field} data={itemData.data} />
@@ -195,12 +190,6 @@ export default function InventoryForm() {
             <div>
                 <form.Field 
                     name={individualTableNames.unit}
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return ''
-                        }
-                    }}
                     children={(field) => (
                     <>
                         <Select tableName={individualTableNames.unit} field={field} data={unitData.data} />
@@ -212,12 +201,6 @@ export default function InventoryForm() {
             <div>
                 <form.Field 
                     name="entryDate"
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return value;
-                        }
-                    }}
                     children={(field) => (
                     <>
                         <label htmlFor={field.name}>Entry Date:</label>
@@ -236,12 +219,6 @@ export default function InventoryForm() {
             <div>
                 <form.Field 
                     name="expDate"
-                    validators={{
-                        onChange: ({ value }) => {
-                            console.log(value);
-                            return value;
-                        }
-                    }}
                     children={(field) => (
                     <>
                         <label htmlFor={field.name}>Exp Date:</label>
@@ -251,6 +228,42 @@ export default function InventoryForm() {
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
                             type="date"
+                        />
+                        <FieldInfo field={field} />
+                    </>
+                    )}
+                />
+            </div>
+            <div>
+                <form.Field 
+                    name="quantity"
+                    children={(field) => (
+                    <>
+                        <label htmlFor={field.name}>Quantity:</label>
+                        <input 
+                            name={field.name}
+                            value={field.state.value}
+                            onBlur={field.handleBlur}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            type="number"
+                        />
+                        <FieldInfo field={field} />
+                    </>
+                    )}
+                />
+            </div>
+            <div>
+                <form.Field 
+                    name="description"
+                    children={(field) => (
+                    <>
+                        <label htmlFor={field.name}>Description:</label>
+                        <input 
+                            name={field.name}
+                            value={field.state.value}
+                            onBlur={field.handleBlur}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            type="text"
                         />
                         <FieldInfo field={field} />
                     </>

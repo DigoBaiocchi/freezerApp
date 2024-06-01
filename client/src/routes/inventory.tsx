@@ -6,7 +6,7 @@ export const Route = createFileRoute('/inventory')({
     return (
       <>
         <div>Hello Inventory!</div>
-        <InventoryForm />
+        <InventoryForm  />
       </>
     )
   }

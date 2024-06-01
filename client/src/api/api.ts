@@ -6,7 +6,7 @@ export type InventoryTable = 'inventory';
 
 export type DatabaseTables = IndividualTables | InventoryTable;
 
-type InventoryPostParams = {
+export type InventoryPostParams = {
     freezerId: string;
     categoryId: string;
     itemId: string;
