@@ -2,11 +2,12 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { SetStateAction, useState } from "react";
 import { type IndiviualTable } from "./Table";
 import { Row } from "@tanstack/react-table";
+import { InventoryTableData } from "./InventoryTable";
 
 type InputProps = {
     getValue: () => string;
-    row: Row<IndiviualTable>;
-    updateName: UseMutationResult<void, Error, IndiviualTable>
+    row: Row<IndiviualTable | InventoryTableData>;
+    updateName: UseMutationResult<void, Error, IndiviualTable | InventoryTableData>
 };
 
 export default function TestInput({ getValue, row, updateName }: InputProps) {

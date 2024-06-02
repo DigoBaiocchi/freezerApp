@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import InventoryForm from '../components/InventoryForm'
+import { InventoryTable } from '../components/InventoryTable'
 
 export const Route = createFileRoute('/inventory')({
   component: () => {
@@ -7,6 +8,7 @@ export const Route = createFileRoute('/inventory')({
       <>
         <div>Hello Inventory!</div>
         <InventoryForm  />
+        <InventoryTable />
       </>
     )
   }
