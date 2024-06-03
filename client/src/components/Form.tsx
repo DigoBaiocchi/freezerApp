@@ -1,6 +1,7 @@
 import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, IndividualTables } from "../api/api";
+import { Button } from "./ui/button";
 
 type TableName = {
   tableName: IndividualTables;
@@ -75,9 +76,9 @@ function Form({ tableName }: TableName) {
         <form.Subscribe 
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([_canSubmit, isSubmitting]) => (
-            <button type='submit' disabled={addDataMutation.isPending}>
+            <Button type="submit" disabled={addDataMutation.isPending}>
               {isSubmitting ? '...' : 'Submit'}
-            </button>
+            </Button>
           )}
         />
       </form>

@@ -3,14 +3,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, InventoryPostParams, InventoryTable } from "../api/api";
 import type { FieldApi } from '@tanstack/react-form';
 import Select from "./Select";
+import { Button } from "./ui/button";
+import { DatePicker } from "./ui/datePicker";
 
 export type InventoryFields = {
   freezer: string;
   category: string;
   item: string;
   unit: string;
-  entryDate: string;
-  expDate: string;
+  entryDate: Date;
+  expDate: Date;
   quantity: string;
   description: string;
 };
@@ -100,8 +102,8 @@ export default function InventoryForm() {
             category: '',
             item: '',
             unit: '',
-            entryDate: date.toISOString().split('T')[0],
-            expDate: date.toISOString().split('T')[0],
+            entryDate: date,
+            expDate: date,
             quantity: '0',
             description: '',
         }
@@ -113,8 +115,8 @@ export default function InventoryForm() {
             category: '',
             item: '',
             unit: '',
-            entryDate: date.toISOString().split('T')[0],
-            expDate: date.toISOString().split('T')[0],
+            entryDate: date,
+            expDate: date,
             quantity: '0',
             description: '',
         },
@@ -138,8 +140,8 @@ export default function InventoryForm() {
             value.category = '';
             value.item = '';
             value.unit = '';
-            value.entryDate = date.toISOString().split('T')[0];
-            value.expDate = date.toISOString().split('T')[0];
+            value.entryDate = date;
+            value.expDate = date;
             value.quantity = '0';
             value.description = '';
         }
@@ -204,13 +206,7 @@ export default function InventoryForm() {
                     children={(field) => (
                     <>
                         <label htmlFor={field.name}>Entry Date:</label>
-                        <input 
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            type="date"
-                        />
+                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
                         <FieldInfo field={field} />
                     </>
                     )}
@@ -222,13 +218,7 @@ export default function InventoryForm() {
                     children={(field) => (
                     <>
                         <label htmlFor={field.name}>Exp Date:</label>
-                        <input 
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            type="date"
-                        />
+                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
                         <FieldInfo field={field} />
                     </>
                     )}
@@ -273,9 +263,9 @@ export default function InventoryForm() {
             <form.Subscribe 
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([_canSubmit, isSubmitting]) => (
-                <button type='submit' disabled={addDataMutation.isPending}>
-                {isSubmitting ? '...' : 'Submit'}
-                </button>
+                <Button type="submit" disabled={addDataMutation.isPending}>
+                    {isSubmitting ? '...' : 'Submit'}
+                </Button>
             )}
             />
         </form>
