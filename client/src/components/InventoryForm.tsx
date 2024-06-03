@@ -2,7 +2,7 @@ import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, InventoryPostParams, InventoryTable } from "../api/api";
 import type { FieldApi } from '@tanstack/react-form';
-import Select from "./Select";
+import /**Select,*/ { SelectDemo } from "./Select";
 import { Button } from "./ui/button";
 import { DatePicker } from "./ui/datePicker";
 
@@ -157,45 +157,45 @@ export default function InventoryForm() {
                 form.handleSubmit();
             }}
         >
-            <div>
+            <div className="p-1">
                 <form.Field 
                     name={individualTableNames.freezer}
                     children={(field)  => (
                     <>
-                        <Select tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
+                        <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}
                 />
             </div>
-            <div>
+            <div className="p-1">
                 <form.Field 
                     name={individualTableNames.category}
                     children={(field) => (
                     <>
-                        <Select tableName={individualTableNames.category} field={field} data={categoryData.data} />
+                        <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}
                 />
             </div>
-            <div>
+            <div className="p-1">
                 <form.Field 
                     name={individualTableNames.item}
                     children={(field) => (
                     <>
-                        <Select tableName={individualTableNames.item} field={field} data={itemData.data} />
+                        <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}
                 />
             </div>
-            <div>
+            <div className="p-1">
                 <form.Field 
                     name={individualTableNames.unit}
                     children={(field) => (
                     <>
-                        <Select tableName={individualTableNames.unit} field={field} data={unitData.data} />
+                        <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
                         <FieldInfo field={field} />
                     </>
                     )}

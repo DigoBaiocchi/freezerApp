@@ -8,13 +8,30 @@ type SelectProps = {
     data: IndividualTableData;
 };
 
-export default function Select({ tableName, field, data }: SelectProps) {
-    return (
-        <select name={tableName} defaultValue={""} id={tableName} onChange={(e) => field.handleChange(e.target.value)}>
-            <option value="" disabled>Choose a {tableName}</option>
-            {data?.map((data: IndiviualTable) => (
-                <option value={data.id} key={data.id}>{data.name}</option>
-            ))}
-        </select>
-    );
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+export function SelectDemo({ tableName, field, data }: SelectProps) {
+  return (
+    <Select onValueChange={(value) => field.handleChange(value)}>
+      <SelectTrigger className="w-[280px]">
+        <SelectValue placeholder={`Choose a ${tableName}`} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>{tableName} list</SelectLabel>
+          {data?.map((data: IndiviualTable) => (
+              <SelectItem value={data.id}>{data.name}</SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
 }
