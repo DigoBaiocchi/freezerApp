@@ -2,9 +2,12 @@ import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, InventoryPostParams, InventoryTable } from "../api/api";
 import type { FieldApi } from '@tanstack/react-form';
-import /**Select,*/ { SelectDemo } from "./Select";
+import { SelectDemo } from "./Select";
 import { Button } from "./ui/button";
 import { DatePicker } from "./ui/datePicker";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 export type InventoryFields = {
   freezer: string;
@@ -150,126 +153,135 @@ export default function InventoryForm() {
 
     return (
         <>
-        <form 
-            onSubmit={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                form.handleSubmit();
-            }}
-        >
-            <div className="p-1">
-                <form.Field 
-                    name={individualTableNames.freezer}
-                    children={(field)  => (
-                    <>
-                        <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div className="p-1">
-                <form.Field 
-                    name={individualTableNames.category}
-                    children={(field) => (
-                    <>
-                        <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div className="p-1">
-                <form.Field 
-                    name={individualTableNames.item}
-                    children={(field) => (
-                    <>
-                        <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div className="p-1">
-                <form.Field 
-                    name={individualTableNames.unit}
-                    children={(field) => (
-                    <>
-                        <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div>
-                <form.Field 
-                    name="entryDate"
-                    children={(field) => (
-                    <>
-                        <label htmlFor={field.name}>Entry Date:</label>
-                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div>
-                <form.Field 
-                    name="expDate"
-                    children={(field) => (
-                    <>
-                        <label htmlFor={field.name}>Exp Date:</label>
-                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div>
-                <form.Field 
-                    name="quantity"
-                    children={(field) => (
-                    <>
-                        <label htmlFor={field.name}>Quantity:</label>
-                        <input 
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            type="number"
-                        />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <div>
-                <form.Field 
-                    name="description"
-                    children={(field) => (
-                    <>
-                        <label htmlFor={field.name}>Description:</label>
-                        <input 
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            type="text"
-                        />
-                        <FieldInfo field={field} />
-                    </>
-                    )}
-                />
-            </div>
-            <form.Subscribe 
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([_canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={addDataMutation.isPending}>
-                    {isSubmitting ? '...' : 'Submit'}
-                </Button>
-            )}
-            />
-        </form>
+        <div className="flex flex-col items-center justify-center">
+            <p className="p-1"><b>Add new item to inventory</b></p>
+            <form 
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    form.handleSubmit();
+                }}
+                className="flex flex-col justify-center"
+            >
+                <div className="p-1 flex flex-col justify-center">
+                    <form.Field 
+                        name={individualTableNames.freezer}
+                        children={(field)  => (
+                        <>
+                            <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
+                            <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col justify-center">
+                    <form.Field 
+                        name={individualTableNames.category}
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
+                            <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col justify-center">
+                    <form.Field 
+                        name={individualTableNames.item}
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
+                            <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col justify-center">
+                    <form.Field 
+                        name={individualTableNames.unit}
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
+                            <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col justify-center content-center">
+                    <form.Field 
+                        name="entryDate"
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
+                            <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col">
+                    <form.Field 
+                        name="expDate"
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
+                            <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col">
+                    <form.Field 
+                        name="quantity"
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
+                            <Input 
+                                name={field.name}
+                                value={field.state.value}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                type="number"
+                            />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 flex flex-col">
+                    <form.Field 
+                        name="description"
+                        children={(field) => (
+                        <>
+                            <Label className="pb-1" htmlFor={field.name}>Description:</Label>
+                            <Textarea 
+                                name={field.name}
+                                value={field.state.value}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                            />
+                            <FieldInfo field={field} />
+                        </>
+                        )}
+                    />
+                </div>
+                <div className="p-1 pb-2 flex flex-col">
+                    <form.Subscribe 
+                        selector={(state) => [state.canSubmit, state.isSubmitting]}
+                        children={([_canSubmit, isSubmitting]) => (
+                            <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} variant='outline'>
+                                {isSubmitting ? '...' : 'Add'}
+                            </Button>
+                        )}
+                    />
+                </div>
+            </form>
+        </div>
         <hr />
         </>
     )
