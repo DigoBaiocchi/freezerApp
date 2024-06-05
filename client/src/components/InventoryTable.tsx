@@ -2,15 +2,17 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { ApiCalls } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Button } from "./ui/button";
 
 export type InventoryTableData = {
     id: string;
     freezername: string;
-    category: string;
-    item: string;
-    unit: string;
-    entryDate: string;
-    expDate: string;
+    categoryname: string;
+    itemname: string;
+    unitname: string;
+    entrydate: string;
+    expdate: string;
     quantity: string;
     description: string;
 };
@@ -39,7 +41,7 @@ export function InventoryTable() {
     });
     
     const updateMutation = useMutation<void, Error, InventoryTableData>({
-        mutationFn: ({id, freezer}) => apiCalls.updateCall(id, freezer),
+        // mutationFn: ({id, freezer}) => apiCalls.updateCall(id, freezer),
         onSuccess: () => {
             console.log('Invalidating queries for:', ['inventoryData']);
             queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
@@ -57,23 +59,95 @@ export function InventoryTable() {
         columnHelper.accessor('freezername', {
             header: 'Freezer',
             cell: props => {
-                console.log(props.getValue)
-                return <Input 
-                    row={props.row} 
-                    getValue={props.getValue} 
-                    updateName={updateMutation}
-                />
-
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('categoryname', {
+            header: 'Category',
+            cell: props => {
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('itemname', {
+            header: 'Item',
+            cell: props => {
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('unitname', {
+            header: 'Unit',
+            cell: props => {
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('entrydate', {
+            header: 'Entry Date',
+            cell: props => {
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('expdate', {
+            header: 'Exp Date',
+            cell: props => {
+                console.log(typeof props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
+            }
+        }),
+        columnHelper.accessor('quantity', {
+            header: 'quantity',
+            cell: props => {
+                console.log(props.getValue())
+                // return <Input 
+                //     row={props.row} 
+                //     getValue={props.getValue} 
+                //     updateName={updateMutation}
+                // />
+                return props.getValue();
             }
         }),
         columnHelper.display({
             id: 'delete',
             header: 'delete',
-            cell: (props) => <button onClick={() => {
+            cell: (props) => 
+                <Button variant="destructive" onClick={() => {
                     const id = props.cell.row.original.id as string;
                     deleteMutation.mutate(id)
-                }
-            }>Delete</button>
+                }}>Delete</Button>
         })
     ];
 
@@ -89,35 +163,36 @@ export function InventoryTable() {
 
     return (
         <div>
-            <table>
-                <thead>
+            <Table>
+                <TableCaption >Inventory List</TableCaption>
+                <TableHeader>
                     {table.getHeaderGroups().map(headerGroup => (
-                        <tr key={headerGroup.id}>
+                        <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map(header => (
-                                <th key={header.id}>
+                                <TableHead key={header.id}>
                                     {header.isPlaceholder
                                         ? null
                                         : flexRender(
                                             header.column.columnDef.header,
                                             header.getContext()
                                         )}
-                                </th>
+                                </TableHead>
                             ))}
-                        </tr>
+                        </TableRow>
                     ))}
-                </thead>
-                <tbody>
+                </TableHeader>
+                <TableBody>
                     {table.getRowModel().rows.map(row => (
-                        <tr key={row.id}>
+                        <TableRow key={row.id}>
                             {row.getVisibleCells().map(cell => (
-                                <td key={cell.id}>
+                                <TableCell key={cell.id}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
+                                </TableCell>
                             ))}
-                        </tr>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </div>
     );
 }

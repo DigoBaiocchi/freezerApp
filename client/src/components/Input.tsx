@@ -7,7 +7,7 @@ import { InventoryTableData } from "./InventoryTable";
 type InputProps = {
     getValue: () => string;
     row: Row<IndiviualTable | InventoryTableData>;
-    updateName: UseMutationResult<void, Error, IndiviualTable | InventoryTableData>
+    updateName: UseMutationResult<void, Error, any>
 };
 
 export default function TestInput({ getValue, row, updateName }: InputProps) {
