@@ -1,9 +1,9 @@
 import { query } from "./dbConfig";
 
 export type InventoryPostParams = {
-    freezerId: string;
-    categoryId: string;
-    itemId: string;
+    freezerId: number;
+    categoryId: number;
+    itemId: number;
     unitId: number;
     quantity: number;
     entryDate: Date;
@@ -12,11 +12,11 @@ export type InventoryPostParams = {
 };
 
 export type InventoryData = {
-    id: string;
+    id: number;
 } & InventoryPostParams;
 
 export type DetailedInventoryData = {
-    id: string;
+    id: number;
     freezername: string;
     categoryname: string;
     itemname: string;
@@ -112,7 +112,7 @@ export class InventoryQueries {
         return updatedItem as InventoryData;
     }
 
-    public async updateItemUnits({ id, quantity }: { id: string; quantity: number; }) {
+    public async updateItemUnits({ id, quantity }: { id: number; quantity: number; }) {
         const updateItemQuery = `UPDATE ${this.tableName} SET quantity = $1 WHERE id = $2 RETURNING *;`;
 
         const updatedItem = await query(updateItemQuery, [quantity, id]).then(data => data?.rows[0]);
@@ -120,7 +120,7 @@ export class InventoryQueries {
         return updatedItem as InventoryData;
     }
 
-    public async deleteData(id: string) {
+    public async deleteData(id: number) {
         const deleteQuery = `DELETE FROM ${this.tableName} WHERE id = $1`;
 
         return await query(deleteQuery, [id]);

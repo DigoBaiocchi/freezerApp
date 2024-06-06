@@ -66,6 +66,7 @@ export function IndividualTable({ tableName }: TableProps) {
             header: 'delete',
             cell: (props) => <button onClick={() => {
                     const id = props.cell.row.original.id as number;
+                    console.log(`type of id is: ${typeof id}`);
                     deleteMutation.mutate(id)
                 }
             }>Delete</button>

@@ -10,13 +10,13 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
         if (tableName === 'inventory') {
             const { freezerId, categoryId, itemId, unitId } = req.body;
             
-            const updatedFreezerId: string = freezerId || 0;
+            const updatedFreezerId: number = freezerId || 0;
             let checkFreezerId: boolean = !updatedFreezerId || true;
-            const updatedCategoryId: string = categoryId || 0;
+            const updatedCategoryId: number = categoryId || 0;
             let checkCategoryId: boolean = !updatedCategoryId || true;
-            const updatedItemId: string = itemId || 0;
+            const updatedItemId: number = itemId || 0;
             let checkItemId: boolean = !updatedItemId || true;
-            const updatedUnitId: string = unitId || 0;
+            const updatedUnitId: number = unitId || 0;
             let checkUnitId: boolean = !updatedUnitId || true;
             
             if (updatedFreezerId || updatedCategoryId || checkItemId || checkUnitId) {
@@ -60,18 +60,19 @@ const notUniqueName = (tableName: IndividualTables): RequestHandler => {
     };
 }
 
-const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
+const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: number }> => {
     return async (req, res, next) => {
         let checkIfIdExists: boolean;
+        console.log(`row id: ${req.params.id}`)
 
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const database = new NonInventoryQueries(tableName);
             const data = await database.getData() as NonInventoryData[];
-            checkIfIdExists = data.map(data => data.id).includes(req.params.id);
+            checkIfIdExists = data.map(data => data.id).includes(+req.params.id);
         } else if (tableName === 'inventory') {
             const database = new InventoryQueries();
             const data = await database.getData() as DetailedInventoryData[];
-            checkIfIdExists = data.map(data => data.id).includes(req.params.id);
+            checkIfIdExists = data.map(data => data.id).includes(+req.params.id);
             console.log(checkIfIdExists, req.params.id)
         } else {
             throw new Error("Invalid table name");

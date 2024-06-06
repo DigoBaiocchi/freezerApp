@@ -61,9 +61,9 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
     };
 };
 
-const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
+const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: number }> => {
     return async (req, res) => {
-        const id: string = req.params.id;
+        const id: number = req.params.id;
         let updatedData;
         
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
@@ -102,7 +102,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: s
     };
 } 
 
-const updateItemQuantity = (): RequestHandler<{ id: string }> => {
+const updateItemQuantity = (): RequestHandler<{ id: number }> => {
     return async (req, res) => {
         const database = new InventoryQueries();
         console.log(`Id: ${req.params.id} - updated quantity: ${req.body.quantity}`)
@@ -113,7 +113,7 @@ const updateItemQuantity = (): RequestHandler<{ id: string }> => {
     };
 }
 
-const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: string }> => {
+const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: number }> => {
     return async (req, res) => {
         const id = req.params.id;
         

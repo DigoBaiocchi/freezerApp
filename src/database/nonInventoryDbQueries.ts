@@ -6,7 +6,7 @@ type CollectionReferenceTables = "freezer" | "category";
 type CollectionTargetTables = "category" | "item";
 
 export type NonInventoryData = {
-    id: string;
+    id: number;
     name: string;
 };
 
@@ -26,7 +26,7 @@ export class NonInventoryQueries {
         return selectData as NonInventoryData[];
     }
 
-    private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: string) {
+    private async getDataById(collectionReference:CollectionReferenceTables, collectionTarget: CollectionTargetTables, id: number) {
         const selectQUery = `SELECT ${collectionTarget}_id AS id 
                             FROM inventory 
                             WHERE ${collectionReference}_id = $1`;
@@ -54,7 +54,7 @@ export class NonInventoryQueries {
         return updatedData as NonInventoryData;
     }
 
-    public async deleteData(id: string) {
+    public async deleteData(id: number) {
         const deleteQuery = `DELETE FROM ${this.tableName} WHERE id = $1`;
 
         switch(this.tableName) {
