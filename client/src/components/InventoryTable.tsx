@@ -2,7 +2,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { ApiCalls } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 
 export type InventoryTableData = {
@@ -20,7 +20,9 @@ export type InventoryTableData = {
 export type IndividualTableData = InventoryTableData[];
 
 export function InventoryTable() {
-    const apiCalls = new ApiCalls('inventory');
+    const tableName = 'inventory';
+    const apiCalls = new ApiCalls(tableName);
+    const idPrefix = tableName.substring(0,3).toUpperCase();
     
     const queryClient = useQueryClient();
     
@@ -54,7 +56,7 @@ export function InventoryTable() {
         columnHelper.accessor('id', {
             id: 'id',
             header: 'ID',
-            cell: props => props.getValue()
+            cell: props => `${idPrefix}_${String(props.getValue()).padStart(5, '0')}`
         }),
         columnHelper.accessor('freezername', {
             header: 'Freezer',
@@ -164,7 +166,6 @@ export function InventoryTable() {
     return (
         <div>
             <Table>
-                <TableCaption >Inventory List</TableCaption>
                 <TableHeader>
                     {table.getHeaderGroups().map(headerGroup => (
                         <TableRow key={headerGroup.id}>

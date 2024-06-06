@@ -3,6 +3,7 @@ import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Button } from "./ui/button";
 
 export type IndiviualTable = {
     id: number;
@@ -17,6 +18,7 @@ type TableProps = {
 
 export function IndividualTable({ tableName }: TableProps) {
     const apiCalls = new ApiCalls(tableName);
+    const idPrefix = tableName.substring(0,3).toUpperCase();
     
     const queryClient = useQueryClient();
     
@@ -50,7 +52,7 @@ export function IndividualTable({ tableName }: TableProps) {
         columnHelper.accessor('id', {
             id: 'id',
             header: 'ID',
-            cell: props => `FRE_${String(props.getValue()).padStart(5, '0')}`
+            cell: props => `${idPrefix}_${String(props.getValue()).padStart(5, '0')}`
         }),
         columnHelper.accessor('name', {
             header: 'Name',
@@ -64,12 +66,11 @@ export function IndividualTable({ tableName }: TableProps) {
         columnHelper.display({
             id: 'delete',
             header: 'delete',
-            cell: (props) => <button onClick={() => {
+            cell: (props) => 
+                <Button variant="destructive" onClick={() => {
                     const id = props.cell.row.original.id as number;
-                    console.log(`type of id is: ${typeof id}`);
                     deleteMutation.mutate(id)
-                }
-            }>Delete</button>
+                }}>Delete</Button>
         })
     ];
 
