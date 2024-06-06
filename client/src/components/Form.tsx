@@ -84,6 +84,7 @@ function Form({ tableName }: TableName) {
                             value={field.state.value}
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
+                            className="w-[400px]"
                         />
                         <FieldInfo field={field} />
                     </>
@@ -94,7 +95,7 @@ function Form({ tableName }: TableName) {
                 <form.Subscribe 
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([_canSubmit, isSubmitting]) => (
-                        <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} variant='outline'>
+                        <Button className="w-[400px]" type="submit" disabled={addDataMutation.isPending} variant='outline'>
                             {isSubmitting ? '...' : 'Add'}
                         </Button>
                     )}

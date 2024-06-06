@@ -6,7 +6,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Button } from "./ui/button";
 
 export type InventoryTableData = {
-    id: string;
+    id: number;
     freezername: string;
     categoryname: string;
     itemname: string;
@@ -33,7 +33,7 @@ export function InventoryTable() {
     });
     
     const deleteMutation = useMutation({
-        mutationFn: (id: string) => apiCalls.deleteCall(id),
+        mutationFn: (id: number) => apiCalls.deleteCall(id),
         onSuccess: () => {
             console.log('Invalidating queries for:', ['inventoryData']);
             queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
@@ -145,7 +145,7 @@ export function InventoryTable() {
             header: 'delete',
             cell: (props) => 
                 <Button variant="destructive" onClick={() => {
-                    const id = props.cell.row.original.id as string;
+                    const id = props.cell.row.original.id as number;
                     deleteMutation.mutate(id)
                 }}>Delete</Button>
         })

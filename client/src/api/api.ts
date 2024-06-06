@@ -7,10 +7,10 @@ export type InventoryTable = 'inventory';
 export type DatabaseTables = IndividualTables | InventoryTable;
 
 export type InventoryPostParams = {
-    freezerId: string;
-    categoryId: string;
-    itemId: string;
-    unitId: string;
+    freezerId: number;
+    categoryId: number;
+    itemId: number;
+    unitId: number;
     entryDate: Date;
     expDate: Date;
     quantity: number;
@@ -68,7 +68,7 @@ export class ApiCalls {
             .catch(error => console.log(error))
     }
 
-    async updateCall(id: string, name: string) {
+    async updateCall(id: number, name: string) {
         return axios.put(`${this.apiUrl}/${id}`, {
                 name: name
             })
@@ -76,7 +76,7 @@ export class ApiCalls {
             .catch(error => console.log(error))
     }
 
-    async deleteCall(id: string) {
+    async deleteCall(id: number) {
         return axios.delete(`${this.apiUrl}/${id}`)
                 .then(response => console.log(response))
                 .catch(error => console.log(error))

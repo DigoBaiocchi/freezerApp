@@ -2,9 +2,10 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 export type IndiviualTable = {
-    id: string;
+    id: number;
     name: string;
 };
 
@@ -14,7 +15,7 @@ type TableProps = {
     tableName: IndividualTables;
 };
 
-export function Table({ tableName }: TableProps) {
+export function IndividualTable({ tableName }: TableProps) {
     const apiCalls = new ApiCalls(tableName);
     
     const queryClient = useQueryClient();
@@ -28,7 +29,7 @@ export function Table({ tableName }: TableProps) {
     });
     
     const deleteMutation = useMutation({
-        mutationFn: (id: string) => apiCalls.deleteCall(id),
+        mutationFn: (id: number) => apiCalls.deleteCall(id),
         onSuccess: () => {
             console.log('Invalidating queries for:', ['data', tableName]);
             queryClient.invalidateQueries({ queryKey: ['data', tableName] });
@@ -49,7 +50,7 @@ export function Table({ tableName }: TableProps) {
         columnHelper.accessor('id', {
             id: 'id',
             header: 'ID',
-            cell: props => props.getValue()
+            cell: props => `FRE_${String(props.getValue()).padStart(5, '0')}`
         }),
         columnHelper.accessor('name', {
             header: 'Name',
@@ -64,7 +65,7 @@ export function Table({ tableName }: TableProps) {
             id: 'delete',
             header: 'delete',
             cell: (props) => <button onClick={() => {
-                    const id = props.cell.row.original.id as string;
+                    const id = props.cell.row.original.id as number;
                     deleteMutation.mutate(id)
                 }
             }>Delete</button>
@@ -82,36 +83,38 @@ export function Table({ tableName }: TableProps) {
     if (error) return <div>{`An error has ocurred: ${error.message}`}</div>;
 
     return (
-        <div>
-            <table>
-                <thead>
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                <th key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map(row => (
-                        <tr key={row.id}>
-                            {row.getVisibleCells().map(cell => (
-                                <td key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="flex justify-center ">
+            <div className="flex">
+                <Table className="w-85">
+                    <TableHeader>
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows.map(row => (
+                            <TableRow key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <TableCell key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     );
 }

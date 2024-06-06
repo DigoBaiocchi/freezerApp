@@ -130,10 +130,10 @@ export default function InventoryForm() {
             console.log(`entrydate: ${new Date(value.entryDate)}`);
             console.log('Submitting form.')
             addDataMutation.mutate({
-                freezerId: value.freezer,
-                categoryId: value.category,
-                itemId: value.item,
-                unitId: value.unit,
+                freezerId: +value.freezer,
+                categoryId: +value.category,
+                itemId: +value.item,
+                unitId: +value.unit,
                 entryDate: new Date(value.entryDate),
                 expDate: new Date(value.expDate),
                 quantity: +value.quantity,
