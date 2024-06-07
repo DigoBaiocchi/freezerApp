@@ -1,9 +1,9 @@
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { ApiCalls } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Input from "./Input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
+import { CircleMinus, CirclePlus, CircleX } from "lucide-react";
 
 export type InventoryTableData = {
     id: number;
@@ -15,6 +15,11 @@ export type InventoryTableData = {
     expdate: string;
     quantity: string;
     description: string;
+};
+
+type UpdateQuantityAmountParams = {
+    id: number;
+    quantity: number;
 };
 
 export type IndividualTableData = InventoryTableData[];
@@ -42,8 +47,18 @@ export function InventoryTable() {
         },
     });
     
-    const updateMutation = useMutation<void, Error, InventoryTableData>({
-        // mutationFn: ({id, freezer}) => apiCalls.updateCall(id, freezer),
+    // const updateMutation = useMutation<void, Error, InventoryTableData>({
+    //     mutationFn: ({id, freezer}) => apiCalls.updateCall(id, freezer),
+    //     onSuccess: () => {
+    //         console.log('Invalidating queries for:', ['inventoryData']);
+    //         queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
+    //     }
+    // });
+
+    const updateQuantityMutation = useMutation<void, Error, UpdateQuantityAmountParams>({
+        mutationFn: ({id, quantity}) => {
+            return apiCalls.updateQuantityCall(id, quantity);
+        },
         onSuccess: () => {
             console.log('Invalidating queries for:', ['inventoryData']);
             queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
@@ -53,20 +68,15 @@ export function InventoryTable() {
     const columnHelper = createColumnHelper<InventoryTableData>();
     
     const columns = [
-        columnHelper.accessor('id', {
-            id: 'id',
-            header: 'ID',
-            cell: props => `${idPrefix}_${String(props.getValue()).padStart(5, '0')}`
-        }),
+        // columnHelper.accessor('id', {
+        //     id: 'id',
+        //     header: 'ID',
+        //     cell: props => `${idPrefix}_${String(props.getValue()).padStart(5, '0')}`
+        // }),
         columnHelper.accessor('freezername', {
             header: 'Freezer',
             cell: props => {
                 console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
                 return props.getValue();
             }
         }),
@@ -74,11 +84,6 @@ export function InventoryTable() {
             header: 'Category',
             cell: props => {
                 console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
                 return props.getValue();
             }
         }),
@@ -86,11 +91,6 @@ export function InventoryTable() {
             header: 'Item',
             cell: props => {
                 console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
                 return props.getValue();
             }
         }),
@@ -98,58 +98,59 @@ export function InventoryTable() {
             header: 'Unit',
             cell: props => {
                 console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
                 return props.getValue();
             }
         }),
-        columnHelper.accessor('entrydate', {
-            header: 'Entry Date',
-            cell: props => {
-                console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
-                return props.getValue();
-            }
-        }),
+        // columnHelper.accessor('entrydate', {
+        //     header: 'Entry Date',
+        //     cell: props => {
+        //         console.log(props.getValue())
+        //         return props.getValue().substring(0,10);
+        //     }
+        // }),
         columnHelper.accessor('expdate', {
             header: 'Exp Date',
             cell: props => {
                 console.log(typeof props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
-                return props.getValue();
+                return props.getValue().substring(0,10);
             }
         }),
         columnHelper.accessor('quantity', {
-            header: 'quantity',
+            header: 'Qtd',
             cell: props => {
                 console.log(props.getValue())
-                // return <Input 
-                //     row={props.row} 
-                //     getValue={props.getValue} 
-                //     updateName={updateMutation}
-                // />
-                return props.getValue();
+                return (
+                    <div className="flex">
+                        <Button className="p-2" variant='ghost' onClick={() => {
+                            const id = props.cell.row.original.id as number;
+                            const quantity = Number(props.cell.row.original.quantity);
+                            const updatedQuantity = quantity - 1;
+                            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
+                        }}>
+                            <CircleMinus onClick={() => console.log('reduce quantity')} />
+                        </Button>
+                            <p className="w-7 p-2">{props.getValue()}</p>
+                        <Button className="p-2" variant='ghost' onClick={() => {
+                            const id = props.cell.row.original.id as number;
+                            const quantity = Number(props.cell.row.original.quantity);
+                            const updatedQuantity = quantity + 1;
+                            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
+                        }}>
+                            <CirclePlus onClick={() => console.log('increase quantity')} />
+                        </Button>
+                    </div>
+                );
             }
         }),
         columnHelper.display({
             id: 'delete',
-            header: 'delete',
+            header: 'Delete',
             cell: (props) => 
-                <Button variant="destructive" onClick={() => {
+                <Button className="p-2" variant="ghost" onClick={() => {
                     const id = props.cell.row.original.id as number;
                     deleteMutation.mutate(id)
-                }}>Delete</Button>
+                }}><CircleX color="#eb2d2d" /></Button>
+                
         })
     ];
 
@@ -164,36 +165,38 @@ export function InventoryTable() {
     if (error) return <div>{`An error has ocurred: ${error.message}`}</div>;
 
     return (
-        <div>
-            <Table>
-                <TableHeader>
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                <TableHead key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHeader>
-                <TableBody>
-                    {table.getRowModel().rows.map(row => (
-                        <TableRow key={row.id}>
-                            {row.getVisibleCells().map(cell => (
-                                <TableCell key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+        <div className="flex justify-center">
+            <div>
+                <Table className="w-85">
+                    <TableHeader>
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows.map(row => (
+                            <TableRow key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <TableCell key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     );
 }

@@ -22,9 +22,11 @@ const Root = () => {
                             Categories
                         </NavigationMenuLink>
                     </Link>
+                    <Link to="/item">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             Items
                         </NavigationMenuLink>
+                    </Link>
                     <Link to="/unit">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             Units
@@ -39,7 +41,7 @@ const Root = () => {
             </NavigationMenu>
             <hr />
             <Outlet />
-            <TanStackRouterDevtools />
+            {/* <TanStackRouterDevtools /> */}
         </>
     )
 }

@@ -76,6 +76,14 @@ export class ApiCalls {
             .catch(error => console.log(error))
     }
 
+    async updateQuantityCall(id: number, quantity: number) {
+        return axios.patch(`${this.apiUrl}/update-quantity/${id}`, {
+            quantity
+        })
+        .then(response => console.log(response))
+        .catch(error => { throw new Error(error) })
+    }
+
     async deleteCall(id: number) {
         return axios.delete(`${this.apiUrl}/${id}`)
                 .then(response => console.log(response))
