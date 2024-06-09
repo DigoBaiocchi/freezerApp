@@ -1,9 +1,10 @@
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
+import TableData from "./TableData";
+// import { columns } from "./IndividualTables/IndividualTablesColumn";
 
 export type IndiviualTable = {
     id: number;
@@ -74,49 +75,5 @@ export function IndividualTable({ tableName }: TableProps) {
         })
     ];
 
-    const table = useReactTable({ 
-        columns, 
-        data, 
-        getCoreRowModel: getCoreRowModel(),
-    });
-    
-    if (isPending) return <div>Loading...</div>;
-
-    if (error) return <div>{`An error has ocurred: ${error.message}`}</div>;
-
-    return (
-        <div className="flex justify-center ">
-            <div className="flex">
-                <Table className="w-85">
-                    <TableHeader>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows.map(row => (
-                            <TableRow key={row.id}>
-                                {row.getVisibleCells().map(cell => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-        </div>
-    );
+    return <TableData columns={columns} data={data} isPending={isPending} error={error} />
 }

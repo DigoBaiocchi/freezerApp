@@ -41,7 +41,7 @@ const Root = () => {
             </NavigationMenu>
             <hr />
             <Outlet />
-            {/* <TanStackRouterDevtools /> */}
+            <TanStackRouterDevtools />
         </>
     )
 }

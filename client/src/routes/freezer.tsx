@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import Form from '../components/Form'
 import { IndividualTables } from '../api/api'
 import { IndividualTable } from '../components/Table';
+import { DrawerDialog } from '@/components/DrawerDialog';
 
 const tableName: IndividualTables = 'freezer';
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute(`/${tableName}`)({
         <div>Hello freezer!</div>
         <Form tableName={tableName} />
         <IndividualTable tableName={tableName} />
+        <DrawerDialog />
       </>
     )
   }
