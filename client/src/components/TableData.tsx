@@ -1,6 +1,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { InventoryTableData } from "./InventoryTable/InventoryTableColumns";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 type TableDataProps = {
     columns: ColumnDef<any, any>[];
@@ -21,38 +22,41 @@ export default function TableData({ columns, data, isPending, error}: TableDataP
     if (error) return <div>{`An error has ocurred: ${error.message}`}</div>;
 
     return (
-        <div className="flex justify-center">
-            <div>
-                <Table className="w-85">
-                    <TableHeader>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows.map(row => (
-                            <TableRow key={row.id}>
-                                {row.getVisibleCells().map(cell => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+        <ScrollArea className="w-100 whitespace-nowrap rounded-md border">
+            <div className="flex justify-center">
+                <div>
+                    <Table className="w-85">
+                        <TableHeader>
+                            {table.getHeaderGroups().map(headerGroup => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map(header => (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                        </TableHead>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows.map(row => (
+                                <TableRow key={row.id}>
+                                    {row.getVisibleCells().map(cell => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
-        </div>
+            <ScrollBar orientation="horizontal" />
+        </ScrollArea>
     );
 }

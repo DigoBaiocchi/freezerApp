@@ -21,9 +21,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "./ui/scroll-area"
 import { CircleMinus, CirclePlus } from "lucide-react"
 
 export function DrawerDialog() {
@@ -34,14 +31,14 @@ export function DrawerDialog() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
+          <Button variant="outline">Update Quantity</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit item quantity</DialogTitle>
-            {/* <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription> */}
+            <DialogTitle>Update</DialogTitle>
+            <DialogDescription>
+              Update item 'name' quantity.
+            </DialogDescription>
           </DialogHeader>
           <ProfileForm />
         </DialogContent>
@@ -52,13 +49,13 @@ export function DrawerDialog() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="outline">Update Quantity</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
+          <DrawerTitle>Update</DrawerTitle>
           <DrawerDescription>
-            Make changes to your profile here. Click save when you're done.
+          Update item 'name' quantity.
           </DrawerDescription>
         </DrawerHeader>
         <ProfileForm className="px-4" />
@@ -75,22 +72,26 @@ export function DrawerDialog() {
 function ProfileForm({ className }: React.ComponentProps<"form">) {
   return (
     // <form className={cn("grid items-start gap-4", className)}>
-    <div className="flex justify-center">
-      <div className="flex">
-        <Button className="p-2" variant='ghost' size={"icon"} onClick={() => {
+    <div className="p-4 pb-0">
+      <div className="flex items-center justify-center space-x-2">
+        <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
             // const updatedQuantity = Number(quantity) - 1;
             // updateFunction.mutate({id, quantity: updatedQuantity})
             console.log('reduce quantity')
         }}>
-            <CircleMinus />
+            <CircleMinus className="h-6 w-6" />
         </Button>
-            <p className="w-7 p-2">{5}</p>
-        <Button className="p-2" variant='ghost' onClick={() => {
+        <div className="flex-1 text-center">
+          <div className="text-7xl font-bold tracking-tighter">
+            <p className="text-7xl font-bold tracking-tighter">{5}</p>
+          </div>
+        </div>
+        <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
             // const updatedQuantity = Number(quantity) + 1;
             // updateFunction.mutate({id, quantity: updatedQuantity})
             console.log('increase quantity')
         }}>
-            <CirclePlus />
+            <CirclePlus className="h-6 w-6" />
         </Button>
       </div>
     </div>

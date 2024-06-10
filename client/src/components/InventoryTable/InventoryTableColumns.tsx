@@ -82,16 +82,6 @@ export const columns = [
         }
     }),
     columnHelper.display({
-        id: 'delete',
-        header: 'Delete',
-        cell: (props) => 
-            <Button className="p-2" variant="ghost" onClick={() => {
-                const id = props.cell.row.original.id as number;
-                // deleteMutation.mutate(id)
-            }}><CircleX color="#eb2d2d" /></Button>
-            
-    }),
-    columnHelper.display({
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
@@ -107,23 +97,33 @@ export const columns = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                            <Button className="" variant="destructive" onClick={() => {
-                                const id = item.id;
-                                // deleteMutation.mutate(id)
-                            }}>Delete</Button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                             {/* <UpdateQuantityDrawer 
                                 id={item.id} 
                                 quantity={Number(item.quantity)} 
                                 updateFunction={updateQuantityMutation}
-                            /> */}
+                                /> */}
                             <DrawerDialog />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button className="w-full" variant="outline" onClick={() => {
+                                const id = item.id;
+                                // deleteMutation.mutate(id)
+                                }}>Update Item Data</Button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
         }
+    }),
+    columnHelper.display({
+        id: 'delete',
+        header: 'Delete',
+        cell: (props) => 
+            <Button className="p-2" variant="ghost" onClick={() => {
+                const id = props.cell.row.original.id as number;
+                // deleteMutation.mutate(id)
+            }}><CircleX color="#eb2d2d" /></Button>
+            
     }),
 ];
