@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
 import { useMediaQuery } from 'usehooks-ts'
 import { Button } from "@/components/ui/button"
 import {
@@ -22,6 +21,14 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { CircleMinus, CirclePlus } from "lucide-react"
+import { ApiCalls } from "@/api/api"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { IdContext } from "./InventoryTable"
+
+type DrawerDialogProps = {
+    id: number;
+    quantity: number;
+};
 
 export function DrawerDialog() {
   const [open, setOpen] = React.useState(false)
@@ -31,13 +38,13 @@ export function DrawerDialog() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">Update Quantity</Button>
+          <Button className="w-full" variant="outline">Edit Quantity</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Update</DialogTitle>
+            <DialogTitle>Edit</DialogTitle>
             <DialogDescription>
-              Update item 'name' quantity.
+            Edit item 'name' quantity.
             </DialogDescription>
           </DialogHeader>
           <ProfileForm />
@@ -49,16 +56,16 @@ export function DrawerDialog() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline">Update Quantity</Button>
+        <Button className="w-full" variant="outline">Edit Quantity</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Update</DrawerTitle>
+          <DrawerTitle>Edit</DrawerTitle>
           <DrawerDescription>
-          Update item 'name' quantity.
+          Edit item 'name' quantity.
           </DrawerDescription>
         </DrawerHeader>
-        <ProfileForm className="px-4" />
+        <ProfileForm />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -69,32 +76,54 @@ export function DrawerDialog() {
   )
 }
 
-function ProfileForm({ className }: React.ComponentProps<"form">) {
+function ProfileForm() {
+  const tableName = 'inventory';
+  const apiCalls = new ApiCalls(tableName);
+
+  const { id, quantity } = React.useContext(IdContext);
+      
+  const queryClient = useQueryClient();
+  
+  // const deleteMutation = useMutation({
+  //     mutationFn: (id: number) => apiCalls.deleteCall(id),
+  //     onSuccess: () => {
+  //         console.log('Invalidating queries for:', ['inventoryData']);
+  //         queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
+  //     },
+  // });
+  
+  const updateQuantityMutation = useMutation<void, Error, DrawerDialogProps>({
+      mutationFn: ({id, quantity}) => {
+          return apiCalls.updateQuantityCall(id, quantity);
+      },
+      onSuccess: () => {
+          console.log('Invalidating queries for:', ['inventoryData']);
+          queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
+      }
+  });
   return (
-    // <form className={cn("grid items-start gap-4", className)}>
     <div className="p-4 pb-0">
       <div className="flex items-center justify-center space-x-2">
         <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
-            // const updatedQuantity = Number(quantity) - 1;
-            // updateFunction.mutate({id, quantity: updatedQuantity})
+            const updatedQuantity = Number(quantity) - 1;
+            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
             console.log('reduce quantity')
         }}>
             <CircleMinus className="h-6 w-6" />
         </Button>
         <div className="flex-1 text-center">
           <div className="text-7xl font-bold tracking-tighter">
-            <p className="text-7xl font-bold tracking-tighter">{5}</p>
+            <p className="text-7xl font-bold tracking-tighter">{quantity}</p>
           </div>
         </div>
         <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
-            // const updatedQuantity = Number(quantity) + 1;
-            // updateFunction.mutate({id, quantity: updatedQuantity})
+            const updatedQuantity = Number(quantity) + 1;
+            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
             console.log('increase quantity')
         }}>
             <CirclePlus className="h-6 w-6" />
         </Button>
       </div>
     </div>
-    // </form>
   )
 }

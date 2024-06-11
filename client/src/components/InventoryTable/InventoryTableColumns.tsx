@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { CircleMinus, CirclePlus, CircleX, MoreHorizontal } from "lucide-react";
 import { DrawerDialog } from "../DrawerDialog";
+import { IdContext } from "../InventoryTable";
 
 export type InventoryTableData = {
     id: number;
@@ -15,6 +16,8 @@ export type InventoryTableData = {
     quantity: string;
     description: string;
 };
+
+
 
 const columnHelper = createColumnHelper<InventoryTableData>();
     
@@ -82,8 +85,8 @@ export const columns = [
         }
     }),
     columnHelper.display({
-        id: 'actions',
-        header: 'Actions',
+        id: 'edit',
+        header: 'Edit',
         cell: ({ row }) => {
             const item = row.original;
             
@@ -96,20 +99,18 @@ export const columns = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>Edit</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            {/* <UpdateQuantityDrawer 
-                                id={item.id} 
-                                quantity={Number(item.quantity)} 
-                                updateFunction={updateQuantityMutation}
-                                /> */}
-                            <DrawerDialog />
+                            <IdContext.Provider value={{ id: item.id, quantity: +item.quantity }}>
+                                <DrawerDialog />
+                            </IdContext.Provider>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Button className="w-full" variant="outline" onClick={() => {
                                 const id = item.id;
+                                console.log(item.quantity)
                                 // deleteMutation.mutate(id)
-                                }}>Update Item Data</Button>
+                                }}>Edit Item Data</Button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
