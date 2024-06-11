@@ -94,8 +94,8 @@ export default function InventoryForm() {
     const addDataMutation = useMutation({
         mutationFn: ({...params}: InventoryPostParams) => apiCalls.postInventoryCall({...params}),
         onSuccess: () => {
-        console.log('Invalidating queries for:', ['inventoryData']);
-        queryClient.invalidateQueries({ queryKey: ['inventoryData'], exact: true });
+        console.log('Invalidating queries for:', [tableName]);
+        queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
         }
     });
 

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
 import { Button } from "./ui/button";
 import TableData from "./TableData";
+import DeleteButton from "./DeleteButton";
 // import { columns } from "./IndividualTables/IndividualTablesColumn";
 
 export type IndiviualTable = {
@@ -24,7 +25,7 @@ export function IndividualTable({ tableName }: TableProps) {
     const queryClient = useQueryClient();
     
     const { isPending, error, data} = useQuery({
-        queryKey: ['data', tableName],
+        queryKey: [tableName],
         queryFn: () => apiCalls.getCall().then((res) => {
             console.log("getCall data is:", res.data)
             return res.data;
@@ -34,16 +35,16 @@ export function IndividualTable({ tableName }: TableProps) {
     const deleteMutation = useMutation({
         mutationFn: (id: number) => apiCalls.deleteCall(id),
         onSuccess: () => {
-            console.log('Invalidating queries for:', ['data', tableName]);
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
+            console.log('Invalidating queries for:', [tableName]);
+            queryClient.invalidateQueries({ queryKey: [tableName] });
         },
     });
     
     const updateMutation = useMutation<void, Error, IndiviualTable>({
         mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
         onSuccess: () => {
-            console.log('Invalidating queries for:', ['data', tableName]);
-            queryClient.invalidateQueries({ queryKey: ['data', tableName] });
+            console.log('Invalidating queries for:', [tableName]);
+            queryClient.invalidateQueries({ queryKey: [tableName] });
         }
     });
     
@@ -67,11 +68,15 @@ export function IndividualTable({ tableName }: TableProps) {
         columnHelper.display({
             id: 'delete',
             header: 'delete',
-            cell: (props) => 
-                <Button variant="destructive" onClick={() => {
-                    const id = props.cell.row.original.id as number;
-                    deleteMutation.mutate(id)
-                }}>Delete</Button>
+            cell: (props) => {
+                const id = props.cell.row.original.id as number;
+
+                return <DeleteButton tableName={tableName} id={id} />
+            }
+                // <Button variant="destructive" onClick={() => {
+                //     const id = props.cell.row.original.id as number;
+                //     deleteMutation.mutate(id)
+                // }}>Delete</Button>
         })
     ];
 

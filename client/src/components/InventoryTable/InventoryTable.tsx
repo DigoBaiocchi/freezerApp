@@ -25,7 +25,7 @@ export function InventoryTable() {
     const apiCalls = new ApiCalls(tableName);
     
     const { isPending, error, data} = useQuery({
-        queryKey: ['inventoryData'],
+        queryKey: [tableName],
         queryFn: () => apiCalls.getCall().then((res) => {
             console.log("getCall data is:", res.data)
             return res.data;

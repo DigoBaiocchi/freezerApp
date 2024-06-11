@@ -4,6 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { CircleMinus, CirclePlus, CircleX, MoreHorizontal } from "lucide-react";
 import { DrawerDialog } from "./DrawerDialog";
 import { UpdatePropsContext } from "./InventoryTable";
+import DeleteButton from "../DeleteButton";
 
 export type InventoryTableData = {
     id: number;
@@ -120,11 +121,15 @@ export const columns = [
     columnHelper.display({
         id: 'delete',
         header: 'Delete',
-        cell: (props) => 
-            <Button className="p-2" variant="ghost" onClick={() => {
-                const id = props.cell.row.original.id as number;
-                // deleteMutation.mutate(id)
-            }}><CircleX color="#eb2d2d" /></Button>
+        cell: (props) => {
+            const id = props.row.original.id;
+
+            return <DeleteButton tableName="inventory" id={id} />
+        }
+            // <Button className="p-2" variant="ghost" onClick={() => {
+            //     const id = props.cell.row.original.id as number;
+            //     // deleteMutation.mutate(id)
+            // }}><CircleX color="#eb2d2d" /></Button>
             
     }),
 ];

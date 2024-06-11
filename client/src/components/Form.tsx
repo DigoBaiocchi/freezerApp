@@ -31,8 +31,8 @@ function Form({ tableName }: TableName) {
   const addDataMutation = useMutation({
     mutationFn: (name: string) => apiCalls.postCall(name),
     onSuccess: () => {
-      console.log('Invalidating queries for:', ['data', tableName]);
-      queryClient.invalidateQueries({ queryKey: ['data', tableName], exact: true });
+      console.log('Invalidating queries for:', [tableName]);
+      queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
     }
   });
 

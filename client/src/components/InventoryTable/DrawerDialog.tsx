@@ -97,8 +97,8 @@ function ProfileForm() {
           return apiCalls.updateQuantityCall(id, quantity);
       },
       onSuccess: () => {
-          console.log('Invalidating queries for:', ['inventoryData']);
-          queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
+          console.log('Invalidating queries for:', [tableName]);
+          queryClient.invalidateQueries({ queryKey: [tableName] });
       }
   });
   return (
