@@ -2,8 +2,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { CircleMinus, CirclePlus, CircleX, MoreHorizontal } from "lucide-react";
-import { DrawerDialog } from "../DrawerDialog";
-import { IdContext } from "../InventoryTable";
+import { DrawerDialog } from "./DrawerDialog";
+import { UpdatePropsContext } from "./InventoryTable";
 
 export type InventoryTableData = {
     id: number;
@@ -101,9 +101,9 @@ export const columns = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Edit</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <IdContext.Provider value={{ id: item.id, quantity: +item.quantity }}>
+                            <UpdatePropsContext.Provider value={{ id: item.id, quantity: +item.quantity }}>
                                 <DrawerDialog />
-                            </IdContext.Provider>
+                            </UpdatePropsContext.Provider>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Button className="w-full" variant="outline" onClick={() => {

@@ -23,7 +23,7 @@ import {
 import { CircleMinus, CirclePlus } from "lucide-react"
 import { ApiCalls } from "@/api/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { IdContext } from "./InventoryTable"
+import { UpdatePropsContext } from "./InventoryTable"
 
 type DrawerDialogProps = {
     id: number;
@@ -80,7 +80,7 @@ function ProfileForm() {
   const tableName = 'inventory';
   const apiCalls = new ApiCalls(tableName);
 
-  const { id, quantity } = React.useContext(IdContext);
+  const { id, quantity } = React.useContext(UpdatePropsContext);
       
   const queryClient = useQueryClient();
   

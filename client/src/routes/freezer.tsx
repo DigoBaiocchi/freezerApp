@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import Form from '../components/Form'
 import { IndividualTables } from '../api/api'
 import { IndividualTable } from '../components/Table';
-import { DrawerDialog } from '@/components/DrawerDialog';
+import { DrawerDialog } from '@/components/InventoryTable/DrawerDialog';
 
 const tableName: IndividualTables = 'freezer';
 

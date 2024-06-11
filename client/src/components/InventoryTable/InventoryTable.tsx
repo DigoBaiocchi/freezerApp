@@ -1,7 +1,7 @@
-import { ApiCalls } from "../api/api";
+import { ApiCalls } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
-import { columns } from "./InventoryTable/InventoryTableColumns";
-import TableData from "./TableData";
+import { columns } from "./InventoryTableColumns";
+import TableData from "../TableData";
 import { createContext } from "react";
 
 export type InventoryTableData = {
@@ -18,7 +18,7 @@ export type InventoryTableData = {
 
 export type IndividualTableData = InventoryTableData[];
 
-export const IdContext = createContext({ id: 0, quantity: 0});
+export const UpdatePropsContext = createContext({ id: 0, quantity: 0});
 
 export function InventoryTable() {
     const tableName = 'inventory';

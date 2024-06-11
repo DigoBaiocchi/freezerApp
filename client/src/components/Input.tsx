@@ -2,7 +2,7 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { SetStateAction, useState } from "react";
 import { type IndiviualTable } from "./Table";
 import { Row } from "@tanstack/react-table";
-import { InventoryTableData } from "./InventoryTable";
+import { InventoryTableData } from "./InventoryTable/InventoryTable";
 
 type InputProps = {
     getValue: () => string;
