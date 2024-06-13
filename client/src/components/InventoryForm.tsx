@@ -153,7 +153,7 @@ export default function InventoryForm() {
 
     return (
         <>
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center pt-11">
                 <p className="p-1"><b>Add new item to inventory</b></p>
                 <form 
                     onSubmit={(e) => {

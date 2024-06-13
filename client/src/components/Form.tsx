@@ -55,7 +55,7 @@ function Form({ tableName }: TableName) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center pt-5">
         <p className="p-1"><b>Add new {tableName}</b></p>
         <form 
             onSubmit={(e) => {
