@@ -84,14 +84,6 @@ function ProfileForm() {
       
   const queryClient = useQueryClient();
   
-  // const deleteMutation = useMutation({
-  //     mutationFn: (id: number) => apiCalls.deleteCall(id),
-  //     onSuccess: () => {
-  //         console.log('Invalidating queries for:', ['inventoryData']);
-  //         queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
-  //     },
-  // });
-  
   const updateQuantityMutation = useMutation<void, Error, DrawerDialogProps>({
       mutationFn: ({id, quantity}) => {
           return apiCalls.updateQuantityCall(id, quantity);
@@ -101,6 +93,7 @@ function ProfileForm() {
           queryClient.invalidateQueries({ queryKey: [tableName] });
       }
   });
+  
   return (
     <div className="p-4 pb-0">
       <div className="flex items-center justify-center space-x-2">

@@ -1,10 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Button } from "../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { CircleMinus, CirclePlus, CircleX, MoreHorizontal } from "lucide-react";
-import { DrawerDialog } from "./DrawerDialog";
-import { UpdatePropsContext } from "./InventoryTable";
 import DeleteButton from "../DeleteButton";
+import EditMenu from "./EditMenu";
+import QuantityField from "./QuantityField";
 
 export type InventoryTableData = {
     id: number;
@@ -60,28 +57,11 @@ export const columns = [
     }),
     columnHelper.accessor('quantity', {
         header: 'Qtd',
-        cell: props => {
-            console.log(props.getValue())
+        cell: ({ row }) => {
+            const item = row.original;
+            
             return (
-                <div className="flex">
-                    <Button className="p-2" variant='ghost' onClick={() => {
-                        const id = props.cell.row.original.id as number;
-                        const quantity = Number(props.cell.row.original.quantity);
-                        const updatedQuantity = quantity - 1;
-                        // updateQuantityMutation.mutate({id, quantity: updatedQuantity})
-                    }}>
-                        <CircleMinus onClick={() => console.log('reduce quantity')} />
-                    </Button>
-                        <p className="w-7 p-2">{props.getValue()}</p>
-                    <Button className="p-2" variant='ghost' onClick={() => {
-                        const id = props.cell.row.original.id as number;
-                        const quantity = Number(props.cell.row.original.quantity);
-                        const updatedQuantity = quantity + 1;
-                        // updateQuantityMutation.mutate({id, quantity: updatedQuantity})
-                    }}>
-                        <CirclePlus onClick={() => console.log('increase quantity')} />
-                    </Button>
-                </div>
+                <QuantityField item={item} />
             );
         }
     }),
@@ -92,29 +72,7 @@ export const columns = [
             const item = row.original;
             
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"} className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Edit</DropdownMenuLabel>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <UpdatePropsContext.Provider value={{ id: item.id, quantity: +item.quantity }}>
-                                <DrawerDialog />
-                            </UpdatePropsContext.Provider>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Button className="w-full" variant="outline" onClick={() => {
-                                const id = item.id;
-                                console.log(item.quantity)
-                                // deleteMutation.mutate(id)
-                                }}>Edit Item Data</Button>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <EditMenu item={item} />
             );
         }
     }),
@@ -126,10 +84,6 @@ export const columns = [
 
             return <DeleteButton tableName="inventory" id={id} />
         }
-            // <Button className="p-2" variant="ghost" onClick={() => {
-            //     const id = props.cell.row.original.id as number;
-            //     // deleteMutation.mutate(id)
-            // }}><CircleX color="#eb2d2d" /></Button>
             
     }),
 ];
