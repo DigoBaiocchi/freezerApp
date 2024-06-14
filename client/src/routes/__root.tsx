@@ -1,6 +1,6 @@
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+// import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const Root = () => {
     return (
@@ -43,7 +43,7 @@ const Root = () => {
             </div>
             <hr />
             <Outlet />
-            <TanStackRouterDevtools />
+            {/* <TanStackRouterDevtools /> */}
         </>
     )
 }
