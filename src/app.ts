@@ -12,7 +12,7 @@ import unitRouter from './routes/unit';
 import inventoryRouter from './routes/inventory';
 import { CreateDatabaseTables } from "./database/createTablesQueries";
 
-dotenv.config({ path: '.env.development.local' });
+// dotenv.config({ path: '.env.development.local' });
 
 export const app:Express = express();
 const port = config.PORT;
@@ -27,7 +27,7 @@ app.use(
 );
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: config.CLIENT_URL,
     credentials: true,
 }));
 

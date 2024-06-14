@@ -3,5 +3,6 @@ dotenv.config({ path: '.env.development.local' });
 
 export const config = {
     DATABASE_URL: process.env.DATABASE_URL,
-    PORT: process.env.PORT
+    PORT: process.env.PORT,
+    CLIENT_URL: process.env.CLIENT_URL,
 };

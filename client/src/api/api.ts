@@ -1,3 +1,4 @@
+import { config } from "../utils/config";
 import axios from "axios";
 
 export type IndividualTables = "freezer" | "category" | "item" | 'unit';
@@ -23,7 +24,7 @@ export class ApiCalls {
 
     constructor(databaseTable: DatabaseTables) {
         this.databaseTable = databaseTable;
-        this.apiUrl = `http://localhost:3000/${this.databaseTable}`;
+        this.apiUrl = `${config.SERVER_URL}${this.databaseTable}`;
     }
 
     async postCall(name: string) {
