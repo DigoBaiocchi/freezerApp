@@ -2,7 +2,6 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Input from "./Input";
-import { Button } from "./ui/button";
 import TableData from "./TableData";
 import DeleteButton from "./DeleteButton";
 // import { columns } from "./IndividualTables/IndividualTablesColumn";
@@ -31,15 +30,7 @@ export function IndividualTable({ tableName }: TableProps) {
             return res.data;
         }),
     });
-    
-    const deleteMutation = useMutation({
-        mutationFn: (id: number) => apiCalls.deleteCall(id),
-        onSuccess: () => {
-            console.log('Invalidating queries for:', [tableName]);
-            queryClient.invalidateQueries({ queryKey: [tableName] });
-        },
-    });
-    
+        
     const updateMutation = useMutation<void, Error, IndiviualTable>({
         mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
         onSuccess: () => {
@@ -73,10 +64,6 @@ export function IndividualTable({ tableName }: TableProps) {
 
                 return <DeleteButton tableName={tableName} id={id} />
             }
-                // <Button variant="destructive" onClick={() => {
-                //     const id = props.cell.row.original.id as number;
-                //     deleteMutation.mutate(id)
-                // }}>Delete</Button>
         })
     ];
 
