@@ -72,8 +72,8 @@ function Form({ tableName }: TableName) {
                       onChange: ({ value }) => 
                         !value
                           ? 'A name is required'
-                          : value.length < 3
-                            ? 'First name must be at least 3 characters'
+                          : value.length > 30
+                            ? 'Name must be max of 30 characters'
                             : undefined,
                     }}
                     children={(field) => (
@@ -84,8 +84,9 @@ function Form({ tableName }: TableName) {
                             value={field.state.value}
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
-                            className="w-[400px]"
+                            className="w-full"
                         />
+                        <span className="italic">Name must be max of 30 characters</span>
                         <FieldInfo field={field} />
                     </>
                     )}
@@ -95,7 +96,7 @@ function Form({ tableName }: TableName) {
                 <form.Subscribe 
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([_canSubmit, isSubmitting]) => (
-                        <Button className="w-[400px]" type="submit" disabled={addDataMutation.isPending} variant='outline'>
+                        <Button className="" type="submit" disabled={addDataMutation.isPending} >
                             {isSubmitting ? '...' : 'Add'}
                         </Button>
                     )}

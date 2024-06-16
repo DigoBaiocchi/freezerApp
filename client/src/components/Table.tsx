@@ -19,7 +19,6 @@ type TableProps = {
 
 export function IndividualTable({ tableName }: TableProps) {
     const apiCalls = new ApiCalls(tableName);
-    const idPrefix = tableName.substring(0,3).toUpperCase();
     
     const queryClient = useQueryClient();
     
@@ -42,11 +41,6 @@ export function IndividualTable({ tableName }: TableProps) {
     const columnHelper = createColumnHelper<IndiviualTable>();
     
     const columns = [
-        columnHelper.accessor('id', {
-            id: 'id',
-            header: 'ID',
-            cell: props => `${idPrefix}_${String(props.getValue()).padStart(5, '0')}`
-        }),
         columnHelper.accessor('name', {
             header: 'Name',
             cell: props => 
@@ -64,7 +58,7 @@ export function IndividualTable({ tableName }: TableProps) {
 
                 return <DeleteButton tableName={tableName} id={id} />
             }
-        })
+        }),
     ];
 
     return <TableData columns={columns} data={data} isPending={isPending} error={error} />

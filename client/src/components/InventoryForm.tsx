@@ -274,7 +274,7 @@ export default function InventoryForm() {
                         <form.Subscribe 
                             selector={(state) => [state.canSubmit, state.isSubmitting]}
                             children={([_canSubmit, isSubmitting]) => (
-                                <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} variant='outline'>
+                                <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} >
                                     {isSubmitting ? '...' : 'Add'}
                                 </Button>
                             )}

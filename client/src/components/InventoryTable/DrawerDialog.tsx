@@ -30,9 +30,36 @@ type DrawerDialogProps = {
     quantity: number;
 };
 
+type UpdateQuantityDialogProps = {
+  updatedQuantity: (quantity: number) => void;
+};
+
 export function DrawerDialog() {
-  const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const { id, quantity } = React.useContext(UpdatePropsContext);
+  const [updatedQuantity, setUpdatedQuantity] = React.useState(quantity);
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const tableName = 'inventory';
+  const apiCalls = new ApiCalls(tableName);
+  const queryClient = useQueryClient();
+  
+  const updateQuantityMutation = useMutation<void, Error, DrawerDialogProps>({
+    mutationFn: ({id, quantity}) => {
+        return apiCalls.updateQuantityCall(id, quantity);
+    },
+    onSuccess: () => {
+        console.log('Invalidating queries for:', [tableName]);
+        queryClient.invalidateQueries({ queryKey: [tableName] });
+    }
+  });
+
+  const handleQuantityUpdate = (quantity: number) => {
+    setUpdatedQuantity(quantity);
+  };
+
+  const handleSubmitNewQuantity = ({id, quantity}: DrawerDialogProps) => {
+    updateQuantityMutation.mutate({ id, quantity });
+  }
 
   if (isDesktop) {
     return (
@@ -47,7 +74,7 @@ export function DrawerDialog() {
             Edit item 'name' quantity.
             </DialogDescription>
           </DialogHeader>
-          <ProfileForm />
+          {/* <ProfileForm /> */}
         </DialogContent>
       </Dialog>
     )
@@ -65,10 +92,15 @@ export function DrawerDialog() {
           Edit item 'name' quantity.
           </DrawerDescription>
         </DrawerHeader>
-        <ProfileForm />
+          <UpdateQuantityDialog updatedQuantity={handleQuantityUpdate} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button onClick={() => {
+              handleSubmitNewQuantity({ id, quantity: updatedQuantity });
+            }}>Update Quantity</Button>
+          </DrawerClose>
+          <DrawerClose asChild>
+            <Button variant="destructive">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -76,43 +108,41 @@ export function DrawerDialog() {
   )
 }
 
-function ProfileForm() {
-  const tableName = 'inventory';
-  const apiCalls = new ApiCalls(tableName);
+function UpdateQuantityDialog({ updatedQuantity }: UpdateQuantityDialogProps) {
+  const { quantity } = React.useContext(UpdatePropsContext);
 
-  const { id, quantity } = React.useContext(UpdatePropsContext);
+  const [itemQuantity, setItemQuantity] = React.useState(quantity);
+
+  const handleQuantityIncrease = () => {
+    setItemQuantity(itemQuantity + 1);
+  };
+    
+  const handleQuantityDecrease = () => {
+    setItemQuantity(itemQuantity - 1);
+  };
+
+  React.useEffect(() => {
+    updatedQuantity(itemQuantity);
+  }, [itemQuantity]);
       
-  const queryClient = useQueryClient();
-  
-  const updateQuantityMutation = useMutation<void, Error, DrawerDialogProps>({
-      mutationFn: ({id, quantity}) => {
-          return apiCalls.updateQuantityCall(id, quantity);
-      },
-      onSuccess: () => {
-          console.log('Invalidating queries for:', [tableName]);
-          queryClient.invalidateQueries({ queryKey: [tableName] });
-      }
-  });
   
   return (
     <div className="p-4 pb-0">
       <div className="flex items-center justify-center space-x-2">
         <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
-            const updatedQuantity = Number(quantity) - 1;
-            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
             console.log('reduce quantity')
-        }}>
+            handleQuantityDecrease();
+            }}>
             <CircleMinus className="h-6 w-6" />
         </Button>
         <div className="flex-1 text-center">
           <div className="text-7xl font-bold tracking-tighter">
-            <p className="text-7xl font-bold tracking-tighter">{quantity}</p>
+            <p className="text-7xl font-bold tracking-tighter">{itemQuantity}</p>
           </div>
         </div>
         <Button className="h-10 w-10 shrink-0 rounded-full" variant='ghost' size={"icon"} onClick={() => {
-            const updatedQuantity = Number(quantity) + 1;
-            updateQuantityMutation.mutate({id, quantity: updatedQuantity})
-            console.log('increase quantity')
+          console.log('increase quantity')
+          handleQuantityIncrease();
         }}>
             <CirclePlus className="h-6 w-6" />
         </Button>
