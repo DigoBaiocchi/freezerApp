@@ -1,10 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Input from "./Input";
 import TableData from "./TableData";
 import DeleteButton from "./DeleteButton";
-// import { columns } from "./IndividualTables/IndividualTablesColumn";
+import { UpdateNameDrawerDialog } from "./IndividualTables/UpdateName";
 
 export type IndiviualTable = {
     id: number;
@@ -43,16 +42,21 @@ export function IndividualTable({ tableName }: TableProps) {
     const columns = [
         columnHelper.accessor('name', {
             header: 'Name',
-            cell: props => 
-                <Input 
-                    row={props.row} 
-                    getValue={props.getValue} 
-                    updateName={updateMutation}
-                />
+            cell: props => props.getValue()
+        }),
+        columnHelper.display({
+            id: 'update',
+            header: 'Update',
+            cell: ({ row }) => {
+                const id = row.original.id;
+                const name = row.original.name;
+
+                return <UpdateNameDrawerDialog updateFunction={updateMutation} tableName={tableName} id={id} name={name} />
+            }
         }),
         columnHelper.display({
             id: 'delete',
-            header: 'delete',
+            header: 'Delete',
             cell: (props) => {
                 const id = props.cell.row.original.id as number;
 
