@@ -28,7 +28,7 @@ export function SelectDemo({ tableName, field, data }: SelectProps) {
         <SelectGroup>
           <SelectLabel>{tableName} list</SelectLabel>
           {data?.map((data: IndiviualTable) => (
-              <SelectItem value={data.id.toString()}>{data.name}</SelectItem>
+              <SelectItem key={data.id} value={data.id.toString()}>{data.name}</SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>

@@ -2,8 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TableData from "./TableData";
-import DeleteButton from "./DeleteButton";
-import { UpdateNameDrawerDialog } from "./IndividualTables/UpdateName";
+import { UpdateDeleteNameDrawerDialog } from "./IndividualTables/UpdateDeleteName";
 
 export type IndiviualTable = {
     id: number;
@@ -28,6 +27,14 @@ export function IndividualTable({ tableName }: TableProps) {
             return res.data;
         }),
     });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: number) => apiCalls.deleteCall(id),
+        onSuccess: () => {
+            console.log('Invalidating queries for:', [tableName]);
+            queryClient.invalidateQueries({ queryKey: [tableName] });
+        },
+    });
         
     const updateMutation = useMutation<void, Error, IndiviualTable>({
         mutationFn: ({id, name}) => apiCalls.updateCall(id, name),
@@ -51,16 +58,34 @@ export function IndividualTable({ tableName }: TableProps) {
                 const id = row.original.id;
                 const name = row.original.name;
 
-                return <UpdateNameDrawerDialog updateFunction={updateMutation} tableName={tableName} id={id} name={name} />
+                return (
+                    <UpdateDeleteNameDrawerDialog 
+                        updateFunction={updateMutation} 
+                        tableName={tableName} 
+                        id={id} 
+                        name={name} 
+                        actionType="update"
+                    />
+                )
             }
         }),
         columnHelper.display({
             id: 'delete',
             header: 'Delete',
-            cell: (props) => {
-                const id = props.cell.row.original.id as number;
+            cell: ({ row }) => {
+                const id = row.original.id as number;
+                const name = row.original.name;
 
-                return <DeleteButton tableName={tableName} id={id} />
+                // return <DeleteButton tableName={tableName} id={id} />
+                return (
+                    <UpdateDeleteNameDrawerDialog 
+                        deleteFunction={deleteMutation} 
+                        tableName={tableName} 
+                        id={id} 
+                        name={name} 
+                        actionType="delete"
+                    />
+                )
             }
         }),
     ];
