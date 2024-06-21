@@ -1,6 +1,6 @@
 import { UseMutationResult } from "@tanstack/react-query";
 import { SetStateAction, useState } from "react";
-import { type IndiviualTable } from "./Table";
+import { type IndiviualTable } from "./IndividualTables/Table";
 import { Row } from "@tanstack/react-table";
 import { InventoryTableData } from "./InventoryTable/InventoryTable";
 

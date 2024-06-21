@@ -27,7 +27,7 @@ import { Label } from "@/components/ui/label"
 import { CircleX, PencilLineIcon } from "lucide-react"
 import { IndividualTables } from "@/api/api"
 import { UseMutationResult } from "@tanstack/react-query"
-import { IndiviualTable } from "../Table"
+import { IndiviualTable } from "./Table"
 
 type DialogDrawerUpdateNameProps = {
     id: number;

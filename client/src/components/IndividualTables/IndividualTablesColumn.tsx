@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { IndiviualTable } from "../Table";
+import { IndiviualTable } from "./Table";
 
 const columnHelper = createColumnHelper<IndiviualTable>();
     

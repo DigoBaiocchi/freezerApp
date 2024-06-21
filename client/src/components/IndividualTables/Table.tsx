@@ -1,8 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ApiCalls, type IndividualTables } from "../api/api";
+import { ApiCalls, type IndividualTables } from "../../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import TableData from "./TableData";
-import { UpdateDeleteNameDrawerDialog } from "./IndividualTables/UpdateDeleteName";
+import TableData from "../TableData";
+import { UpdateDeleteNameDrawerDialog } from "./UpdateDeleteName";
 
 export type IndiviualTable = {
     id: number;

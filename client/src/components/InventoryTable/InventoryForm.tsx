@@ -1,13 +1,13 @@
 import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiCalls, InventoryPostParams, InventoryTable } from "../api/api";
+import { ApiCalls, InventoryPostParams, InventoryTable } from "../../api/api";
 import type { FieldApi } from '@tanstack/react-form';
-import { SelectDemo } from "./Select";
-import { Button } from "./ui/button";
-import { DatePicker } from "./ui/datePicker";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import { SelectDemo } from "../Select";
+import { Button } from "../ui/button";
+import { DatePicker } from "../ui/datePicker";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 export type InventoryFields = {
   freezer: string;

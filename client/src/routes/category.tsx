@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import Form from '../components/Form'
-import { IndividualTable } from '../components/Table';
+import { IndividualTable } from '../components/IndividualTables/Table';
 import { IndividualTables } from '../api/api';
 
 const tableName: IndividualTables = 'category';

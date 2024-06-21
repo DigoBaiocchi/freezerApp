@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import InventoryForm from '../components/InventoryForm'
+import InventoryForm from '../components/InventoryTable/InventoryForm'
 import { InventoryTable } from '../components/InventoryTable/InventoryTable'
 
 export const Route = createFileRoute('/inventory')({

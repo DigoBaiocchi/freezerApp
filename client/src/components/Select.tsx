@@ -1,6 +1,6 @@
 import { FieldApi } from "@tanstack/react-form";
 import { IndividualTables } from "../api/api";
-import { IndividualTableData, IndiviualTable } from "./Table";
+import { IndividualTableData, IndiviualTable } from "./IndividualTables/Table";
 
 type SelectProps = {
     tableName: IndividualTables;
