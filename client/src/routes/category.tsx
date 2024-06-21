@@ -1,18 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import Form from '../components/Form'
-import { IndividualTable } from '../components/IndividualTables/Table';
 import { IndividualTables } from '../api/api';
-
+import MainBodyIndividualTable from '@/components/MainBodyIndividualTable';
 const tableName: IndividualTables = 'category';
 
 export const Route = createFileRoute(`/${tableName}`)({
   component: () => {
-    return (
-      <>
-        <div>Hello {tableName}!</div>
-        <Form tableName={tableName} />
-        <IndividualTable tableName={tableName} />
-      </>
-    )
+    return <MainBodyIndividualTable tableName={tableName} />
   }
 })
