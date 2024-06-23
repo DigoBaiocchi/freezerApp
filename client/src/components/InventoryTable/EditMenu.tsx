@@ -1,4 +1,4 @@
-import { MoreHorizontal, Pencil } from "lucide-react";
+import { PencilLineIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { UpdatePropsContext } from "./InventoryTable";
@@ -16,17 +16,17 @@ export default function EditMenu({ item }: ItemProps) {
     if (isDesktop) {
         return (
             <Button variant={"ghost"}>
-                <Pencil color="#3859ff" />
+                <PencilLineIcon color="#3859ff" />
             </Button>
         );
     }
-
+    
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant={"ghost"} className="h-8 w-8 p-0">
                     <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
+                    <PencilLineIcon color="#3859ff" className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

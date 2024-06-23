@@ -79,10 +79,10 @@ export const columns = [
     columnHelper.display({
         id: 'delete',
         header: 'Delete',
-        cell: (props) => {
-            const id = props.row.original.id;
+        cell: ({ row }) => {
+            const item = row.original;
 
-            return <DeleteButton tableName="inventory" id={id} />
+            return <DeleteButton tableName="inventory" item={item} />
         }
             
     }),

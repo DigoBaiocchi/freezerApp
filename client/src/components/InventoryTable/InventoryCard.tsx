@@ -1,6 +1,3 @@
-import * as React from "react"
-
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -9,51 +6,76 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import EditMenu from "./EditMenu"
+import { IndividualTableData, InventoryTableData } from "./InventoryTable"
+import DeleteButton from "../DeleteButton";
 
-export function InventoryCard() {
+type InventoryCardProps = {
+    items: IndividualTableData;
+};
+
+export function InventoryCard({ items }: InventoryCardProps) {
     return (
-        <Card className="w-[350px]">
-        <CardHeader>
-            <CardTitle>Rib Eye Steak</CardTitle>
-            <CardDescription>Deploy your new project in one-click.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <form>
-            <div className="grid w-full items-center gap-4">
-                <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Name of your project" />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="framework">Framework</Label>
-                <Select>
-                    <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                    <SelectItem value="next">Next.js</SelectItem>
-                    <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                    <SelectItem value="astro">Astro</SelectItem>
-                    <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                    </SelectContent>
-                </Select>
-                </div>
-            </div>
-            </form>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-            <Button variant="outline">Cancel</Button>
-            <Button>Deploy</Button>
-        </CardFooter>
-        </Card>
+        <>
+            {
+                items.map((item: InventoryTableData) => (
+                    <div className="flex justify-center m-2">
+                        <Card className="w-[275px]">
+                            <CardHeader className="p-5">
+                                <CardTitle>{item.itemname}</CardTitle>
+                                <CardDescription>{item.freezername} - {item.categoryname}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid gap-4 pb-3">
+                                <div>
+                                    <div
+                                    className="mb-4 grid grid-cols-[25px_1fr] items-start pb-0 last:mb-0 last:pb-0"
+                                    >
+                                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                                        <div className="flex m-0 space-x-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                Exp:
+                                            </p>
+                                            <p className="text-sm text-muted-foreground leading-none">
+                                                {item.expdate.substring(0,10)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                    className="mb-4 grid grid-cols-[25px_1fr] items-start pb-0 last:mb-0 last:pb-0"
+                                    >
+                                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                                        <div className="flex m-0 space-x-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                Unit:
+                                            </p>
+                                            <p className="text-sm text-muted-foreground leading-none">
+                                                {item.unitname}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                    className="mb-4 grid grid-cols-[25px_1fr] items-start pb-0 last:mb-0 last:pb-0"
+                                    >
+                                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                                        <div className="flex m-0 space-x-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                Quantity:
+                                            </p>
+                                            <p className="text-sm text-muted-foreground leading-none">
+                                                {item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between pb-3">
+                                <EditMenu item={item} />
+                                <DeleteButton tableName="inventory" item={item} />
+                            </CardFooter>
+                        </Card>
+                    </div>
+                ))
+            }
+        </>
     )
 }
