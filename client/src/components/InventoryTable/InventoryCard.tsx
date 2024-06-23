@@ -18,8 +18,8 @@ export function InventoryCard({ items }: InventoryCardProps) {
     return (
         <>
             {
-                items.map((item: InventoryTableData) => (
-                    <div className="flex justify-center m-2">
+                items?.map((item: InventoryTableData) => (
+                    <div key={item.id} className="flex justify-center m-2">
                         <Card className="w-[275px]">
                             <CardHeader className="p-5">
                                 <CardTitle>{item.itemname}</CardTitle>
