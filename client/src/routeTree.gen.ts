@@ -17,6 +17,7 @@ import { Route as InventoryImport } from './routes/inventory'
 import { Route as HomeImport } from './routes/home'
 import { Route as FreezerImport } from './routes/freezer'
 import { Route as CategoryImport } from './routes/category'
+import { Route as AddInventoryImport } from './routes/addInventory'
 
 // Create/Update Routes
 
@@ -50,10 +51,22 @@ const CategoryRoute = CategoryImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AddInventoryRoute = AddInventoryImport.update({
+  path: '/addInventory',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/addInventory': {
+      id: '/addInventory'
+      path: '/addInventory'
+      fullPath: '/addInventory'
+      preLoaderRoute: typeof AddInventoryImport
+      parentRoute: typeof rootRoute
+    }
     '/category': {
       id: '/category'
       path: '/category'
@@ -102,6 +115,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
+  AddInventoryRoute,
   CategoryRoute,
   FreezerRoute,
   HomeRoute,

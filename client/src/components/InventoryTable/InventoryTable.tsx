@@ -36,9 +36,23 @@ export function InventoryTable() {
     });
 
     if (isDesktop) {
-        return <TableData columns={columns} data={data} isPending={isPending} error={error} />
+        return (
+            <div className="flex-col">
+                <div className="flex justify-center m-2">
+                    <p className="p-1"><b>Items in {tableName}</b></p>
+                </div>
+                <TableData columns={columns} data={data} isPending={isPending} error={error} />
+            </div>
+        );
     }
 
-    return <InventoryCard items={data} />;
+    return (
+        <div className="flex-col">
+            <div className="flex justify-center m-2">
+                <p className="p-1"><b>Items in {tableName}</b></p>
+            </div>
+                <InventoryCard items={data} />                
+        </div>
+    );
 
 }

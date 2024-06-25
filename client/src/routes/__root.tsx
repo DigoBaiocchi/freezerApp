@@ -12,8 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Menu } from "lucide-react";
-import InventoryForm from "@/components/InventoryTable/InventoryForm";
+import { CirclePlus, Menu } from "lucide-react";
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const Root = () => {
@@ -25,37 +24,47 @@ const Root = () => {
                 <div className="flex-column w-full bg-white fixed">
                     <div className="flex w-full justify-center bg-white">
                         <NavigationMenu className="list-none">
-                            <NavigationMenuItem>
-                                <Link to="/home">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Home
-                                    </NavigationMenuLink>
-                                </Link>
-                                <Link to="/freezer">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Freezers
-                                    </NavigationMenuLink>
-                                </Link>
-                                <Link to="/category">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Categories
-                                    </NavigationMenuLink>
-                                </Link>
-                                <Link to="/item">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Items
-                                    </NavigationMenuLink>
-                                </Link>
-                                <Link to="/unit">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Units
-                                    </NavigationMenuLink>
-                                </Link>
-                                <Link to="/inventory">
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Inventory
-                                    </NavigationMenuLink>
-                                </Link>
+                            <NavigationMenuItem className="flex">
+                                <div>
+
+                                    <Link to="/home">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Home
+                                        </NavigationMenuLink>
+                                    </Link>
+                                    <Link to="/freezer">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Freezers
+                                        </NavigationMenuLink>
+                                    </Link>
+                                    <Link to="/category">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Categories
+                                        </NavigationMenuLink>
+                                    </Link>
+                                    <Link to="/item">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Items
+                                        </NavigationMenuLink>
+                                    </Link>
+                                    <Link to="/unit">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Units
+                                        </NavigationMenuLink>
+                                    </Link>
+                                    <Link to="/inventory">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Inventory
+                                        </NavigationMenuLink>
+                                    </Link>
+                                </div>
+                                <div>
+                                    <Link to="/addInventory">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            <Button className="h-8 w-45" type="submit"><CirclePlus className="m-1" />Add to inventory</Button>
+                                        </NavigationMenuLink>
+                                    </Link>
+                                </div>
                             </NavigationMenuItem>
                         </NavigationMenu>
                     </div>
@@ -79,16 +88,24 @@ const Root = () => {
                     <SheetContent side={"left"}>
                         <SheetHeader>
                             <SheetTitle>Freezer App</SheetTitle>
-                            <SheetDescription>
+                            <SheetDescription className="p-2">
                                 Make changes to your freezer here.
                             </SheetDescription>
-                            <SheetClose asChild>
-                                <InventoryForm />
-                            </SheetClose>
                         </SheetHeader>
                         <div className="">
                             <NavigationMenu className="list-none">
                                 <NavigationMenuItem className="w-24">
+                                    <SheetClose asChild>
+                                        <Link to="/addInventory">
+                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                <Button 
+                                                    className="w-40 p-1" 
+                                                    type="submit">
+                                                        <CirclePlus className="m-1" />Add to inventory
+                                                </Button>
+                                            </NavigationMenuLink>
+                                        </Link>
+                                    </SheetClose>
                                     <SheetClose asChild>
                                         <Link to="/home">
                                             <NavigationMenuLink className={`${navigationMenuTriggerStyle()} w-full`}>
@@ -138,7 +155,7 @@ const Root = () => {
                         </SheetFooter>
                     </SheetContent>
                 </Sheet>
-                <hr className="mt-2" />
+                <hr className="mt-1.5" />
             </div>
             <Outlet />
         </>

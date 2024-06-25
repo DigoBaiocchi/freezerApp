@@ -8,8 +8,6 @@ import { DatePicker } from "../ui/datePicker";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { CirclePlus } from "lucide-react";
 
 export type InventoryFields = {
   freezer: string;
@@ -155,153 +153,138 @@ export default function InventoryForm() {
 
     return (
         <>
-            <Sheet>
-                <div className="flex justify-center">
-                    <SheetTrigger asChild>
-                        <Button className="my-2" type="submit"><CirclePlus className="m-1" />Add to inventory</Button>
-                    </SheetTrigger>
-                </div>
-                <SheetContent side={"left"} className="w-full h-screen flex flex-col">
-                    <SheetHeader>
-                        <SheetTitle>Freezer App</SheetTitle>
-                        <SheetDescription>
-                            <p className="p-1"><b>Add new item to inventory</b></p>
-                        </SheetDescription>
-                    </SheetHeader>
-                    <div className="flex-1 overflow-auto">
-                        <div className="flex flex-col items-center justify-center">
-                            <form 
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    form.handleSubmit();
-                                }}
-                                className="flex flex-col justify-center"
-                            >
-                                <div className="p-1 flex flex-col justify-center">
-                                    <form.Field 
-                                        name={individualTableNames.freezer}
-                                        children={(field)  => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
-                                            <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col justify-center">
-                                    <form.Field 
-                                        name={individualTableNames.category}
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
-                                            <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col justify-center">
-                                    <form.Field 
-                                        name={individualTableNames.item}
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
-                                            <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col justify-center">
-                                    <form.Field 
-                                        name={individualTableNames.unit}
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
-                                            <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col justify-center content-center">
-                                    <form.Field 
-                                        name="entryDate"
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
-                                            <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col">
-                                    <form.Field 
-                                        name="expDate"
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
-                                            <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col">
-                                    <form.Field 
-                                        name="quantity"
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
-                                            <Input 
-                                                name={field.name}
-                                                value={field.state.value}
-                                                onBlur={field.handleBlur}
-                                                onChange={(e) => field.handleChange(e.target.value)}
-                                                type="number"
-                                            />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 flex flex-col">
-                                    <form.Field 
-                                        name="description"
-                                        children={(field) => (
-                                        <>
-                                            <Label className="pb-1" htmlFor={field.name}>Description:</Label>
-                                            <Textarea 
-                                                name={field.name}
-                                                value={field.state.value}
-                                                onBlur={field.handleBlur}
-                                                onChange={(e) => field.handleChange(e.target.value)}
-                                            />
-                                            <FieldInfo field={field} />
-                                        </>
-                                        )}
-                                    />
-                                </div>
-                                <div className="p-1 pb-2 flex flex-col">
-                                    <form.Subscribe 
-                                        selector={(state) => [state.canSubmit, state.isSubmitting]}
-                                        children={([_canSubmit, isSubmitting]) => (
-                                            <SheetClose asChild>
-                                                <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} >
-                                                    {isSubmitting ? '...' : 'Add'}
-                                                </Button>
-                                            </SheetClose>
-                                        )}
-                                    />
-                                </div>
-                            </form>
+            
+            <div className="flex-1 overflow-auto">
+                <div className="flex flex-col items-center justify-center m-2">
+                    <p className="p-1"><b>Add item to {tableName}</b></p>
+                    <form 
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            form.handleSubmit();
+                        }}
+                        className="flex flex-col justify-center"
+                    >
+                        <div className="p-1 flex flex-col justify-center">
+                            <form.Field 
+                                name={individualTableNames.freezer}
+                                children={(field)  => (
+                                <>
+                                    <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
+                                    <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
                         </div>
-                    </div>
-                </SheetContent>
-            </Sheet>
+                        <div className="p-1 flex flex-col justify-center">
+                            <form.Field 
+                                name={individualTableNames.category}
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
+                                    <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col justify-center">
+                            <form.Field 
+                                name={individualTableNames.item}
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
+                                    <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col justify-center">
+                            <form.Field 
+                                name={individualTableNames.unit}
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
+                                    <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col justify-center content-center">
+                            <form.Field 
+                                name="entryDate"
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
+                                    <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col">
+                            <form.Field 
+                                name="expDate"
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
+                                    <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col">
+                            <form.Field 
+                                name="quantity"
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
+                                    <Input 
+                                        name={field.name}
+                                        value={field.state.value}
+                                        onBlur={field.handleBlur}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        type="number"
+                                    />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col">
+                            <form.Field 
+                                name="description"
+                                children={(field) => (
+                                <>
+                                    <Label className="pb-1" htmlFor={field.name}>Description:</Label>
+                                    <Textarea 
+                                        name={field.name}
+                                        value={field.state.value}
+                                        onBlur={field.handleBlur}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                    />
+                                    <FieldInfo field={field} />
+                                </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 pb-2 flex flex-col">
+                            <form.Subscribe 
+                                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                                children={([_canSubmit, isSubmitting]) => (
+                                    <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} >
+                                        {isSubmitting ? '...' : 'Add'}
+                                    </Button>
+                                )}
+                            />
+                        </div>
+                    </form>
+                </div>
+            </div>
             <hr />
         </>
     )
