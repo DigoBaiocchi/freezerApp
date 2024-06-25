@@ -7,24 +7,44 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import EditMenu from "./EditMenu"
-import { IndividualTableData, InventoryTableData } from "./InventoryTable"
+import { InventoryTableData } from "./InventoryTable"
 import DeleteButton from "../DeleteButton";
+import { useState } from "react";
+import { Collapsible } from "@radix-ui/react-collapsible";
+import { CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Button } from "../ui/button";
+import { ChevronsUpDown } from "lucide-react";
 
 type InventoryCardProps = {
-    items: IndividualTableData;
+    item: InventoryTableData;
 };
 
-export function InventoryCard({ items }: InventoryCardProps) {
+export function InventoryCard({ item }: InventoryCardProps) {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
         <>
-            {
-                items?.map((item: InventoryTableData) => (
-                    <div key={item.id} className="flex justify-center m-2">
-                        <Card className="w-[275px]">
-                            <CardHeader className="p-5">
+            <Collapsible
+                open={isOpen}
+                onOpenChange={setIsOpen}
+                className="w-[350px] space-y-2"
+            >
+                <div className="flex justify-center m-2">
+                    <Card className="w-[275px]">
+                        <CardHeader className="p-5">
+                            <div className="flex justify-between">
                                 <CardTitle>{item.itemname}</CardTitle>
-                                <CardDescription>{item.freezername} - {item.categoryname}</CardDescription>
-                            </CardHeader>
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="w-100% h-full p-0">
+                                        <ChevronsUpDown className="h-4 w-4" />
+                                        <span className="sr-only">Toggle</span>
+                                    </Button>
+                                </CollapsibleTrigger>
+
+                            </div>
+                            <CardDescription>{item.freezername} - {item.categoryname}</CardDescription>
+                        </CardHeader>
+                        <CollapsibleContent className="space-y-2">
                             <CardContent className="grid gap-4 pb-3">
                                 <div>
                                     <div
@@ -71,11 +91,11 @@ export function InventoryCard({ items }: InventoryCardProps) {
                             <CardFooter className="flex justify-between pb-3">
                                 <EditMenu item={item} />
                                 <DeleteButton tableName="inventory" item={item} />
-                            </CardFooter>
-                        </Card>
-                    </div>
-                ))
-            }
+                            </CardFooter>                                
+                        </CollapsibleContent>
+                    </Card>
+                </div>                    
+            </Collapsible>
         </>
     )
 }

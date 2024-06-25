@@ -51,8 +51,11 @@ export function InventoryTable() {
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Items in {tableName}</b></p>
             </div>
-                <InventoryCard items={data} />                
+            { 
+                data?.map((item: InventoryTableData) => (
+                    <InventoryCard key={item.id} item={item} />                
+                ))
+            }
         </div>
     );
-
 }
