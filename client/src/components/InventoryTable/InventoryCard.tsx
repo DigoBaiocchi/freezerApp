@@ -32,16 +32,16 @@ export function InventoryCard({ item }: InventoryCardProps) {
                 <div className="flex justify-center m-2">
                     <Card className="w-[275px]">
                         <CardHeader className="p-5">
-                            <div className="flex justify-between">
-                                <CardTitle>{item.itemname}</CardTitle>
-                                <CollapsibleTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="w-100% h-full p-0">
-                                        <ChevronsUpDown className="h-4 w-4" />
-                                        <span className="sr-only">Toggle</span>
-                                    </Button>
-                                </CollapsibleTrigger>
+                            <CollapsibleTrigger asChild>
+                                <div className="flex justify-between">
+                                    <CardTitle>{item.itemname}</CardTitle>
+                                        <Button variant="ghost" size="sm" className="w-100% h-full p-0">
+                                            <ChevronsUpDown className="h-4 w-4" />
+                                            <span className="sr-only">Toggle</span>
+                                        </Button>
 
-                            </div>
+                                </div>
+                            </CollapsibleTrigger>
                             <CardDescription>{item.freezername} - {item.categoryname}</CardDescription>
                         </CardHeader>
                         <CollapsibleContent className="space-y-2">
