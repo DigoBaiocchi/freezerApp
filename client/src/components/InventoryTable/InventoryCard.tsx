@@ -39,10 +39,16 @@ export function InventoryCard({ item }: InventoryCardProps) {
                                             <ChevronsUpDown className="h-4 w-4" />
                                             <span className="sr-only">Toggle</span>
                                         </Button>
-
                                 </div>
                             </CollapsibleTrigger>
-                            <CardDescription>{item.freezername} - {item.categoryname}</CardDescription>
+                            <CardDescription>
+                                {!isOpen ? 
+                                        <p className="text-sm text-muted-foreground leading-none">
+                                            <b>Exp:</b> {item.expdate.substring(0,7)} - <b>Qtd:</b> {item.quantity}
+                                        </p>                                   
+                                     :
+                                    `${item.freezername} - ${item.categoryname}`}
+                            </CardDescription>
                         </CardHeader>
                         <CollapsibleContent className="space-y-2">
                             <CardContent className="grid gap-4 pb-3">
