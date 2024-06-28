@@ -8,6 +8,7 @@ import { DatePicker } from "../ui/datePicker";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { ComboBoxResponsive } from "../Combobox";
 
 export type InventoryFields = {
   freezer: string;
@@ -172,6 +173,7 @@ export default function InventoryForm() {
                                 <>
                                     <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
                                     <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
+                                    <ComboBoxResponsive />
                                     <FieldInfo field={field} />
                                 </>
                                 )}
