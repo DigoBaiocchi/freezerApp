@@ -2,7 +2,6 @@ import { createFormFactory } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiCalls, InventoryPostParams, InventoryTable } from "../../api/api";
 import type { FieldApi } from '@tanstack/react-form';
-import { SelectDemo } from "../Select";
 import { Button } from "../ui/button";
 import { DatePicker } from "../ui/datePicker";
 import { Label } from "../ui/label";
@@ -52,6 +51,8 @@ export default function InventoryForm() {
     const apiCalls = new ApiCalls(tableName);
     const queryClient = useQueryClient();
     const date = new Date();
+
+    // const setValueToNull = () => null;
 
     const freezerData = useQuery({
         queryKey: [`${individualTableNames.freezer}Data`],
@@ -141,14 +142,7 @@ export default function InventoryForm() {
                 description: value.description
             });
 
-            value.freezer = '';
-            value.category = '';
-            value.item = '';
-            value.unit = '';
-            value.entryDate = date;
-            value.expDate = date;
-            value.quantity = '0';
-            value.description = '';
+            form.reset();
         }
     });
 
@@ -170,12 +164,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name={individualTableNames.freezer}
                                 children={(field)  => (
-                                <>
-                                    <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
-                                    <SelectDemo tableName={individualTableNames.freezer} field={field} data={freezerData.data} />
-                                    <ComboBoxResponsive />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
+                                        <ComboBoxResponsive data={freezerData.data} tableName={individualTableNames.freezer} field={field} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -183,11 +176,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name={individualTableNames.category}
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
-                                    <SelectDemo tableName={individualTableNames.category} field={field} data={categoryData.data} />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
+                                        <ComboBoxResponsive data={categoryData.data} tableName={individualTableNames.category} field={field} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -195,11 +188,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name={individualTableNames.item}
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
-                                    <SelectDemo tableName={individualTableNames.item} field={field} data={itemData.data} />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
+                                        <ComboBoxResponsive data={itemData.data} tableName={individualTableNames.item} field={field} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -207,11 +200,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name={individualTableNames.unit}
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
-                                    <SelectDemo tableName={individualTableNames.unit} field={field} data={unitData.data} />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
+                                        <ComboBoxResponsive data={unitData.data} tableName={individualTableNames.unit} field={field} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -219,11 +212,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name="entryDate"
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
-                                    <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
+                                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -231,11 +224,11 @@ export default function InventoryForm() {
                             <form.Field 
                                 name="expDate"
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
-                                    <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
+                                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -243,17 +236,17 @@ export default function InventoryForm() {
                             <form.Field 
                                 name="quantity"
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
-                                    <Input 
-                                        name={field.name}
-                                        value={field.state.value}
-                                        onBlur={field.handleBlur}
-                                        onChange={(e) => field.handleChange(e.target.value)}
-                                        type="number"
-                                    />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
+                                        <Input 
+                                            name={field.name}
+                                            value={field.state.value}
+                                            onBlur={field.handleBlur}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            type="number"
+                                        />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
@@ -261,16 +254,16 @@ export default function InventoryForm() {
                             <form.Field 
                                 name="description"
                                 children={(field) => (
-                                <>
-                                    <Label className="pb-1" htmlFor={field.name}>Description:</Label>
-                                    <Textarea 
-                                        name={field.name}
-                                        value={field.state.value}
-                                        onBlur={field.handleBlur}
-                                        onChange={(e) => field.handleChange(e.target.value)}
-                                    />
-                                    <FieldInfo field={field} />
-                                </>
+                                    <>
+                                        <Label className="pb-1" htmlFor={field.name}>Description:</Label>
+                                        <Textarea 
+                                            name={field.name}
+                                            value={field.state.value}
+                                            onBlur={field.handleBlur}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                        />
+                                        <FieldInfo field={field} />
+                                    </>
                                 )}
                             />
                         </div>
