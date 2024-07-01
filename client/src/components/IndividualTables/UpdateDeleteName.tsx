@@ -36,14 +36,15 @@ type DialogDrawerUpdateNameProps = {
 
 type UpdateNameDrawerDialogProps = {
     updateFunction?: UseMutationResult<void, Error, IndiviualTable, unknown>;
+    insertFunction?: UseMutationResult<void, Error, string, unknown>;
     deleteFunction?: UseMutationResult<void, Error, number, unknown>;
     tableName: IndividualTables;
     name: string;
     id: number;
-    actionType: 'delete' | 'update';
+    actionType: 'delete' | 'update' | 'insert';
 };
 
-export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFunction, deleteFunction, actionType }: UpdateNameDrawerDialogProps) {
+export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFunction, insertFunction, deleteFunction, actionType }: UpdateNameDrawerDialogProps) {
     const [open, setOpen] = React.useState(false)
     const [updatedName, setUpdatedName] = React.useState(name);
     const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -74,7 +75,7 @@ export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFuncti
                         Click save when you're done.
                     </DialogDescription>
                     </DialogHeader>
-                    <UpdateNameForm name={name} updatedQuantity={handleUpdatedName} />
+                    <UpdateNameForm name={name} handleNameChange={handleUpdatedName} />
                     <DialogClose className="flex">
                     <Button className="w-full" onClick={() => {
                         handleSubmitUpdatedName({ id, name: updatedName })
@@ -97,7 +98,7 @@ export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFuncti
                     Click Save when you're done.
                 </DrawerDescription>
                 </DrawerHeader>
-                <UpdateNameForm className="px-4" name={name} updatedQuantity={handleUpdatedName} />
+                <UpdateNameForm className="px-4" name={name} handleNameChange={handleUpdatedName} />
                 <DrawerFooter className="pt-2">
                 <DrawerClose asChild>
                     <Button onClick={() => {
@@ -145,6 +146,7 @@ export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFuncti
                     </DialogClose>
                 </DialogContent>
                 </Dialog>
+                
             )
         }
         
@@ -176,7 +178,70 @@ export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFuncti
             </Drawer>
         )
 
-    } else {
+    } else if (actionType === 'insert') {
+        if (!insertFunction) {
+            throw new Error('updateFunction was not provided.');
+        }
+
+        const handleUpdatedName = (name: string) => {
+            setUpdatedName(name);
+        }
+         
+        const handleInsert = (name: string) => {
+            insertFunction.mutate(name)
+        }
+
+        if (isDesktop) {
+            return (
+                <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <Button className="w-full">Create new {tableName}</Button>  
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                    <DialogTitle>Create new {tableName}</DialogTitle>
+                    <DialogDescription>
+                        Click save when you're done.
+                    </DialogDescription>
+                    </DialogHeader>
+                    <UpdateNameForm name={name} handleNameChange={handleUpdatedName} />
+                    <DialogClose className="flex">
+                    <Button className="w-full" onClick={() => {
+                        handleInsert(updatedName)
+                    }}>Save</Button>
+                    </DialogClose>
+                </DialogContent>
+                </Dialog>
+            )
+        }
+        
+        return (
+            <Drawer open={open} onOpenChange={setOpen}>
+            <DrawerTrigger asChild>
+                <Button className="w-full">Create new {tableName}</Button>
+            </DrawerTrigger>
+            <DrawerContent>
+                <DrawerHeader className="text-left">
+                <DrawerTitle>Create new {tableName}</DrawerTitle>
+                <DrawerDescription>
+                    Click Save when you're done.
+                </DrawerDescription>
+                </DrawerHeader>
+                <UpdateNameForm className="px-4" name={name} handleNameChange={handleUpdatedName} />
+                <DrawerFooter className="pt-2">
+                <DrawerClose asChild>
+                    <Button onClick={() => {
+                        handleInsert(updatedName)
+                    }}>Save</Button>
+                </DrawerClose>
+                <DrawerClose asChild>
+                    <Button variant="destructive">Cancel</Button>
+                </DrawerClose>
+                </DrawerFooter>
+            </DrawerContent>
+            </Drawer>
+        )
+    }else {
         throw new Error('Wrong actionType selected');
     }
 }
@@ -184,14 +249,14 @@ export function UpdateDeleteNameDrawerDialog({ tableName, id, name, updateFuncti
 type UpdateNameFormProps = {
     className?: string;
     name: string;
-    updatedQuantity: (name: string) => void;
+    handleNameChange: (name: string) => void;
 };
 
-function UpdateNameForm({ className, name, updatedQuantity }: UpdateNameFormProps) {
+function UpdateNameForm({ className, name, handleNameChange }: UpdateNameFormProps) {
     const [updatedName, setUpdatedName] = React.useState(name);
 
     React.useEffect(() => {
-        updatedQuantity(updatedName);
+        handleNameChange(updatedName);
     }, [updatedName]);
 
     return (
