@@ -30,8 +30,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
 
 type Data = {
-  id: number
-  name: string
+    id: number
+    name: string
 }
 
 type ComboboxResponsiveProps = {
@@ -51,6 +51,10 @@ export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiv
         }
     }, [field.state.value])
 
+    React.useEffect(() => {
+        console.log(data);
+    }, [data])
+
     if (isDesktop) {
         return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -60,7 +64,13 @@ export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiv
             </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[280px] p-0" align="start">
-            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} data={data} field={field} tableName={tableName} />
+            <NameList 
+                setOpen={setOpen} 
+                setSelectedName={setSelectedStatus} 
+                data={data} 
+                field={field} 
+                tableName={tableName} 
+            />
             </PopoverContent>
         </Popover>
         )
@@ -81,22 +91,29 @@ export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiv
                 </DialogDescription>
             </DialogHeader>
             <div className="mt-4 border-t">
-            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} data={data} field={field} tableName={tableName} />
+            <NameList 
+                setOpen={setOpen} 
+                setSelectedName={setSelectedStatus} 
+                data={data} 
+                field={field} 
+                tableName={tableName} 
+            />
             </div>
         </DrawerContent>
         </Drawer>
     )
 }
 
-function StatusList({
+function NameList({
     setOpen,
-    setSelectedStatus,
+    setSelectedName,
     data,
     field,
-    tableName
+    tableName,
+    // insertFunction
 }: {
     setOpen: (open: boolean) => void
-    setSelectedStatus: (status: Data | null) => void
+    setSelectedName: (status: Data | null) => void
     data: IndividualTableData
     field: FieldApi<any, any, any, any, any>;
     tableName: IndividualTables;
@@ -108,14 +125,10 @@ function StatusList({
     const addDataMutation = useMutation({
       mutationFn: (name: string) => apiCalls.postCall(name),
       onSuccess: () => {
-        console.log('Invalidating queries for:', [tableName]);
-        queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+        console.log('Invalidating queries for:', [`${tableName}Data`]);
+        queryClient.invalidateQueries({ queryKey: [`${tableName}Data`], exact: true });
       }
     });
-
-    React.useEffect(() => {
-        console.log(value)
-    }, [value]);
 
     return (
         <Command>
@@ -144,7 +157,7 @@ function StatusList({
                     key={status.id}
                     value={status.name}
                     onSelect={(value) => {
-                        setSelectedStatus(
+                        setSelectedName(
                             data.find((priority) => priority.name === value) || null
                         )
                         setOpen(false)

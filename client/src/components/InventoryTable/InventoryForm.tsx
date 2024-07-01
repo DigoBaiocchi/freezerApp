@@ -166,7 +166,11 @@ export default function InventoryForm() {
                                 children={(field)  => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
-                                        <ComboBoxResponsive data={freezerData.data} tableName={individualTableNames.freezer} field={field} />
+                                        <ComboBoxResponsive 
+                                            data={freezerData.data} 
+                                            tableName={individualTableNames.freezer} 
+                                            field={field} 
+                                        />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
@@ -178,7 +182,11 @@ export default function InventoryForm() {
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
-                                        <ComboBoxResponsive data={categoryData.data} tableName={individualTableNames.category} field={field} />
+                                        <ComboBoxResponsive 
+                                            data={categoryData.data} 
+                                            tableName={individualTableNames.category} 
+                                            field={field} 
+                                        />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
@@ -190,7 +198,11 @@ export default function InventoryForm() {
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
-                                        <ComboBoxResponsive data={itemData.data} tableName={individualTableNames.item} field={field} />
+                                        <ComboBoxResponsive 
+                                            data={itemData.data} 
+                                            tableName={individualTableNames.item} 
+                                            field={field} 
+                                        />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
@@ -202,7 +214,11 @@ export default function InventoryForm() {
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
-                                        <ComboBoxResponsive data={unitData.data} tableName={individualTableNames.unit} field={field} />
+                                        <ComboBoxResponsive 
+                                            data={unitData.data} 
+                                            tableName={individualTableNames.unit} 
+                                            field={field} 
+                                        />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
