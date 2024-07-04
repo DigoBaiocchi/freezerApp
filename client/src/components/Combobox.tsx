@@ -83,7 +83,7 @@ export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiv
             {selectedStatus ? <>{selectedStatus.name}</> : <>+ Select {tableName}</>}
             </Button>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className="pb-16">
             <DialogHeader>
                 <DialogTitle>Select {tableName}</DialogTitle>
                 <DialogDescription>
