@@ -21,7 +21,7 @@ export function InputFile() {
         reader.onload = (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
             setFileContent(content);
-            console.log('File content:', content);
+            console.log('File content:', content.split('\r\n').map((array) => array.split(',')));
         };
 
         reader.readAsText(file);
@@ -29,7 +29,7 @@ export function InputFile() {
     
     return (
         <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="picture">Picture</Label>
+            <Label htmlFor="picture">Select File:</Label>
             <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
             {
                 file && (
@@ -38,7 +38,7 @@ export function InputFile() {
                         <p>Name: {file.name}</p>
                         <p>Type: {file.type}</p>
                         <p>Size: {file.size}</p>
-                        <pre>{fileContent}</pre>
+                        <pre>{fileContent.split(',')}</pre>
                     </div>
                 )
             }
