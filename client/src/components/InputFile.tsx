@@ -1,10 +1,16 @@
+import { IndividualTables } from "@/api/api";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChangeEvent, useState } from "react"
 
+type file = {
+    table: IndividualTables;
+    name: string;
+}
+
 export function InputFile() {
     const [file, setFile] = useState<File | null>(null);
-    const [fileContent, setFileContent] = useState('');
+    const [fileContent, setFileContent] = useState<Array<file>>([]);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
@@ -20,8 +26,15 @@ export function InputFile() {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
-            setFileContent(content);
-            console.log('File content:', content.split('\r\n').map((array) => array.split(',')));
+            const result = content.split('\r\n').map((array) => {
+                const arrayResult = array.split(',');
+                const table = arrayResult[0] as IndividualTables;
+                const name = arrayResult[1];
+                return { table, name };
+            });
+            result.shift();
+            console.log('File content:', result);
+            setFileContent(result);
         };
 
         reader.readAsText(file);
@@ -38,7 +51,13 @@ export function InputFile() {
                         <p>Name: {file.name}</p>
                         <p>Type: {file.type}</p>
                         <p>Size: {file.size}</p>
-                        <pre>{fileContent.split(',')}</pre>
+                        {
+                            fileContent.map(fileData => (
+                                <pre key={fileData.name}>
+                                    {`Table: ${fileData.table} - Name: ${fileData.name}`}
+                                </pre>
+                            ))
+                        }
                     </div>
                 )
             }
