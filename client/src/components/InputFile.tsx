@@ -1,7 +1,8 @@
-import { IndividualTables } from "@/api/api";
+import { ApiCalls, IndividualTables } from "@/api/api";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
+import { IndividualTableData } from "./IndividualTables/Table";
 
 type file = {
     table: IndividualTables;
@@ -38,7 +39,26 @@ export function InputFile() {
         };
 
         reader.readAsText(file);
-    }
+    };
+
+    const insertNamesToDatabase = () => {
+        fileContent.forEach(async content => {
+            const apiCalls = new ApiCalls(content.table);
+            const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
+            const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
+            
+            if (checkifNameExists) {
+                console.log(`Name ${content.name} already exists`);
+                throw new Error(`Name ${content.name} already exists`);
+            }
+    
+            return await apiCalls.postCall(content.name);
+        });
+    };
+    
+    useEffect(() => {
+        insertNamesToDatabase();
+    }, [fileContent]);
     
     return (
         <div className="grid w-full max-w-sm items-center gap-1.5">
