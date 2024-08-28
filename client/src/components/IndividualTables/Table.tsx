@@ -1,7 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ApiCalls, type IndividualTables } from "../../api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import TableData from "../TableData";
+// import TableData from "../TableData";
+import TableIndividualData from "../TableIndividualData";
 import { UpdateDeleteNameDrawerDialog } from "./UpdateDeleteName";
 
 export type IndiviualTable = {
@@ -48,12 +49,14 @@ export function IndividualTable({ tableName }: TableProps) {
     
     const columns = [
         columnHelper.accessor('name', {
+            id: 'name',
             header: 'Name',
-            cell: props => props.getValue()
+            cell: props => props.getValue(),
         }),
         columnHelper.display({
             id: 'update',
             header: 'Update',
+            enableSorting: false,
             cell: ({ row }) => {
                 const id = row.original.id;
                 const name = row.original.name;
@@ -72,11 +75,11 @@ export function IndividualTable({ tableName }: TableProps) {
         columnHelper.display({
             id: 'delete',
             header: 'Delete',
+            enableSorting: false,
             cell: ({ row }) => {
                 const id = row.original.id as number;
                 const name = row.original.name;
 
-                // return <DeleteButton tableName={tableName} id={id} />
                 return (
                     <UpdateDeleteNameDrawerDialog 
                         deleteFunction={deleteMutation} 
@@ -90,5 +93,5 @@ export function IndividualTable({ tableName }: TableProps) {
         }),
     ];
 
-    return <TableData columns={columns} data={data} isPending={isPending} error={error} />
+    return <TableIndividualData columns={columns} data={data} isPending={isPending} error={error} />
 }
