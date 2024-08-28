@@ -50,15 +50,12 @@ export function IndividualTable({ tableName }: TableProps) {
     const columns = [
         columnHelper.accessor('name', {
             id: 'name',
-            id: 'name',
             header: 'Name',
-            cell: props => props.getValue(),
             cell: props => props.getValue(),
         }),
         columnHelper.display({
             id: 'update',
             header: 'Update',
-            enableSorting: false,
             enableSorting: false,
             cell: ({ row }) => {
                 const id = row.original.id;
@@ -79,7 +76,6 @@ export function IndividualTable({ tableName }: TableProps) {
             id: 'delete',
             header: 'Delete',
             enableSorting: false,
-            enableSorting: false,
             cell: ({ row }) => {
                 const id = row.original.id as number;
                 const name = row.original.name;
@@ -97,6 +93,5 @@ export function IndividualTable({ tableName }: TableProps) {
         }),
     ];
 
-    return <TableIndividualData columns={columns} data={data} isPending={isPending} error={error} />
     return <TableIndividualData columns={columns} data={data} isPending={isPending} error={error} />
 }
