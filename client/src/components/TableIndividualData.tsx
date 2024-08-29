@@ -1,8 +1,8 @@
-import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { InventoryTableData } from "./InventoryTable/InventoryTableColumns";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDownAZ, ArrowDownUp, ArrowUpAZ } from "lucide-react";
 
 type TableDataProps = {
@@ -18,16 +18,33 @@ type ColumnSort = {
 }
 type SortingState = ColumnSort[];
 
+type ColumnFilter = {
+    id: string;
+    value: string;
+}
+type FilteringState = ColumnFilter[];
+
 
 
 export default function TableIndividualData({ columns, data, isPending, error}: TableDataProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = useState<FilteringState>([
+        {
+            id: "name",
+            value: ""
+        }
+    ]);
+
+    useEffect(() => {
+        setColumnFilters(columnFilters);
+    }, [columnFilters]);
 
     const table = useReactTable({ 
         columns, 
         data, 
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
         // initialState: {
         //     columnOrder: ["name", "update", "delete"],
         //     sorting: [
@@ -39,6 +56,7 @@ export default function TableIndividualData({ columns, data, isPending, error}: 
         // },
         state: {
             sorting,
+            columnFilters,
         },
         onSortingChange: setSorting,
     });
