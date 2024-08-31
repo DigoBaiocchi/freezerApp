@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChangeEvent, useEffect, useState } from "react"
 import { IndividualTableData } from "./IndividualTables/Table";
+import { Card } from "./ui/card";
 
 type file = {
     table: IndividualTables;
@@ -61,26 +62,31 @@ export function InputFile() {
     }, [fileContent]);
     
     return (
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="picture">Select File:</Label>
-            <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
-            {
-                file && (
-                    <div>
-                        <h3>Uploaded File:</h3>
-                        <p>Name: {file.name}</p>
-                        <p>Type: {file.type}</p>
-                        <p>Size: {file.size}</p>
-                        {
-                            fileContent.map(fileData => (
-                                <pre key={fileData.name}>
-                                    {`Table: ${fileData.table} - Name: ${fileData.name}`}
-                                </pre>
-                            ))
-                        }
-                    </div>
-                )
-            }
-        </div>
+        <Card className="flex w-[300px] m-2">
+            <div className="flex justify-center p-2">
+                <div className="flex-row align-middle w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="picture">Select File:</Label>
+                    <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
+                    {
+                        file && (
+                            <div>
+                                <h3>Uploaded File:</h3>
+                                <p>Name: {file.name}</p>
+                                <p>Type: {file.type}</p>
+                                <p>Size: {file.size}</p>
+                                {
+                                    fileContent.map(fileData => (
+                                        <pre key={fileData.name}>
+                                            {`Table: ${fileData.table} - Name: ${fileData.name}`}
+                                        </pre>
+                                    ))
+                                }
+                            </div>
+                        )
+                    }
+                </div>
+            </div>
+        </Card>
+        
     )   
 }

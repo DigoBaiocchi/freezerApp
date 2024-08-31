@@ -8,7 +8,7 @@ export default function MainContainer({ children }: MainProps) {
 
   if (isDesktop) {
     return (
-        <main className='pt-10'>
+        <main className='pt-14'>
           {children}
         </main>
     );
