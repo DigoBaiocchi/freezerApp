@@ -35,27 +35,31 @@ export function InventoryTable() {
         }),
     });
 
-    if (isDesktop) {
-        return (
-            <div className="flex-col">
-                <div className="flex justify-center m-2">
-                    <p className="p-1"><b>Items in {tableName}</b></p>
-                </div>
-                <TableData columns={columns} data={data} isPending={isPending} error={error} />
-            </div>
-        );
-    }
+    // if (isDesktop) {
+    //     return (
+    //         <div className="flex-col">
+    //             <div className="flex justify-center m-2">
+    //                 <p className="p-1"><b>Items in {tableName}</b></p>
+    //             </div>
+    //             <TableData columns={columns} data={data} isPending={isPending} error={error} />
+    //         </div>
+    //     );
+    // }
 
     return (
-        <div className="flex-col">
+        <div className="flex-col align-middle">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Items in {tableName}</b></p>
             </div>
-            { 
-                data?.map((item: InventoryTableData) => (
-                    <InventoryCard key={item.id} item={item} />                
-                ))
-            }
+            <div className="flex justify-center">
+                <div className="flex flex-wrap pl-16 max-w-[1200px]">
+                    { 
+                        data?.map((item: InventoryTableData) => (
+                            <InventoryCard key={item.id} item={item} />                
+                        ))
+                    }
+                </div>
+            </div>
         </div>
     );
 }

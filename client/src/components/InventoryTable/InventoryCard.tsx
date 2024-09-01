@@ -44,7 +44,7 @@ export function InventoryCard({ item }: InventoryCardProps) {
                             <CardDescription>
                                 {!isOpen ? 
                                         <p className="text-sm text-muted-foreground leading-none">
-                                            <b>Exp:</b> {item.expdate.substring(0,7)} - <b>Qtd:</b> {item.quantity}
+                                            <b>Quatity:</b> {item.quantity}
                                         </p>                                   
                                      :
                                     `${item.freezername} - ${item.categoryname}`}
