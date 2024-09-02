@@ -1,9 +1,9 @@
 import { ApiCalls } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
-import { columns } from "./InventoryTableColumns";
-import TableData from "../TableData";
+// import { columns } from "./InventoryTableColumns";
+// import TableData from "../TableData";
 import { createContext } from "react";
-import { useMediaQuery } from "usehooks-ts";
+// import { useMediaQuery } from "usehooks-ts";
 import { InventoryCard } from "./InventoryCard";
 
 export type InventoryTableData = {
@@ -23,11 +23,11 @@ export type IndividualTableData = InventoryTableData[];
 export const UpdatePropsContext = createContext({ id: 0, quantity: 0});
 
 export function InventoryTable() {
-    const isDesktop = useMediaQuery("(min-width: 768px)");
+    // const isDesktop = useMediaQuery("(min-width: 768px)");
     const tableName = 'inventory';
     const apiCalls = new ApiCalls(tableName);
     
-    const { isPending, error, data} = useQuery({
+    const { /**isPending, error, */data} = useQuery({
         queryKey: [tableName],
         queryFn: () => apiCalls.getCall().then((res) => {
             console.log("getCall data is:", res.data)
@@ -47,12 +47,12 @@ export function InventoryTable() {
     // }
 
     return (
-        <div className="flex-col align-middle">
+        <div className="flex-col">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Items in {tableName}</b></p>
             </div>
             <div className="flex justify-center">
-                <div className="flex flex-wrap pl-16 max-w-[1200px]">
+                <div className="flex flex-wrap pl-8 pr-8 max-w-[1200px]">
                     { 
                         data?.map((item: InventoryTableData) => (
                             <InventoryCard key={item.id} item={item} />                
