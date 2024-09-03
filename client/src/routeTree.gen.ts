@@ -15,9 +15,11 @@ import { Route as UnitImport } from './routes/unit'
 import { Route as ItemImport } from './routes/item'
 import { Route as InventoryImport } from './routes/inventory'
 import { Route as HomeImport } from './routes/home'
-import { Route as FreezerImport } from './routes/freezer'
 import { Route as CategoryImport } from './routes/category'
 import { Route as AddInventoryImport } from './routes/addInventory'
+import { Route as FreezerIndexImport } from './routes/freezer/index'
+import { Route as FreezerFreezerIdImport } from './routes/freezer/$freezerId'
+import { Route as CategoryCategoryIdImport } from './routes/category/$categoryId'
 
 // Create/Update Routes
 
@@ -41,11 +43,6 @@ const HomeRoute = HomeImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const FreezerRoute = FreezerImport.update({
-  path: '/freezer',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const CategoryRoute = CategoryImport.update({
   path: '/category',
   getParentRoute: () => rootRoute,
@@ -54,6 +51,21 @@ const CategoryRoute = CategoryImport.update({
 const AddInventoryRoute = AddInventoryImport.update({
   path: '/addInventory',
   getParentRoute: () => rootRoute,
+} as any)
+
+const FreezerIndexRoute = FreezerIndexImport.update({
+  path: '/freezer/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FreezerFreezerIdRoute = FreezerFreezerIdImport.update({
+  path: '/freezer/$freezerId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CategoryCategoryIdRoute = CategoryCategoryIdImport.update({
+  path: '/$categoryId',
+  getParentRoute: () => CategoryRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -72,13 +84,6 @@ declare module '@tanstack/react-router' {
       path: '/category'
       fullPath: '/category'
       preLoaderRoute: typeof CategoryImport
-      parentRoute: typeof rootRoute
-    }
-    '/freezer': {
-      id: '/freezer'
-      path: '/freezer'
-      fullPath: '/freezer'
-      preLoaderRoute: typeof FreezerImport
       parentRoute: typeof rootRoute
     }
     '/home': {
@@ -109,6 +114,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnitImport
       parentRoute: typeof rootRoute
     }
+    '/category/$categoryId': {
+      id: '/category/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/category/$categoryId'
+      preLoaderRoute: typeof CategoryCategoryIdImport
+      parentRoute: typeof CategoryImport
+    }
+    '/freezer/$freezerId': {
+      id: '/freezer/$freezerId'
+      path: '/freezer/$freezerId'
+      fullPath: '/freezer/$freezerId'
+      preLoaderRoute: typeof FreezerFreezerIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/freezer/': {
+      id: '/freezer/'
+      path: '/freezer/'
+      fullPath: '/freezer/'
+      preLoaderRoute: typeof FreezerIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -116,12 +142,13 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   AddInventoryRoute,
-  CategoryRoute,
-  FreezerRoute,
+  CategoryRoute: CategoryRoute.addChildren({ CategoryCategoryIdRoute }),
   HomeRoute,
   InventoryRoute,
   ItemRoute,
   UnitRoute,
+  FreezerFreezerIdRoute,
+  FreezerIndexRoute,
 })
 
 /* prettier-ignore-end */

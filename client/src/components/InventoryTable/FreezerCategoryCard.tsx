@@ -6,10 +6,10 @@ type FreezerCategoryCardProps = {
 }
 
 export function FreezerCategoryCard({name}: FreezerCategoryCardProps) {
-
+    const freezerId = "2";
     return (
         <div className="flex m-2">
-            <Link to="/freezer">
+            <Link to="/freezer/$freezerId" params={{ freezerId }} search={{ categoryId: "categories" }} >
                 <Card className="w-[275px]">
                     <CardHeader className="p-5">
                             <div className="flex justify-center">
