@@ -1,18 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { ApiCalls } from "@/api/api";
-import { FreezerCategoryCard } from "./FreezerCategoryCard";
-import { IndiviualTable } from "../IndividualTables/Table";
-// import { Card, CardHeader } from "../ui/card";
-// import { Skeleton } from "../ui/skeleton";
 import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
+import { CategoryCard } from "./CategoryCard";
 
-export function FreezerSelection() {
-    const tableName = 'freezer';
+type CategoryListProps = {
+    freezerId: number;
+}
+
+type CategorySummaryData = {
+    freezerid: number;
+    categoryid: number;
+    categoryname: string;
+    categorytotal: number;
+};
+
+export function CategoryList({ freezerId }: CategoryListProps) {
+    const tableName = 'inventory';
     const apiCalls = new ApiCalls(tableName);
 
     const { isPending, error, data} = useQuery({
         queryKey: [tableName],
-        queryFn: () => apiCalls.getCall().then((res) => {
+        queryFn: () => apiCalls.getCategoriesList(freezerId).then((res) => {
             console.log("getCall data is:", res.data)
             return res.data;
         }),
@@ -38,8 +46,12 @@ export function FreezerSelection() {
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
-                        data?.map((freezerData: IndiviualTable) => (
-                            <FreezerCategoryCard name={freezerData.name} />
+                        data?.map((categoryData: CategorySummaryData) => (
+                            <CategoryCard 
+                                categoryId={categoryData.categoryid} 
+                                freezerId={categoryData.freezerid} 
+                                categoryName={categoryData.categoryname}
+                            />
                         ))
                     }   
                 </div>

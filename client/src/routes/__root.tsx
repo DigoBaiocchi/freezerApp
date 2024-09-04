@@ -32,17 +32,17 @@ const Root = () => {
                                             Home
                                         </NavigationMenuLink>
                                     </Link>
-                                    <Link to="/freezer">
+                                    <Link to="/freezer/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Freezers
                                         </NavigationMenuLink>
                                     </Link>
-                                    <Link to="/category">
+                                    <Link to="/category/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Categories
                                         </NavigationMenuLink>
                                     </Link>
-                                    <Link to="/item">
+                                    <Link to="/item/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Items
                                         </NavigationMenuLink>
@@ -114,21 +114,21 @@ const Root = () => {
                                         </Link>
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/freezer">
+                                        <Link to="/freezer/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Freezers
                                             </NavigationMenuLink>
                                         </Link>
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/category">
+                                        <Link to="/category/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Categories
                                             </NavigationMenuLink>
                                         </Link>    
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/item">
+                                        <Link to="/item/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Items
                                             </NavigationMenuLink>

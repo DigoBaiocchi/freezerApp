@@ -69,6 +69,12 @@ export class ApiCalls {
             .catch(error => console.log(error))
     }
 
+    async getCategoriesList(freezerId: number) {
+        return axios.get(`${this.apiUrl}/category-list/${freezerId}`)
+            .then(response => response.data)
+            .catch(error => console.log(error));
+    }
+
     async updateCall(id: number, name: string) {
         return axios.put(`${this.apiUrl}/${id}`, {
                 name: name
