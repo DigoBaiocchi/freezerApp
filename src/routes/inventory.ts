@@ -9,6 +9,10 @@ router.get('/',
     successfulMiddlewares.getDataByTableName(tableName)
 );
 
+router.get('/category-list/:freezerId',
+    successfulMiddlewares.getCategorylistByFreezer()
+);
+
 router.post('/', 
     errorMiddlewares.missingRequiredParam(tableName), 
     successfulMiddlewares.postDataByTableName(tableName)
