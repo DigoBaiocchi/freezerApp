@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { ApiCalls } from "@/api/api";
 import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
 import { CategoryCard } from "./CategoryCard";
+import { BreadcrumbPath } from "./BreadcrumbPath";
 
 type CategoryListProps = {
     freezerId: number;
@@ -15,39 +16,52 @@ type CategorySummaryData = {
 };
 
 export function CategoryList({ freezerId }: CategoryListProps) {
-    const tableName = 'inventory';
-    const apiCalls = new ApiCalls(tableName);
+    const inventory = "inventory";
+    const freezer = "freezer";
+    const inventoryCalls = new ApiCalls(inventory);
+    const freezerCalls = new ApiCalls(freezer);
 
-    const { isPending, error, data} = useQuery({
-        queryKey: [tableName],
-        queryFn: () => apiCalls.getCategoriesList(freezerId).then((res) => {
-            console.log("getCall data is:", res.data)
-            return res.data;
-        }),
+    const result = useQueries({
+        queries: [
+            {
+                queryKey: [inventory],
+                queryFn: () => inventoryCalls.getCategoriesList(freezerId).then((res) => {
+                    console.log("getCall data is:", res.data)
+                    return res.data;
+                }),
+            }, {
+                queryKey: [freezer],
+                queryFn: () => freezerCalls.getCall().then((res) => {
+                    console.log("getCall data is:", res.data)
+                    return res.data;
+                }),
+            }
+        ]
     });
 
-    if (isPending) {
+    if (result[1].isPending) {
         return <FreezerCategoryCardSkeleton />;
     }
 
-    if (error) {
-        <div className="flex-col justify-center">
+    if (result[1].error) {
+        return <div className="flex-col justify-center">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Unable to get data.</b></p>
             </div>
         </div>
     }
+  
+    const freezerName = result[1].data.find((item: { id: number; name: string; }) => item.id === freezerId);
 
     return (
         <div className="flex-col justify-center">
-            <div className="flex justify-center m-2">
-                <p className="p-1"><b>Select {tableName}</b></p>
-            </div>
+            <BreadcrumbPath freezerName={freezerName.name}/>
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
-                        data?.map((categoryData: CategorySummaryData) => (
+                        result[0].data?.map((categoryData: CategorySummaryData) => (
                             <CategoryCard 
+                                key={categoryData.categoryid}
                                 categoryId={categoryData.categoryid} 
                                 freezerId={categoryData.freezerid} 
                                 categoryName={categoryData.categoryname}

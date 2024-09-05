@@ -1,4 +1,5 @@
 import { InputFile } from '@/components/InputFile'
+import { FreezerList } from '@/components/InventoryTable/FreezerList'
 import MainContainer from '@/components/MainContainer'
 import { Card } from '@/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/home')({
             <InputFile />
           </Card>
         </div>
+        <FreezerList />
       </MainContainer>
     )
   }

@@ -15,8 +15,6 @@ export const Route = createFileRoute('/category/list')({
   component: () => {
     const { freezerId } = Route.useSearch();
 
-    console.log({freezerId})
-
     return (
       <MainContainer>
         <CategoryList freezerId={freezerId} />
