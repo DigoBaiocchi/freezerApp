@@ -1,3 +1,5 @@
+import { ItemList } from '@/components/InventoryTable/ItemList';
+import MainContainer from '@/components/MainContainer';
 import { createFileRoute } from '@tanstack/react-router'
 
 type Search = {
@@ -12,5 +14,13 @@ export const Route = createFileRoute('/item/list')({
       categoryId: search.categoryId as number
     }
   },
-  component: () => <div>Hello /item/list!</div>
+  component: () => {
+    const { freezerId, categoryId } = Route.useSearch();
+
+    return (
+      <MainContainer>
+        <ItemList key={freezerId} freezerId={freezerId} categoryId={categoryId} />
+      </MainContainer>
+    )
+  }
 })

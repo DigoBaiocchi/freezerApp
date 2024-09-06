@@ -3,7 +3,7 @@ import { ApiCalls } from "@/api/api";
 import { FreezerCategoryCard } from "./FreezerCard";
 import { IndiviualTable } from "../IndividualTables/Table";
 import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
-import { BreadcrumbPath } from "./BreadcrumbPath";
+import { BreadcrumbFreezer } from "./Breadcrumbs/BreadcrumbFreezer";
 
 export function FreezerList() {
     const tableName = 'freezer';
@@ -31,7 +31,7 @@ export function FreezerList() {
 
     return (
         <div className="flex-col justify-center">
-            <BreadcrumbPath />
+            <BreadcrumbFreezer />
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
