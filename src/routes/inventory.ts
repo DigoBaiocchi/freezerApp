@@ -13,6 +13,10 @@ router.get('/category-list/:freezerId',
     successfulMiddlewares.getCategorylistByFreezer()
 );
 
+router.get('/item-list/:freezerId/:categoryId',
+    successfulMiddlewares.getItemlistByFreezerAndCategory()
+);
+
 router.post('/', 
     errorMiddlewares.missingRequiredParam(tableName), 
     successfulMiddlewares.postDataByTableName(tableName)

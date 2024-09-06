@@ -35,6 +35,14 @@ export type CategorySummaryData = {
 };
 
 export type ItemSummaryData = {
+    freezerid: number;
+    categoryid: number;
+    itemid: number;
+    itemname: string;
+    itemtotal: number;
+};
+
+export type IventorySummaryData = {
     inventoryId: number;
     freezerid: number;
     categoryid: number;
@@ -92,12 +100,36 @@ export class InventoryQueries {
                                 WHERE freezer.id = $1
                                 GROUP BY freezerid, categoryid, categoryname;`;
         
-        return await query(selectDataQuery, [freezerId]).then(response => response?.rows) as CategorySummaryData[];
+        return await query(selectDataQuery, [freezerId])
+                        .then(response => response?.rows) as CategorySummaryData[];
     }
 
-    public async getItemSummaryByFreezerAndCagegory({
+    public async getItemSummaryByFreezer(
+        { freezerId, categoryId }: { freezerId: number; categoryId: number }
+    ) {
+        const selectDataQuery = `SELECT
+                                    freezer.id as freezerid,
+                                    category.id as categoryid,
+                                    item.id as itemid,
+                                    item.name as itemname,
+                                    sum(inventory.quantity) as itemtotal
+                                FROM inventory
+                                LEFT JOIN item
+                                    ON item.id = inventory.item_id
+                                LEFT JOIN category
+                                    ON category.id = inventory.category_id
+                                LEFT JOIN freezer
+                                    ON freezer.id = inventory.freezer_id
+                                WHERE freezer.id = $1 AND category.id = $2
+                                GROUP BY freezerid, categoryid, itemid, itemname;`;
+        
+        return await query(selectDataQuery, [freezerId, categoryId])
+                        .then(response => response?.rows) as CategorySummaryData[];
+    }
+
+    public async getInventorySummaryByFreezerAndCagegory({
         freezerId, categoryId, itemId
-    }: {freezerId: number, categoryId: number, itemId: number}) {
+    }: { freezerId: number; categoryId: number; itemId: number; }) {
         const selectDataQuery = `SELECT
                                     inventory.id,
                                     freezer.id as freezerid,
@@ -120,7 +152,8 @@ export class InventoryQueries {
                                     ON unit.id = inventory.unit_id
                                 WHERE freezer.id = $1 AND category.id = $2 AND item.id = $3;`;
         
-        return await query(selectDataQuery, [freezerId, categoryId, itemId]).then(response => response?.rows) as ItemSummaryData[];
+        return await query(selectDataQuery, [freezerId, categoryId, itemId])
+                        .then(response => response?.rows) as IventorySummaryData[];
     }
 
     public async postData({
