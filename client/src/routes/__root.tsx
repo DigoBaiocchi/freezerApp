@@ -52,7 +52,7 @@ const Root = () => {
                                             Units
                                         </NavigationMenuLink>
                                     </Link>
-                                    <Link to="/inventory">
+                                    <Link to="/inventory/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Inventory
                                         </NavigationMenuLink>
@@ -142,7 +142,7 @@ const Root = () => {
                                         </Link>
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/inventory">
+                                        <Link to="/inventory/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Inventory
                                             </NavigationMenuLink>

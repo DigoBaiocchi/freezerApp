@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { InventoryTable } from '../components/InventoryTable/InventoryTable'
+import { InventoryTable } from '../../components/InventoryTable/InventoryTable'
 import MainContainer from '@/components/MainContainer'
 
-export const Route = createFileRoute('/inventory')({
+export const Route = createFileRoute('/inventory/edit')({
   component: () => {
     return (
       <>

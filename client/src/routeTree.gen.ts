@@ -12,11 +12,12 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UnitImport } from './routes/unit'
-import { Route as InventoryImport } from './routes/inventory'
 import { Route as HomeImport } from './routes/home'
 import { Route as AddInventoryImport } from './routes/addInventory'
 import { Route as ItemListImport } from './routes/item/list'
 import { Route as ItemEditImport } from './routes/item/edit'
+import { Route as InventoryListImport } from './routes/inventory/list'
+import { Route as InventoryEditImport } from './routes/inventory/edit'
 import { Route as FreezerListImport } from './routes/freezer/list'
 import { Route as FreezerEditImport } from './routes/freezer/edit'
 import { Route as CategoryListImport } from './routes/category/list'
@@ -26,11 +27,6 @@ import { Route as CategoryEditImport } from './routes/category/edit'
 
 const UnitRoute = UnitImport.update({
   path: '/unit',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const InventoryRoute = InventoryImport.update({
-  path: '/inventory',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -51,6 +47,16 @@ const ItemListRoute = ItemListImport.update({
 
 const ItemEditRoute = ItemEditImport.update({
   path: '/item/edit',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const InventoryListRoute = InventoryListImport.update({
+  path: '/inventory/list',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const InventoryEditRoute = InventoryEditImport.update({
+  path: '/inventory/edit',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -92,13 +98,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeImport
       parentRoute: typeof rootRoute
     }
-    '/inventory': {
-      id: '/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof InventoryImport
-      parentRoute: typeof rootRoute
-    }
     '/unit': {
       id: '/unit'
       path: '/unit'
@@ -134,6 +133,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FreezerListImport
       parentRoute: typeof rootRoute
     }
+    '/inventory/edit': {
+      id: '/inventory/edit'
+      path: '/inventory/edit'
+      fullPath: '/inventory/edit'
+      preLoaderRoute: typeof InventoryEditImport
+      parentRoute: typeof rootRoute
+    }
+    '/inventory/list': {
+      id: '/inventory/list'
+      path: '/inventory/list'
+      fullPath: '/inventory/list'
+      preLoaderRoute: typeof InventoryListImport
+      parentRoute: typeof rootRoute
+    }
     '/item/edit': {
       id: '/item/edit'
       path: '/item/edit'
@@ -156,12 +169,13 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   AddInventoryRoute,
   HomeRoute,
-  InventoryRoute,
   UnitRoute,
   CategoryEditRoute,
   CategoryListRoute,
   FreezerEditRoute,
   FreezerListRoute,
+  InventoryEditRoute,
+  InventoryListRoute,
   ItemEditRoute,
   ItemListRoute,
 })
