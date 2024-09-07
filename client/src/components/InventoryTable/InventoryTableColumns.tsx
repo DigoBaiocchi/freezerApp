@@ -1,7 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import DeleteButton from "../DeleteButton";
-import EditMenu from "./EditMenu";
-import QuantityField from "./QuantityField";
+// import DeleteButton from "../DeleteButton";
+// import EditMenu from "./EditMenu";
+// import QuantityField from "./QuantityField";
 
 export type InventoryTableData = {
     id: number;
@@ -57,33 +57,33 @@ export const columns = [
     }),
     columnHelper.accessor('quantity', {
         header: 'Qtd',
-        cell: ({ row }) => {
-            const item = row.original;
+        // cell: ({ row }) => {
+        //     const item = row.original;
             
-            return (
-                <QuantityField item={item} />
-            );
-        }
+        //     return (
+        //         <QuantityField item={item} />
+        //     );
+        // }
     }),
     columnHelper.display({
         id: 'edit',
         header: 'Edit',
-        cell: ({ row }) => {
-            const item = row.original;
+        // cell: ({ row }) => {
+        //     // const item = row.original;
             
-            return (
-                <EditMenu item={item} />
-            );
-        }
+        //     return (
+        //         // <EditMenu item={item} />
+        //     );
+        // }
     }),
     columnHelper.display({
         id: 'delete',
         header: 'Delete',
-        cell: ({ row }) => {
-            const item = row.original;
+        // cell: ({ row }) => {
+        //     const item = row.original;
 
-            return <DeleteButton tableName="inventory" item={item} />
-        }
+        //     return <DeleteButton tableName="inventory" item={item} />
+        // }
             
     }),
 ];
