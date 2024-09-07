@@ -148,7 +148,8 @@ export class InventoryQueries {
                                     ON freezer.id = inventory.freezer_id
                                 LEFT JOIN unit
                                     ON unit.id = inventory.unit_id
-                                WHERE freezer.id = $1 AND category.id = $2 AND item.id = $3;`;
+                                WHERE freezer.id = $1 AND category.id = $2 AND item.id = $3
+                                ORDER BY expDate;`;
         
         return await query(selectDataQuery, [freezerId, categoryId, itemId])
                         .then(response => response?.rows) as IventorySummaryData[];
