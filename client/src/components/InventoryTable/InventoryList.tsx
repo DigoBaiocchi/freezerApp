@@ -2,14 +2,15 @@ import { useQueries } from "@tanstack/react-query";
 import { ApiCalls } from "@/api/api";
 import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
 import { ItemCard } from "./ItemCard";
-import { BreadcrumbItems } from "./Breadcrumbs/BreadcrumbItem";
+import { BreadcrumbInventoryItem } from "./Breadcrumbs/BreadcrumbInventoryItem";
 
 type ItemListProps = {
     freezerId: number;
     categoryId: number;
+    itemId: number;
 }
 
-type ItemSummaryData = {
+type InventorySummaryData = {
     freezerid: number;
     categoryid: number;
     itemid: number;
@@ -17,7 +18,7 @@ type ItemSummaryData = {
     itemtotal: number;
 };
 
-export function ItemList({ freezerId, categoryId }: ItemListProps) {
+export function InventoryList({ freezerId, categoryId, itemId }: ItemListProps) {
     const inventory = "inventory";
     const freezer = "freezer";
     const category = "category";
@@ -25,6 +26,7 @@ export function ItemList({ freezerId, categoryId }: ItemListProps) {
     const inventoryCalls = new ApiCalls(inventory);
     const freezerCalls = new ApiCalls(freezer);
     const categoryCalls = new ApiCalls(category);
+    const itemCalls = new ApiCalls(item);
 
     const result = useQueries({
         queries: [
@@ -46,6 +48,12 @@ export function ItemList({ freezerId, categoryId }: ItemListProps) {
                     console.log("getCall data is:", res.data)
                     return res.data;
                 }),
+            }, {
+                queryKey: [item, item],
+                queryFn: () => itemCalls.getCall().then((res) => {
+                    console.log("getCall data is:", res.data)
+                    return res.data;
+                }),
             }
         ]
     });
@@ -64,24 +72,28 @@ export function ItemList({ freezerId, categoryId }: ItemListProps) {
   
     const freezerName = result[1].data.find((item: { id: number; name: string; }) => item.id === freezerId);
     const categoryName = result[2].data.find((item: { id: number; name: string; }) => item.id === categoryId);
-    
+    const itemName = result[3].data.find((item: { id: number; name: string; }) => item.id === itemId);
+    console.log(itemName)
     return (
         <div className="flex-col justify-center">
-            <BreadcrumbItems freezerId={freezerName.id} freezerName={freezerName.name} categoryName={categoryName.name} />
+            <BreadcrumbInventoryItem 
+                freezerId={freezerName.id} 
+                freezerName={freezerName.name} 
+                categoryName={categoryName.name} 
+                categoryId={categoryId}
+                itemName={itemName.name}
+            />
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
-                        result[0].data?.map((itemData: ItemSummaryData) => (
-                            <ItemCard 
-                                key={itemData.itemid}
-                                freezerId={freezerId}
-                                categoryId={categoryId}
-                                itemId={itemData.itemid}
-                                itemName={itemData.itemname}
-                                itemTotal={itemData.itemtotal}
+                        // result[0].data?.map((itemData: ItemSummaryData) => (
+                        //     <ItemCard 
+                        //         key={itemData.itemid}
+                        //         itemName={itemData.itemname}
+                        //         itemTotal={itemData.itemtotal}
 
-                            />
-                        ))
+                        //     />
+                        // ))
                     }   
                 </div>
             </div>

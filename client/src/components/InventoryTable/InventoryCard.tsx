@@ -15,8 +15,19 @@ import { CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Button } from "../ui/button";
 import { ChevronsUpDown } from "lucide-react";
 
+type ItemData = {
+    id: number;
+    itemname: string;
+    unitid: number;
+    unitname: string;
+    quantity: number;
+    entrydate: string;
+    expdate: string;
+    description: string;
+};
+
 type InventoryCardProps = {
-    item: InventoryTableData;
+    item: ItemData;
 };
 
 export function InventoryCard({ item }: InventoryCardProps) {
@@ -32,25 +43,26 @@ export function InventoryCard({ item }: InventoryCardProps) {
                 <div className="flex justify-center m-2">
                     <Card className="w-[275px]">
                         <CardHeader className="p-5">
-                            <CollapsibleTrigger asChild>
+                            {/* <CollapsibleTrigger asChild> */}
                                 <div className="flex justify-between">
                                     <CardTitle>{item.itemname}</CardTitle>
                                         <Button variant="ghost" size="sm" className="w-100% h-full p-0">
-                                            <ChevronsUpDown className="h-4 w-4" />
+                                            {/* <ChevronsUpDown className="h-4 w-4" /> */}
                                             <span className="sr-only">Toggle</span>
                                         </Button>
                                 </div>
-                            </CollapsibleTrigger>
-                            <CardDescription>
+                            {/* </CollapsibleTrigger> */}
+                            {/* <CardDescription>
                                 {!isOpen ? 
                                         <p className="text-sm text-muted-foreground leading-none">
-                                            <b>Quatity:</b> {item.quantity}
+                                            <b>Quantity:</b> {item.quantity}
                                         </p>                                   
-                                     :
-                                    `${item.freezername} - ${item.categoryname}`}
-                            </CardDescription>
+                                    :
+                                    `${item.freezername} - ${item.categoryname}`
+                                }
+                            </CardDescription> */}
                         </CardHeader>
-                        <CollapsibleContent className="space-y-2">
+                        {/* <CollapsibleContent className="space-y-2"> */}
                             <CardContent className="grid gap-4 pb-3">
                                 <div>
                                     <div
@@ -95,10 +107,10 @@ export function InventoryCard({ item }: InventoryCardProps) {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between pb-3">
-                                <EditMenu item={item} />
-                                <DeleteButton tableName="inventory" item={item} />
+                                {/* <EditMenu item={item} /> */}
+                                {/* <DeleteButton tableName="inventory" item={item} /> */}
                             </CardFooter>                                
-                        </CollapsibleContent>
+                        {/* </CollapsibleContent> */}
                     </Card>
                 </div>                    
             </Collapsible>

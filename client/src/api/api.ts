@@ -70,15 +70,23 @@ export class ApiCalls {
     }
 
     async getCategoriesList(freezerId: number) {
-        return axios.get(`${this.apiUrl}/category-list/${freezerId}`)
-            .then(response => response.data)
-            .catch(error => console.log(error));
+        if (this.databaseTable === "inventory") {
+            return axios.get(`${this.apiUrl}/category-list/${freezerId}`)
+                .then(response => response.data)
+                .catch(error => console.log(error));
+        } else {
+            throw new Error("getCategoriesList is only available for inventory table");
+        }
     }
 
     async getItemList(freezerId: number, categoryId: number) {
-        return axios.get(`${this.apiUrl}/item-list/${freezerId}/${categoryId}`)
-            .then(response => response.data)
-            .catch(error => console.log(error));
+        if (this.databaseTable === "inventory") {
+            return axios.get(`${this.apiUrl}/item-list/${freezerId}/${categoryId}`)
+                .then(response => response.data)
+                .catch(error => console.log(error));
+        } else {
+            throw new Error("getCategoriesList is only available for inventory table");
+        }
     }
 
     async updateCall(id: number, name: string) {

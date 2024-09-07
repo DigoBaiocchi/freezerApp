@@ -29,11 +29,11 @@ export function BreadcrumbInventoryItem({
                         <Link to='/category/list' search={{ freezerId }} >{categoryName}</Link>
                     </BreadcrumbLink>
                     <BreadcrumbSeparator></BreadcrumbSeparator>
-                    <BreadcrumbItem>Select inventory item</BreadcrumbItem>
                     <BreadcrumbLink asChild>
                         <Link to='/item/list' search={{ freezerId, categoryId }} >{itemName}</Link>
                     </BreadcrumbLink>
                     <BreadcrumbSeparator></BreadcrumbSeparator>
+                    <BreadcrumbItem>Select inventory item</BreadcrumbItem>
                 </BreadcrumbList>
                 </Breadcrumb>
             </div>
