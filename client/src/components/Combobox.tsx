@@ -135,13 +135,6 @@ function NameList({
         <CommandInput onValueChange={(value) => setValue(value)} placeholder="Filter status..." />
         <CommandList>
             <CommandEmpty className="">
-                <UpdateDeleteNameDrawerDialog 
-                    actionType="insert" 
-                    id={0} 
-                    name={value} 
-                    tableName={tableName} 
-                    insertFunction={addDataMutation} 
-                />
                 <p className="m-1">No results found.</p>                
             </CommandEmpty>
             <CommandGroup>
