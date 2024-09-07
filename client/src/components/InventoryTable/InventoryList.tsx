@@ -1,21 +1,13 @@
 import { useQueries } from "@tanstack/react-query";
 import { ApiCalls } from "@/api/api";
 import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
-import { ItemCard } from "./ItemCard";
 import { BreadcrumbInventoryItem } from "./Breadcrumbs/BreadcrumbInventoryItem";
+import { InventoryCard, ItemData } from "./InventoryCard";
 
 type ItemListProps = {
     freezerId: number;
     categoryId: number;
     itemId: number;
-}
-
-type InventorySummaryData = {
-    freezerid: number;
-    categoryid: number;
-    itemid: number;
-    itemname: string;
-    itemtotal: number;
 };
 
 export function InventoryList({ freezerId, categoryId, itemId }: ItemListProps) {
@@ -32,7 +24,7 @@ export function InventoryList({ freezerId, categoryId, itemId }: ItemListProps) 
         queries: [
             {
                 queryKey: [inventory, item],
-                queryFn: () => inventoryCalls.getItemList(freezerId, categoryId).then((res) => {
+                queryFn: () => inventoryCalls.getIventoryItemList(freezerId, categoryId, itemId).then((res) => {
                     console.log("getCall data is:", res.data)
                     return res.data;
                 }),
@@ -58,11 +50,11 @@ export function InventoryList({ freezerId, categoryId, itemId }: ItemListProps) 
         ]
     });
 
-    if (result[0].isPending || result[1].isPending || result[2].isPending) {
+    if (result[0].isPending || result[1].isPending || result[2].isPending || result[3].isPending) {
         return <FreezerCategoryCardSkeleton />;
     }
 
-    if (result[0].error || result[1].error || result[2].error) {
+    if (result[0].error || result[1].error || result[2].error || result[3].error) {
         return <div className="flex-col justify-center">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Unable to get data.</b></p>
@@ -86,14 +78,13 @@ export function InventoryList({ freezerId, categoryId, itemId }: ItemListProps) 
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
-                        // result[0].data?.map((itemData: ItemSummaryData) => (
-                        //     <ItemCard 
-                        //         key={itemData.itemid}
-                        //         itemName={itemData.itemname}
-                        //         itemTotal={itemData.itemtotal}
+                        result[0].data?.map((itemData: ItemData) => (
+                            <InventoryCard 
+                                key={itemData.id}
+                                item={itemData}
 
-                        //     />
-                        // ))
+                            />
+                        ))
                     }   
                 </div>
             </div>

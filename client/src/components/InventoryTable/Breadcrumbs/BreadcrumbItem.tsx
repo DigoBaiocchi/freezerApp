@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Link } from "@tanstack/react-router";
+import { LinkForBreadcrumb } from "./BreadcrumbLink";
 
 type BreadcrumbItemsProps = {
     freezerId: number;
@@ -14,11 +14,11 @@ export function BreadcrumbItems({ freezerId, freezerName, categoryName }: Breadc
                 <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbLink asChild>
-                        <Link to='/freezer/list'>{freezerName}</Link>
+                        <LinkForBreadcrumb  to='/freezer/list' name={freezerName} />
                     </BreadcrumbLink>
                     <BreadcrumbSeparator></BreadcrumbSeparator>
                     <BreadcrumbLink asChild>
-                        <Link to='/category/list' search={{ freezerId }} >{categoryName}</Link>
+                        <LinkForBreadcrumb to='/category/list' search={{ freezerId }} name={categoryName} />
                     </BreadcrumbLink>
                     <BreadcrumbSeparator></BreadcrumbSeparator>
                     <BreadcrumbItem>Select Item</BreadcrumbItem>

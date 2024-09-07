@@ -30,7 +30,6 @@ export function CategoryList({ freezerId }: CategoryListProps) {
                     console.log("getCall data is:", res.data)
                     return res.data;
                 }),
-                // refetchOnWindowFocus: true,
             }, {
                 queryKey: [freezer, category],
                 queryFn: () => freezerCalls.getCall().then((res) => {

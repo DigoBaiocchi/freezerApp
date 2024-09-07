@@ -3,11 +3,11 @@ import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { UpdatePropsContext } from "./InventoryTable";
 import { DrawerDialog } from "./DrawerDialog";
-import { InventoryTableData } from "./InventoryTableColumns";
 import { useMediaQuery } from "usehooks-ts";
+import { ItemData } from "./InventoryCard";
 
 export type ItemProps = {
-    item: InventoryTableData
+    item: ItemData;
 };
 
 export default function EditMenu({ item }: ItemProps) {

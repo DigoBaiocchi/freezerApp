@@ -23,11 +23,11 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { useState } from "react";
-import { InventoryTableData } from "./InventoryTable/InventoryTable";
+import { ItemData } from "./InventoryTable/InventoryCard";
 
 type DeleteButtonProps = {
     tableName: IndividualTables | 'inventory';
-    item: InventoryTableData;
+    item: ItemData;
 };
 
 export default function DeleteButton({ tableName, item }: DeleteButtonProps) {

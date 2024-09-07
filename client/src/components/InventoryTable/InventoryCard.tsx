@@ -1,21 +1,21 @@
 import {
   Card,
   CardContent,
-  CardDescription,
+//   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import EditMenu from "./EditMenu"
-import { InventoryTableData } from "./InventoryTable"
+// import { InventoryTableData } from "./InventoryTable"
 import DeleteButton from "../DeleteButton";
 import { useState } from "react";
 import { Collapsible } from "@radix-ui/react-collapsible";
-import { CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+// import { CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Button } from "../ui/button";
-import { ChevronsUpDown } from "lucide-react";
+// import { ChevronsUpDown } from "lucide-react";
 
-type ItemData = {
+export type ItemData = {
     id: number;
     itemname: string;
     unitid: number;
@@ -74,7 +74,7 @@ export function InventoryCard({ item }: InventoryCardProps) {
                                                 Exp:
                                             </p>
                                             <p className="text-sm text-muted-foreground leading-none">
-                                                {item.expdate.substring(0,10)}
+                                                {item.expdate ? item.expdate.substring(0,10) : ""}
                                             </p>
                                         </div>
                                     </div>
@@ -107,8 +107,8 @@ export function InventoryCard({ item }: InventoryCardProps) {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between pb-3">
-                                {/* <EditMenu item={item} /> */}
-                                {/* <DeleteButton tableName="inventory" item={item} /> */}
+                                <EditMenu item={item} />
+                                <DeleteButton tableName="inventory" item={item} />
                             </CardFooter>                                
                         {/* </CollapsibleContent> */}
                     </Card>
