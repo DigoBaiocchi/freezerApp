@@ -132,10 +132,8 @@ export class InventoryQueries {
     }: { freezerId: number; categoryId: number; itemId: number; }) {
         const selectDataQuery = `SELECT
                                     inventory.id,
-                                    freezer.id as freezerid,
-                                    category.id as categoryid,
-                                    item.id as itemid,
                                     item.name as itemName,
+                                    unit.id as unitid,
                                     unit.name as unitName,
                                     inventory.quantity as quantity,
                                     inventory.entry_date as entryDate,
