@@ -128,8 +128,12 @@ export default function InventoryForm() {
         onSubmit: ({ value }) => {
             console.log(`Freezer: ${value.freezer}`);
             console.log(`Category: ${value.category}`);
+            console.log(`Item: ${value.item}`);
+            console.log(`Unit: ${value.unit}`);
+            console.log(`Quantity: ${value.quantity}`);
             console.log(`description: ${value.description}`);
             console.log(`entrydate: ${new Date(value.entryDate)}`);
+            console.log(`expdate: ${new Date(value.expDate)}`);
             console.log('Submitting form.')
             addDataMutation.mutate({
                 freezerId: +value.freezer,
