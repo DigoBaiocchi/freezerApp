@@ -27,6 +27,10 @@ const missingRequiredParam = (tableName: AllTableNames): RequestHandler => {
             }
             
             if(!checkFreezerId || !checkCategoryId || !checkItemId || !checkUnitId) {
+                console.log("checkFreezerId", checkFreezerId)
+                console.log("checkCategoryId", checkCategoryId)
+                console.log("checkItemId", checkItemId)
+                console.log("checkUnitId", checkUnitId)
                 return res.status(404).json({ error: "Incorrect item params provided" });
             }
         } else {
