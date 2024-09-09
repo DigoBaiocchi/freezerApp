@@ -72,11 +72,11 @@ const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: number }> =
         if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
             const database = new NonInventoryQueries(tableName);
             const data = await database.getData() as NonInventoryData[];
-            checkIfIdExists = data.map(data => data.id).includes(+req.params.id);
+            checkIfIdExists = data.map(data => +data.id).includes(+req.params.id);
         } else if (tableName === 'inventory') {
             const database = new InventoryQueries();
             const data = await database.getData() as DetailedInventoryData[];
-            checkIfIdExists = data.map(data => data.id).includes(+req.params.id);
+            checkIfIdExists = data.map(data => +data.id).includes(+req.params.id);
             console.log(checkIfIdExists, req.params.id)
         } else {
             throw new Error("Invalid table name");
