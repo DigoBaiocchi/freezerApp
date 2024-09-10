@@ -124,7 +124,28 @@ export class InventoryQueries {
                                 GROUP BY freezerid, categoryid, itemid, itemname;`;
         
         return await query(selectDataQuery, [freezerId, categoryId])
-                        .then(response => response?.rows) as CategorySummaryData[];
+                        .then(response => response?.rows) as ItemSummaryData[];
+    }
+
+    public async getItemSummaryByQuantity() {
+        const selectDataQuery = `SELECT
+                                    freezer.id as freezerid,
+                                    category.id as categoryid,
+                                    item.id as itemid,
+                                    item.name as itemname,
+                                    sum(inventory.quantity) as itemtotal
+                                FROM inventory
+                                LEFT JOIN item
+                                    ON item.id = inventory.item_id
+                                LEFT JOIN category
+                                    ON category.id = inventory.category_id
+                                LEFT JOIN freezer
+                                    ON freezer.id = inventory.freezer_id
+                                GROUP BY freezerid, categoryid, itemid, itemname
+                                ORDER BY itemname;`;
+        
+        return await query(selectDataQuery)
+                        .then(response => response?.rows) as ItemSummaryData[];
     }
 
     public async getInventorySummaryByFreezerAndCagegory({

@@ -42,6 +42,15 @@ const getItemlistByFreezerAndCategory = (): RequestHandler<{ freezerId: number; 
     };
 };
 
+const getItemlistByquantity = (): RequestHandler  => {
+    return async (req, res) => {
+        const inventoryDb = new InventoryQueries();
+        const response = await inventoryDb.getItemSummaryByQuantity();
+
+        return res.status(200).json({ data: response });
+    };
+};
+
 const getInventoryItemlistByFreezerAndCategory = (): RequestHandler<{ freezerId: number; categoryId: number; itemId: number; }>  => {
     return async (req, res) => {
         const freezerId: number = req.params.freezerId;
@@ -173,6 +182,7 @@ export const successfulMiddlewares = {
     getDataByTableName, 
     getCategorylistByFreezer,
     getItemlistByFreezerAndCategory,
+    getItemlistByquantity,
     getInventoryItemlistByFreezerAndCategory,
     postDataByTableName, 
     updateDataByTableName, 
