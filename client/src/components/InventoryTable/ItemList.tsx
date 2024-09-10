@@ -9,7 +9,7 @@ type ItemListProps = {
     categoryId: number;
 }
 
-type ItemSummaryData = {
+export type ItemSummaryData = {
     freezerid: number;
     categoryid: number;
     itemid: number;

@@ -79,6 +79,16 @@ export class ApiCalls {
         }
     }
 
+    async getItemsList() {
+        if (this.databaseTable === "inventory") {
+            return axios.get(`${this.apiUrl}/item-list/`)
+                .then(response => response.data)
+                .catch(error => console.log(error));
+        } else {
+            throw new Error("getCategoriesList is only available for inventory table");
+        }
+    }
+
     async getItemList(freezerId: number, categoryId: number) {
         if (this.databaseTable === "inventory") {
             return axios.get(`${this.apiUrl}/item-list/${freezerId}/${categoryId}`)

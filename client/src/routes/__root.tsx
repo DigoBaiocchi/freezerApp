@@ -57,6 +57,11 @@ const Root = () => {
                                             Inventory
                                         </NavigationMenuLink>
                                     </Link>
+                                    <Link to="/inventory/search">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            Search
+                                        </NavigationMenuLink>
+                                    </Link>
                                 </div>
                                 <div>
                                     <Link to="/addInventory">
@@ -145,6 +150,13 @@ const Root = () => {
                                         <Link to="/inventory/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Inventory
+                                            </NavigationMenuLink>
+                                        </Link>
+                                    </SheetClose>
+                                    <SheetClose asChild>
+                                        <Link to="/inventory/search">
+                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                Search
                                             </NavigationMenuLink>
                                         </Link>
                                     </SheetClose>

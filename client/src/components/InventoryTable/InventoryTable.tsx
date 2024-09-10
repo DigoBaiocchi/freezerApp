@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 // import { columns } from "./InventoryTableColumns";
 // import TableData from "../TableData";
 import { createContext } from "react";
+import { InventoryCard, ItemData } from "./InventoryCard";
 // import { useMediaQuery } from "usehooks-ts";
 // import { InventoryCard } from "./InventoryCard";
 
@@ -27,7 +28,7 @@ export function InventoryTable() {
     const tableName = 'inventory';
     const apiCalls = new ApiCalls(tableName);
     
-    const { /**isPending, error, data*/} = useQuery({
+    const { /**isPending, error, */data} = useQuery({
         queryKey: [tableName],
         queryFn: () => apiCalls.getCall().then((res) => {
             console.log("getCall data is:", res.data)
@@ -53,11 +54,11 @@ export function InventoryTable() {
             </div>
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-8 pr-8 max-w-[1200px]">
-                    {/* { 
-                        data?.map((item: InventoryTableData) => (
+                    { 
+                        data?.map((item: ItemData) => (
                             <InventoryCard key={item.id} item={item} />                
                         ))
-                    } */}
+                    }
                 </div>
             </div>
         </div>
