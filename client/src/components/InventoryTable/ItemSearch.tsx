@@ -31,7 +31,11 @@ export function ItemSearch() {
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm.toLowerCase());
     }
-
+    
+    useEffect(() => {
+            const filterResults = data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search));
+            setSearchResult(filterResults);
+    }, [search]);
     
     if (isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -44,11 +48,6 @@ export function ItemSearch() {
             </div>
         </div>
     }
-
-    useEffect(() => {
-            const filterResults = data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search));
-            setSearchResult(filterResults);
-    }, [search]);    
     
     return (
         <div className="flex-col justify-center">
