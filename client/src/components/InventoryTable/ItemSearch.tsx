@@ -34,7 +34,9 @@ export function ItemSearch() {
     
     useEffect(() => {
         
-        const filterResults = data? data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search)) : [];
+        const filterResults = data 
+                            ? data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search)) 
+                            : [];
         setSearchResult(filterResults);
     }, [search]);
     
