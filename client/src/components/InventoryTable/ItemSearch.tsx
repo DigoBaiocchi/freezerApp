@@ -33,8 +33,9 @@ export function ItemSearch() {
     }
     
     useEffect(() => {
-            const filterResults = data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search));
-            setSearchResult(filterResults);
+        
+        const filterResults = data? data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search)) : [];
+        setSearchResult(filterResults);
     }, [search]);
     
     if (isPending) {
