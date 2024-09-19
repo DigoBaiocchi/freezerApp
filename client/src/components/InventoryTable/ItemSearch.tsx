@@ -4,6 +4,7 @@ import { FreezerCategoryCardSkeleton } from "./FreezerCategoryCardSkeleton";
 import { ItemCard } from "./ItemCard";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
+import { ComboboxSimple } from "../ComboboxSimple";
 
 type ItemSummaryData = {
     freezerid: number;
@@ -27,6 +28,15 @@ export function ItemSearch() {
                     return res.data;
                 })
     });
+
+    const categoryData = useQuery({
+        queryKey: [`categoryData`],
+        queryFn: () => {
+            const apiCall = new ApiCalls("category");
+
+            return  apiCall.getCall().then(res => res.data);
+        }
+    });    
 
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm.toLowerCase());
@@ -56,10 +66,11 @@ export function ItemSearch() {
         <div className="flex-col justify-center">
             <div className="flex justify-center">
                 <div className="flex justify-center m-2 w-[800px]">
-            <Input 
-                onChange={(e) => handleSearch(e.target.value)} 
-                placeholder="Search Item"
-            />
+                    <Input 
+                        onChange={(e) => handleSearch(e.target.value)} 
+                        placeholder="Search Item"
+                    />
+                    <ComboboxSimple data={categoryData.data} />
                 </div>
             </div>
             <div className="flex justify-center">
