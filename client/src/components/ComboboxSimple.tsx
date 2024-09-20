@@ -24,32 +24,34 @@ import {
 } from "@/components/ui/popover"
 import { IndividualTableData } from "./IndividualTables/Table";
 
-type Data = {
+type dropdrownData = {
     id: number
     name: string
 }
 
 type ComboBoxSimpleProps = {
     data: IndividualTableData;
+    setSelectedCategory: (data: dropdrownData | null) => void;
+    selectedCategory: dropdrownData | null| undefined;
 };
 
-export function ComboboxSimple({ data }: ComboBoxSimpleProps) {
+export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: ComboBoxSimpleProps) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
-  const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(
-    null
-  )
+//   const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(
+//     null
+//   )
 
   if (isDesktop) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-[150px] justify-start">
-            {selectedStatus ? <>{selectedStatus.name}</> : <>+ Set status</>}
+            {selectedCategory ? <> {selectedCategory.name}</> : <>+ Set status</>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
-          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} data={data} />
+          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedCategory} data={data} />
         </PopoverContent>
       </Popover>
     )
@@ -59,12 +61,12 @@ export function ComboboxSimple({ data }: ComboBoxSimpleProps) {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          {selectedStatus ? <>{selectedStatus.name}</> : <>+ Set status</>}
+          {selectedCategory ? <>{selectedCategory.name}</> : <>+ Set status</>}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} data={data} />
+          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedCategory} data={data} />
         </div>
       </DrawerContent>
     </Drawer>
@@ -77,7 +79,7 @@ function StatusList({
   data,
 }: {
   setOpen: (open: boolean) => void
-  setSelectedStatus: (status: Data | null) => void
+  setSelectedStatus: (status: dropdrownData | null) => void
   data: IndividualTableData
 }) {
   return (

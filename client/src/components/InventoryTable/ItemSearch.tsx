@@ -5,6 +5,12 @@ import { ItemCard } from "./ItemCard";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { ComboboxSimple } from "../ComboboxSimple";
+import { Button } from "../ui/button";
+
+type dropdrownData = {
+    id: number
+    name: string
+}
 
 type ItemSummaryData = {
     freezerid: number;
@@ -17,6 +23,7 @@ type ItemSummaryData = {
 export function ItemSearch() {
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState<ItemSummaryData[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<dropdrownData | null>();
     const inventory = "inventory";
     const items = "items";
     const inventoryCalls = new ApiCalls(inventory);
@@ -36,19 +43,34 @@ export function ItemSearch() {
 
             return  apiCall.getCall().then(res => res.data);
         }
-    });    
+    });
+
+    const handleSelectCategory = (data: dropdrownData| null) => {
+        setSelectedCategory(data);
+    };
 
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm.toLowerCase());
+    }
+
+    const handleClearFilter = () => {
+        setSelectedCategory(null);
     }
     
     useEffect(() => {
         
         const filterResults = data 
-                            ? data.filter((item:ItemSummaryData) => item.itemname.toLowerCase().includes(search)) 
+                            ? data.filter((item:ItemSummaryData) => {
+                                if (selectedCategory) {
+                                    return item.itemname.toLowerCase().includes(search) &&
+                                    item.categoryid === selectedCategory?.id
+                                }
+                                return item.itemname.toLowerCase().includes(search)
+                            }
+                            )
                             : [];
         setSearchResult(filterResults);
-    }, [search]);
+    }, [search, selectedCategory]);
     
     if (isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -65,12 +87,20 @@ export function ItemSearch() {
     return (
         <div className="flex-col justify-center">
             <div className="flex justify-center">
-                <div className="flex justify-center m-2 w-[800px]">
+                <div className="flex flex-wrap justify-center m-2 w-[800px]">
                     <Input 
                         onChange={(e) => handleSearch(e.target.value)} 
                         placeholder="Search Item"
                     />
-                    <ComboboxSimple data={categoryData.data} />
+                    <div className="flex">
+                        <p className="p-2">Select Category:</p>
+                        <ComboboxSimple 
+                            data={categoryData.data} 
+                            setSelectedCategory={handleSelectCategory} 
+                            selectedCategory={selectedCategory}
+                        />
+                        <Button className="ml-2" onClick={handleClearFilter}>Clear Filter</Button>
+                    </div>
                 </div>
             </div>
             <div className="flex justify-center">
