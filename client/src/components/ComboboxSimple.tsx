@@ -38,16 +38,13 @@ type ComboBoxSimpleProps = {
 export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: ComboBoxSimpleProps) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
-//   const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(
-//     null
-//   )
 
   if (isDesktop) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-[150px] justify-start">
-            {selectedCategory ? <> {selectedCategory.name}</> : <>+ Set status</>}
+          <Button variant="outline" className="w-[150px] justify-center m-1">
+            {selectedCategory ? <> {selectedCategory.name}</> : <>Select Category</>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
@@ -60,8 +57,8 @@ export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
-          {selectedCategory ? <>{selectedCategory.name}</> : <>+ Set status</>}
+        <Button variant="outline" className="w-[150px] justify-center m-1">
+          {selectedCategory ? <>{selectedCategory.name}</> : <>Select Category</>}
         </Button>
       </DrawerTrigger>
       <DrawerContent>

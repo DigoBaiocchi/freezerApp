@@ -70,13 +70,13 @@ export function ItemSearch() {
                             )
                             : [];
         setSearchResult(filterResults);
-    }, [search, selectedCategory]);
+    }, [search, selectedCategory, data]);
     
-    if (isPending) {
+    if (isPending || categoryData.isPending) {
         return <FreezerCategoryCardSkeleton />;
     }
     
-    if (error) {
+    if (error || categoryData.error) {
         return <div className="flex-col justify-center">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Unable to get data.</b></p>
@@ -85,21 +85,21 @@ export function ItemSearch() {
     }
     
     return (
-        <div className="flex-col justify-center">
+        <>
             <div className="flex justify-center">
-                <div className="flex flex-wrap justify-center m-2 w-[800px]">
-                    <Input 
-                        onChange={(e) => handleSearch(e.target.value)} 
-                        placeholder="Search Item"
-                    />
-                    <div className="flex">
-                        <p className="p-2">Select Category:</p>
+                <div className="w-[750px]">
+                    <div className="flex justify-center flex-wrap m-2">
+                        <Input 
+                            onChange={(e) => handleSearch(e.target.value)} 
+                            placeholder="Search Item"
+                            className="m-1"
+                        />
                         <ComboboxSimple 
                             data={categoryData.data} 
                             setSelectedCategory={handleSelectCategory} 
                             selectedCategory={selectedCategory}
                         />
-                        <Button className="ml-2" onClick={handleClearFilter}>Clear Filter</Button>
+                        <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>
                     </div>
                 </div>
             </div>
@@ -120,6 +120,6 @@ export function ItemSearch() {
                     }   
                 </div>
             </div>
-        </div>
+        </>
     );
 }
