@@ -31,11 +31,12 @@ type dropdrownData = {
 
 type ComboBoxSimpleProps = {
     data: IndividualTableData;
-    setSelectedCategory: (data: dropdrownData | null) => void;
-    selectedCategory: dropdrownData | null| undefined;
+    setSelectedData: (data: dropdrownData | null) => void;
+    selectedData: dropdrownData | null| undefined;
+    type: "freezer" | "category";
 };
 
-export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: ComboBoxSimpleProps) {
+export function ComboboxSimple({ data, setSelectedData, selectedData, type }: ComboBoxSimpleProps) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
@@ -44,11 +45,11 @@ export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-[150px] justify-center m-1">
-            {selectedCategory ? <> {selectedCategory.name}</> : <>Select Category</>}
+            {selectedData ? <> {selectedData.name}</> : <>Select {type}</>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
-          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedCategory} data={data} />
+          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedData} data={data} />
         </PopoverContent>
       </Popover>
     )
@@ -58,12 +59,12 @@ export function ComboboxSimple({ data, setSelectedCategory, selectedCategory }: 
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-center m-1">
-          {selectedCategory ? <>{selectedCategory.name}</> : <>Select Category</>}
+          {selectedData ? <>{selectedData.name}</> : <>Select {type}</>}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedCategory} data={data} />
+          <StatusList setOpen={setOpen} setSelectedStatus={setSelectedData} data={data} />
         </div>
       </DrawerContent>
     </Drawer>

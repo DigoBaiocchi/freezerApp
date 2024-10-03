@@ -23,6 +23,7 @@ type ItemSummaryData = {
 export function ItemSearch() {
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState<ItemSummaryData[]>([]);
+    const [selectedFreezer, setSelectedFreezer] = useState<dropdrownData | null>();
     const [selectedCategory, setSelectedCategory] = useState<dropdrownData | null>();
     const inventory = "inventory";
     const items = "items";
@@ -35,6 +36,15 @@ export function ItemSearch() {
                     return res.data;
                 })
     });
+    
+    const freezerData = useQuery({
+        queryKey: [`freezerData`],
+        queryFn: () => {
+            const apiCall = new ApiCalls("freezer");
+
+            return  apiCall.getCall().then(res => res.data);
+        }
+    });
 
     const categoryData = useQuery({
         queryKey: [`categoryData`],
@@ -44,6 +54,10 @@ export function ItemSearch() {
             return  apiCall.getCall().then(res => res.data);
         }
     });
+
+    const handleSelectFreezer = (data: dropdrownData| null) => {
+        setSelectedFreezer(data);
+    };
 
     const handleSelectCategory = (data: dropdrownData| null) => {
         setSelectedCategory(data);
@@ -55,22 +69,31 @@ export function ItemSearch() {
 
     const handleClearFilter = () => {
         setSelectedCategory(null);
+        setSelectedFreezer(null);
     }
     
     useEffect(() => {
         
         const filterResults = data 
                             ? data.filter((item:ItemSummaryData) => {
-                                if (selectedCategory) {
+                                if (selectedFreezer && selectedCategory){
+                                    return item.itemname.toLowerCase().includes(search) &&
+                                    item.categoryid === selectedCategory?.id &&
+                                    item.freezerid === selectedFreezer?.id
+                                } else if (selectedFreezer) {
+                                    return item.itemname.toLowerCase().includes(search) &&
+                                    item.freezerid === selectedFreezer?.id
+                                } else if (selectedCategory){
                                     return item.itemname.toLowerCase().includes(search) &&
                                     item.categoryid === selectedCategory?.id
+                                } else {
+                                    return item.itemname.toLowerCase().includes(search)
                                 }
-                                return item.itemname.toLowerCase().includes(search)
                             }
                             )
                             : [];
         setSearchResult(filterResults);
-    }, [search, selectedCategory, data]);
+    }, [search, selectedFreezer, selectedCategory, data]);
     
     if (isPending || categoryData.isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -94,12 +117,24 @@ export function ItemSearch() {
                             placeholder="Search Item"
                             className="m-1"
                         />
-                        <ComboboxSimple 
-                            data={categoryData.data} 
-                            setSelectedCategory={handleSelectCategory} 
-                            selectedCategory={selectedCategory}
-                        />
-                        <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>
+                        <div>
+                            <p className="m-2">Select filter:</p>
+                            <div>
+                                <ComboboxSimple 
+                                    data={freezerData.data} 
+                                    setSelectedData={handleSelectFreezer} 
+                                    selectedData={selectedFreezer}
+                                    type="freezer"
+                                />
+                                <ComboboxSimple 
+                                    data={categoryData.data} 
+                                    setSelectedData={handleSelectCategory} 
+                                    selectedData={selectedCategory}
+                                    type="category"
+                                />
+                                <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
