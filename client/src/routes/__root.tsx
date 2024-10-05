@@ -1,4 +1,4 @@
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
 import { useMediaQuery } from "usehooks-ts";
 import { Button } from "@/components/ui/button"
@@ -24,53 +24,72 @@ const Root = () => {
                 <div className="flex-column w-full bg-white fixed">
                     <div className="flex w-full justify-center bg-white">
                         <NavigationMenu className="list-none">
-                            <NavigationMenuItem className="flex">
-                                <div>
-
+                            <NavigationMenuList>
+                                <NavigationMenuItem>
                                     <Link to="/home">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Home
                                         </NavigationMenuLink>
                                     </Link>
-                                    <Link to="/freezer/edit">
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Freezers
-                                        </NavigationMenuLink>
-                                    </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
+                                    <NavigationMenuTrigger>Freezer</NavigationMenuTrigger>
+                                    <NavigationMenuContent>
+                                                <Link to="/freezer/list">
+                                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                        Freezer List
+                                                    </NavigationMenuLink>
+                                                </Link>
+                                                <Link to="/freezer/edit">
+                                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                        Freezer Edit
+                                                    </NavigationMenuLink>
+                                                </Link>
+                                    </NavigationMenuContent>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/category/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Categories
                                         </NavigationMenuLink>
                                     </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/item/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Items
                                         </NavigationMenuLink>
                                     </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/unit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Units
                                         </NavigationMenuLink>
                                     </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/inventory/edit">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Inventory
                                         </NavigationMenuLink>
                                     </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/inventory/search">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Search
                                         </NavigationMenuLink>
                                     </Link>
-                                </div>
-                                <div>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/addInventory">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             <Button className="h-8 w-45" type="submit"><CirclePlus className="m-1" />Add to inventory</Button>
                                         </NavigationMenuLink>
                                     </Link>
-                                </div>
-                            </NavigationMenuItem>
+                                </NavigationMenuItem>
+                            </NavigationMenuList>
                         </NavigationMenu>
                     </div>
                     <div>
