@@ -118,6 +118,9 @@ function UpdateQuantityDialog({ updatedQuantity }: UpdateQuantityDialogProps) {
   };
     
   const handleQuantityDecrease = () => {
+    if (itemQuantity === 0) {
+      return;
+    }
     setItemQuantity(itemQuantity - 1);
   };
 
