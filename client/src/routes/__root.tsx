@@ -23,7 +23,7 @@ const Root = () => {
             <>
                 <div className="flex-column w-full bg-white fixed">
                     <div className="flex w-full justify-center bg-white">
-                        <NavigationMenu className="list-none">
+                        <NavigationMenu>
                             <NavigationMenuList>
                                 <NavigationMenuItem>
                                     <Link to="/home">
@@ -35,16 +35,18 @@ const Root = () => {
                                 <NavigationMenuItem>
                                     <NavigationMenuTrigger>Freezer</NavigationMenuTrigger>
                                     <NavigationMenuContent>
-                                                <Link to="/freezer/list">
-                                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                        Freezer List
-                                                    </NavigationMenuLink>
-                                                </Link>
-                                                <Link to="/freezer/edit">
-                                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                        Freezer Edit
-                                                    </NavigationMenuLink>
-                                                </Link>
+                                        <div className="w-[800px]">
+                                            <Link to="/freezer/list">
+                                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                    Freezer List
+                                                </NavigationMenuLink>
+                                            </Link>
+                                            <Link to="/freezer/edit">
+                                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                    Freezer Edit
+                                                </NavigationMenuLink>
+                                            </Link>
+                                        </div>
                                     </NavigationMenuContent>
                                 </NavigationMenuItem>
                                 <NavigationMenuItem>

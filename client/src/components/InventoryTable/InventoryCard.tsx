@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Collapsible } from "@radix-ui/react-collapsible";
 // import { CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Button } from "../ui/button";
+import { checkExpiration } from "@/lib/checkExpDate";
 // import { ChevronsUpDown } from "lucide-react";
 
 export type ItemData = {
@@ -75,6 +76,19 @@ export function InventoryCard({ item }: InventoryCardProps) {
                                             </p>
                                             <p className="text-sm text-muted-foreground leading-none">
                                                 {item.expdate ? item.expdate.substring(0,10) : ""}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                    className="mb-4 grid grid-cols-[25px_1fr] items-start pb-0 last:mb-0 last:pb-0"
+                                    >
+                                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                                        <div className="flex m-0 space-x-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                Status:
+                                            </p>
+                                            <p className="text-sm text-muted-foreground leading-none">
+                                                {item.expdate ? checkExpiration(item.expdate.substring(0,10)) : ""}
                                             </p>
                                         </div>
                                     </div>
