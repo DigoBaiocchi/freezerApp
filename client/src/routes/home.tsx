@@ -1,3 +1,4 @@
+import FavoriteItemsCard from '@/components/Dashboard/FavoriteItemsCard'
 import { InputFile } from '@/components/InputFile'
 import { FreezerList } from '@/components/InventoryTable/FreezerList'
 import MainContainer from '@/components/MainContainer'
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/home')({
         <div className="flex justify-center m-2">
             <InputFile />
         </div>
+        <FavoriteItemsCard />
         <FreezerList />
       </MainContainer>
     )
