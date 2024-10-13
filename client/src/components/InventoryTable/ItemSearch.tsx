@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { ComboboxSimple } from "../ComboboxSimple";
 import { Button } from "../ui/button";
+import { Link } from "@tanstack/react-router";
+import { Search } from "lucide-react";
 
 type dropdrownData = {
     id: number
@@ -20,7 +22,13 @@ type ItemSummaryData = {
     itemtotal: number;
 };
 
-export function ItemSearch() {
+type ItemSearchProps = {
+    freezerId: number | null;
+    categoryId: number | null;
+    itemName: String;
+};
+
+export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps) {
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState<ItemSummaryData[]>([]);
     const [selectedFreezer, setSelectedFreezer] = useState<dropdrownData | null>();
@@ -73,27 +81,29 @@ export function ItemSearch() {
     }
     
     useEffect(() => {
-        
+        console.log("FreezerId: " + freezerId)
+        console.log("categoryId: " + categoryId)
         const filterResults = data 
                             ? data.filter((item:ItemSummaryData) => {
-                                if (selectedFreezer && selectedCategory){
+                                if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)){
                                     return item.itemname.toLowerCase().includes(search) &&
-                                    item.categoryid === selectedCategory?.id &&
-                                    item.freezerid === selectedFreezer?.id
+                                    item.categoryid === categoryId &&
+                                    item.freezerid === freezerId
                                 } else if (selectedFreezer) {
                                     return item.itemname.toLowerCase().includes(search) &&
-                                    item.freezerid === selectedFreezer?.id
+                                    item.freezerid === freezerId
                                 } else if (selectedCategory){
                                     return item.itemname.toLowerCase().includes(search) &&
-                                    item.categoryid === selectedCategory?.id
+                                    item.categoryid === categoryId
                                 } else {
                                     return item.itemname.toLowerCase().includes(search)
                                 }
                             }
                             )
                             : [];
+                            console.log(filterResults)
         setSearchResult(filterResults);
-    }, [search, selectedFreezer, selectedCategory, data]);
+    }, [search, selectedFreezer, selectedCategory, data, freezerId, categoryId]);
     
     if (isPending || categoryData.isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -117,6 +127,7 @@ export function ItemSearch() {
                             placeholder="Search Item"
                             className="m-1"
                         />
+                        <Button><Search /></Button>
                         <div>
                             <p className="m-2">Select filter:</p>
                             <div>
@@ -132,7 +143,19 @@ export function ItemSearch() {
                                     selectedData={selectedCategory}
                                     type="category"
                                 />
-                                <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>
+                                <Link 
+                                    to="/inventory/search" 
+                                    search={{ 
+                                        freezerId: selectedFreezer?.id as number, 
+                                        categoryId: selectedCategory?.id as number,
+                                        itemName
+                                    }}
+                                >
+                                    <Button className="m-1">Apply Filter</Button>
+                                </Link>
+                                <Link to="/inventory/search">
+                                    <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>                                
+                                </Link>
                             </div>
                         </div>
                     </div>
