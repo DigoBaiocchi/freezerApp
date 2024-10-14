@@ -29,10 +29,10 @@ type ItemSearchProps = {
 };
 
 export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps) {
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(itemName);
     const [searchResult, setSearchResult] = useState<ItemSummaryData[]>([]);
-    const [selectedFreezer, setSelectedFreezer] = useState<dropdrownData | null>();
-    const [selectedCategory, setSelectedCategory] = useState<dropdrownData | null>();
+    const [selectedFreezer, setSelectedFreezer] = useState<dropdrownData | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<dropdrownData | null>(null);
     const inventory = "inventory";
     const items = "items";
     const inventoryCalls = new ApiCalls(inventory);
@@ -64,46 +64,90 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
     });
 
     const handleSelectFreezer = (data: dropdrownData| null) => {
+        // if (freezerId) {
+        //     setSelectedFreezer(freezerData.data.filter((freezer: dropdrownData)  => freezer.id === freezerId))
+        // }
         setSelectedFreezer(data);
     };
 
     const handleSelectCategory = (data: dropdrownData| null) => {
+        // if (categoryId) {
+        //     setSelectedFreezer(categoryData.data.filter((category: dropdrownData)  => category.id === categoryId))
+        // }
         setSelectedCategory(data);
     };
 
     const handleSearch = (searchTerm: string) => {
-        setSearch(searchTerm.toLowerCase());
+        setSearch(searchTerm.trim().toLowerCase());
+    }
+
+    const filteredData = () => {
+            return data ? data.filter((item:ItemSummaryData) => {
+                if (selectedFreezer && selectedCategory) {
+                    console.log("freezer and category are selected")
+                    return item.itemname.toLowerCase().includes(search as string) &&
+                        item.categoryid === selectedCategory?.id &&
+                        item.freezerid === selectedFreezer?.id
+                } else if (selectedFreezer) {
+                    console.log("freezer is selected")
+                    return item.itemname.toLowerCase().includes(search as string) &&
+                        item.freezerid === selectedFreezer?.id
+                } else if (selectedCategory) {
+                    console.log("category is selected")
+                    return item.itemname.toLowerCase().includes(search as string) &&
+                        item.categoryid === selectedCategory?.id
+                } else if (!search) {
+                    return item;
+                } else {
+                    return item.itemname.toLowerCase().includes(search as string)
+                }
+            }) : [];
+    }
+    
+    const submitSearch = () => {
+        console.log("search is", search)
+        console.log(`Search is ${search} and filtered data`, filteredData());
+        setSearchResult(filteredData());
     }
 
     const handleClearFilter = () => {
         setSelectedCategory(null);
         setSelectedFreezer(null);
+        setSearch('');
+        setSearchResult(data);
     }
     
     useEffect(() => {
-        console.log("FreezerId: " + freezerId)
-        console.log("categoryId: " + categoryId)
-        const filterResults = data 
-                            ? data.filter((item:ItemSummaryData) => {
-                                if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)){
-                                    return item.itemname.toLowerCase().includes(search) &&
-                                    item.categoryid === categoryId &&
-                                    item.freezerid === freezerId
-                                } else if (selectedFreezer) {
-                                    return item.itemname.toLowerCase().includes(search) &&
-                                    item.freezerid === freezerId
-                                } else if (selectedCategory){
-                                    return item.itemname.toLowerCase().includes(search) &&
-                                    item.categoryid === categoryId
-                                } else {
-                                    return item.itemname.toLowerCase().includes(search)
-                                }
-                            }
-                            )
-                            : [];
-                            console.log(filterResults)
-        setSearchResult(filterResults);
-    }, [search, selectedFreezer, selectedCategory, data, freezerId, categoryId]);
+        submitSearch();
+        console.log("search is", search)
+        console.log(selectedFreezer)
+        console.log(selectedCategory)
+    }, [data, selectedFreezer, selectedCategory]);
+    
+    // useEffect(() => {
+    //     console.log("FreezerId: " + freezerId)
+    //     console.log("categoryId: " + categoryId)
+    //     const filterResults = data 
+    //                         ? data.filter((item:ItemSummaryData) => {
+    //                             if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)){
+    //                                 return item.itemname.toLowerCase().includes(search) &&
+    //                                 item.categoryid === categoryId &&
+    //                                 item.freezerid === freezerId
+    //                             } else if (selectedFreezer) {
+    //                                 return item.itemname.toLowerCase().includes(search) &&
+    //                                 item.freezerid === freezerId
+    //                             } else if (selectedCategory){
+    //                                 return item.itemname.toLowerCase().includes(search) &&
+    //                                 item.categoryid === categoryId
+    //                             } else {
+    //                                 return item.itemname.toLowerCase().includes(search)
+    //                             }
+    //                         }
+    //                         )
+    //                         : [];
+    //                         console.log(filterResults)
+    //     setSearchResult(filterResults);
+    // }, [search, selectedFreezer, selectedCategory, data, freezerId, categoryId]);
     
     if (isPending || categoryData.isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -127,7 +171,16 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                             placeholder="Search Item"
                             className="m-1"
                         />
-                        <Button><Search /></Button>
+                        <Link
+                            to="/inventory/search"
+                            search={{
+                                freezerId: selectedFreezer?.id as number, 
+                                categoryId: selectedCategory?.id as number,
+                                itemName: search
+                            }}
+                        >
+                            <Button onClick={submitSearch}><Search /></Button>                        
+                        </Link>
                         <div>
                             <p className="m-2">Select filter:</p>
                             <div>
@@ -148,10 +201,10 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                                     search={{ 
                                         freezerId: selectedFreezer?.id as number, 
                                         categoryId: selectedCategory?.id as number,
-                                        itemName
+                                        itemName: search as String,
                                     }}
                                 >
-                                    <Button className="m-1">Apply Filter</Button>
+                                    <Button onClick={submitSearch} className="m-1">Apply Filter</Button>
                                 </Link>
                                 <Link to="/inventory/search">
                                     <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>                                
