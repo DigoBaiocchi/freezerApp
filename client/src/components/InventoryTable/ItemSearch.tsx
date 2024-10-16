@@ -63,17 +63,32 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
         }
     });
 
+    useEffect(() => {
+        if (freezerId || categoryId || itemName) {
+            submitSearch();
+        }
+        if (freezerId !== null) {
+            const initialFreezer = freezerData.data ? 
+                                    freezerData.data.find((freezer: dropdrownData) => freezer.id === freezerId) : 
+                                    null;
+            setSelectedFreezer(initialFreezer);
+        }
+        if (categoryId !== null) {
+            const initialCategory = categoryData.data ? 
+                                    categoryData.data.find((category: dropdrownData) => category.id === categoryId) : 
+                                    null;
+            setSelectedCategory(initialCategory);
+        }
+        if (itemName !== null) {
+            setSearch(itemName);
+        }
+    }, [freezerId, categoryId, itemName]);
+
     const handleSelectFreezer = (data: dropdrownData| null) => {
-        // if (freezerId) {
-        //     setSelectedFreezer(freezerData.data.filter((freezer: dropdrownData)  => freezer.id === freezerId))
-        // }
-        setSelectedFreezer(data);
+            setSelectedFreezer(data);
     };
 
     const handleSelectCategory = (data: dropdrownData| null) => {
-        // if (categoryId) {
-        //     setSelectedFreezer(categoryData.data.filter((category: dropdrownData)  => category.id === categoryId))
-        // }
         setSelectedCategory(data);
     };
 
@@ -83,29 +98,37 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
 
     const filteredData = () => {
             return data ? data.filter((item:ItemSummaryData) => {
-                if (selectedFreezer && selectedCategory) {
-                    console.log("freezer and category are selected")
-                    return item.itemname.toLowerCase().includes(search as string) &&
+                if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)) {
+                    if (search) {
+                        console.log("freezer, category and search selected")
+                        console.log(searchResult)
+                        return item.itemname.toLowerCase().includes(search as string) &&
                         item.categoryid === selectedCategory?.id &&
                         item.freezerid === selectedFreezer?.id
-                } else if (selectedFreezer) {
-                    console.log("freezer is selected")
+                    }
+                    console.log("freezer and category selected")
+                    console.log(item)
+                    return item.categoryid === selectedCategory?.id &&
+                        item.freezerid === selectedFreezer?.id
+                } else if ((selectedFreezer || freezerId) && searchResult) {
+                    console.log("freezer and search selected")
                     return item.itemname.toLowerCase().includes(search as string) &&
                         item.freezerid === selectedFreezer?.id
-                } else if (selectedCategory) {
-                    console.log("category is selected")
+                } else if ((selectedCategory || categoryId) && searchResult) {
+                    console.log("category and search selected")
                     return item.itemname.toLowerCase().includes(search as string) &&
                         item.categoryid === selectedCategory?.id
                 } else if (!search) {
                     return item;
                 } else {
+                    console.log("only filtered by search")
                     return item.itemname.toLowerCase().includes(search as string)
                 }
             }) : [];
     }
     
     const submitSearch = () => {
-        console.log("search is", search)
+        console.log("search is", itemName)
         console.log(`Search is ${search} and filtered data`, filteredData());
         setSearchResult(filteredData());
     }
@@ -119,35 +142,10 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
     
     useEffect(() => {
         submitSearch();
-        console.log("search is", search)
-        console.log(selectedFreezer)
-        console.log(selectedCategory)
-    }, [data, selectedFreezer, selectedCategory]);
-    
-    // useEffect(() => {
-    //     console.log("FreezerId: " + freezerId)
-    //     console.log("categoryId: " + categoryId)
-    //     const filterResults = data 
-    //                         ? data.filter((item:ItemSummaryData) => {
-    //                             if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)){
-    //                                 return item.itemname.toLowerCase().includes(search) &&
-    //                                 item.categoryid === categoryId &&
-    //                                 item.freezerid === freezerId
-    //                             } else if (selectedFreezer) {
-    //                                 return item.itemname.toLowerCase().includes(search) &&
-    //                                 item.freezerid === freezerId
-    //                             } else if (selectedCategory){
-    //                                 return item.itemname.toLowerCase().includes(search) &&
-    //                                 item.categoryid === categoryId
-    //                             } else {
-    //                                 return item.itemname.toLowerCase().includes(search)
-    //                             }
-    //                         }
-    //                         )
-    //                         : [];
-    //                         console.log(filterResults)
-    //     setSearchResult(filterResults);
-    // }, [search, selectedFreezer, selectedCategory, data, freezerId, categoryId]);
+        console.log("search is", itemName)
+        console.log("query freezer id: ", freezerId)
+        console.log("query category id: ", categoryId)
+    }, []);
     
     if (isPending || categoryData.isPending) {
         return <FreezerCategoryCardSkeleton />;
@@ -212,6 +210,11 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="flex justify-center">
+                <div className="flex w-[950px]">
+                    {itemName ? <span className="flex flex-wrap pl-6 pr-6 font-bold">Results for: {itemName}</span> : ''}
                 </div>
             </div>
             <div className="flex justify-center">
