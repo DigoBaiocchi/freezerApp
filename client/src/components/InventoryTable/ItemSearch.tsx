@@ -26,9 +26,12 @@ type ItemSearchProps = {
     freezerId: number | null;
     categoryId: number | null;
     itemName: String;
+    freezerData: dropdrownData[];
+    categoryData: dropdrownData[];
+
 };
 
-export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps) {
+export function ItemSearch({ freezerId, categoryId, itemName, freezerData, categoryData }: ItemSearchProps) {
     const [search, setSearch] = useState(itemName);
     const [searchResult, setSearchResult] = useState<ItemSummaryData[]>([]);
     const [selectedFreezer, setSelectedFreezer] = useState<dropdrownData | null>(null);
@@ -44,60 +47,22 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                     return res.data;
                 })
     });
+
     
-    const freezerData = useQuery({
-        queryKey: [`freezerData`],
-        queryFn: () => {
-            const apiCall = new ApiCalls("freezer");
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    const categoryData = useQuery({
-        queryKey: [`categoryData`],
-        queryFn: () => {
-            const apiCall = new ApiCalls("category");
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    useEffect(() => {
-        if (freezerId || categoryId || itemName) {
-            submitSearch();
-        }
-        if (freezerId !== null) {
-            const initialFreezer = freezerData.data ? 
-                                    freezerData.data.find((freezer: dropdrownData) => freezer.id === freezerId) : 
-                                    null;
-            setSelectedFreezer(initialFreezer);
-        }
-        if (categoryId !== null) {
-            const initialCategory = categoryData.data ? 
-                                    categoryData.data.find((category: dropdrownData) => category.id === categoryId) : 
-                                    null;
-            setSelectedCategory(initialCategory);
-        }
-        if (itemName !== null) {
-            setSearch(itemName);
-        }
-    }, [freezerId, categoryId, itemName]);
-
     const handleSelectFreezer = (data: dropdrownData| null) => {
             setSelectedFreezer(data);
+        };
+        
+        const handleSelectCategory = (data: dropdrownData| null) => {
+            setSelectedCategory(data);
     };
-
-    const handleSelectCategory = (data: dropdrownData| null) => {
-        setSelectedCategory(data);
-    };
-
+    
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm.trim().toLowerCase());
     }
 
     const filteredData = () => {
-            return data ? data.filter((item:ItemSummaryData) => {
+        return data ? data.filter((item:ItemSummaryData) => {
                 if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)) {
                     if (search) {
                         console.log("freezer, category and search selected")
@@ -109,15 +74,26 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                     console.log("freezer and category selected")
                     console.log(item)
                     return item.categoryid === selectedCategory?.id &&
+                    item.freezerid === selectedFreezer?.id
+                } else if ((selectedFreezer || freezerId)) {
+                    if (search) {
+                        console.log("freezer and search selected")
+                        console.log(item.itemname.toLowerCase())
+                        console.log(search.toLowerCase())
+                        console.log(item.itemname.toLowerCase().includes(search.toLowerCase() as string))
+                        console.log(item.freezerid)
+                        console.log(selectedFreezer)
+                        return item.itemname.toLowerCase().includes(search.toLowerCase() as string) &&
                         item.freezerid === selectedFreezer?.id
-                } else if ((selectedFreezer || freezerId) && searchResult) {
-                    console.log("freezer and search selected")
-                    return item.itemname.toLowerCase().includes(search as string) &&
-                        item.freezerid === selectedFreezer?.id
-                } else if ((selectedCategory || categoryId) && searchResult) {
-                    console.log("category and search selected")
-                    return item.itemname.toLowerCase().includes(search as string) &&
+                    }
+                    return item.freezerid === selectedFreezer?.id;
+                } else if ((selectedCategory || categoryId)) {
+                    if (search) {
+                        console.log("category and search selected")
+                        return item.itemname.toLowerCase().includes(search as string) &&
                         item.categoryid === selectedCategory?.id
+                    }
+                    return item.categoryid === selectedCategory?.id
                 } else if (!search) {
                     return item;
                 } else {
@@ -125,33 +101,64 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                     return item.itemname.toLowerCase().includes(search as string)
                 }
             }) : [];
+        }
+        
+        const submitSearch = () => {
+            console.log("search is", itemName)
+            console.log(`Search is ${itemName} and filtered data`, filteredData());
+            setSearchResult(filteredData());
     }
     
-    const submitSearch = () => {
-        console.log("search is", itemName)
-        console.log(`Search is ${search} and filtered data`, filteredData());
-        setSearchResult(filteredData());
-    }
-
     const handleClearFilter = () => {
         setSelectedCategory(null);
         setSelectedFreezer(null);
         setSearch('');
         setSearchResult(data);
     }
+
+    useEffect(() => {
+        if (freezerData && categoryData) {
+            if (freezerId !== null) {
+                const initialFreezer = freezerData?.find((freezer: dropdrownData) => {
+                    if (freezer.id === freezerId) {
+                        console.log("Found freezer:", freezer);
+                        return freezer;
+                    }
+                });
+                console.log("freezerData", freezerData)
+                console.log("freezerId", freezerId)
+                console.log("initialFreezer: ", initialFreezer)
+                setSelectedFreezer(initialFreezer || null);
+            }
+            if (categoryId !== null) {
+                const initialCategory = categoryData ? 
+                categoryData?.find((category: dropdrownData) => category.id === categoryId) : 
+                null;
+                setSelectedCategory(initialCategory || null);
+            }
+            if (itemName !== null) {
+                setSearch(itemName);
+            }
+            submitSearch();
+        }
+    }, [freezerId, categoryId, itemName, freezerData, categoryData]);
     
     useEffect(() => {
-        submitSearch();
-        console.log("search is", itemName)
+        if ((selectedFreezer || selectedCategory || search) && data) {
+            submitSearch();
+        }
+        console.log("query search is", search)
         console.log("query freezer id: ", freezerId)
         console.log("query category id: ", categoryId)
-    }, []);
+        console.log("selectedFreezer", selectedFreezer)
+        console.log(searchResult)
+    }, [data]);
     
-    if (isPending || categoryData.isPending) {
+    if (isPending) {
         return <FreezerCategoryCardSkeleton />;
     }
     
-    if (error || categoryData.error) {
+    if (error) {
         return <div className="flex-col justify-center">
             <div className="flex justify-center m-2">
                 <p className="p-1"><b>Unable to get data.</b></p>
@@ -164,32 +171,36 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
             <div className="flex justify-center">
                 <div className="w-[750px]">
                     <div className="flex justify-center flex-wrap m-2">
-                        <Input 
-                            onChange={(e) => handleSearch(e.target.value)} 
-                            placeholder="Search Item"
-                            className="m-1"
-                        />
-                        <Link
-                            to="/inventory/search"
-                            search={{
-                                freezerId: selectedFreezer?.id as number, 
-                                categoryId: selectedCategory?.id as number,
-                                itemName: search
-                            }}
-                        >
-                            <Button onClick={submitSearch}><Search /></Button>                        
-                        </Link>
+                        <div className="flex justify-center">
+                            <Input 
+                                onChange={(e) => handleSearch(e.target.value)} 
+                                placeholder="Search Item"
+                                className="m-1 w-[270px]"
+                                value={search as string}
+                            />
+                            <Link
+                                to="/inventory/search"
+                                search={{
+                                    freezerId: selectedFreezer?.id as number, 
+                                    categoryId: selectedCategory?.id as number,
+                                    itemName: search
+                                }}
+                                className="p-1"
+                            >
+                                <Button onClick={submitSearch}><Search /></Button>                        
+                            </Link>
+                        </div>
                         <div>
-                            <p className="m-2">Select filter:</p>
+                            <p className="m-2 italic">Select filter:</p>
                             <div>
                                 <ComboboxSimple 
-                                    data={freezerData.data} 
+                                    data={freezerData} 
                                     setSelectedData={handleSelectFreezer} 
                                     selectedData={selectedFreezer}
                                     type="freezer"
                                 />
                                 <ComboboxSimple 
-                                    data={categoryData.data} 
+                                    data={categoryData} 
                                     setSelectedData={handleSelectCategory} 
                                     selectedData={selectedCategory}
                                     type="category"
@@ -220,6 +231,7 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
             <div className="flex justify-center">
                 <div className="flex flex-wrap pl-6 pr-6 max-w-[950px]">
                     {
+                        searchResult[0] ?
                         searchResult.map((itemData: ItemSummaryData, i: number) => (
                             <ItemCard 
                                 key={i}
@@ -230,7 +242,8 @@ export function ItemSearch({ freezerId, categoryId, itemName }: ItemSearchProps)
                                 itemTotal={itemData.itemtotal}
 
                             />
-                        ))
+                        )) :
+                        <span className="m-5 font-bold">No results</span>
                     }   
                 </div>
             </div>
