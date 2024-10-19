@@ -19,8 +19,8 @@ export type InventoryPostParams = {
 };
 
 export class ApiCalls {
-    databaseTable: DatabaseTables;
-    apiUrl: string;
+    protected databaseTable: DatabaseTables;
+    protected apiUrl: string;
 
     constructor(databaseTable: DatabaseTables) {
         this.databaseTable = databaseTable;

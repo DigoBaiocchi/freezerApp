@@ -5,14 +5,26 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { IndividualTableData } from "./IndividualTables/Table";
 import { Card } from "./ui/card";
 
-type file = {
+type IndividualTablefile = {
     table: IndividualTables;
     name: string;
 }
 
+type InventoryFile = {
+    freezerId: number;
+    categoryId: number;
+    itemId: number;
+    unitId: number;
+    entryDate: string;
+    expDate: string;
+    quantity: number;
+    description: string;
+}
+
 export function InputFile() {
     const [file, setFile] = useState<File | null>(null);
-    const [fileContent, setFileContent] = useState<Array<file>>([]);
+    const [fileContent, setFileContent] = useState<Array<IndividualTablefile>>([]);
+    const [inventoryFileContent, setInventoryFileContent] = useState<Array<InventoryFile>>([]);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
@@ -42,6 +54,30 @@ export function InputFile() {
         reader.readAsText(file);
     };
 
+    const readInventoryFileContent = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+            const content = e.target?.result as string;
+            const result = content.split('\r\n').map((array) => {
+                const arrayResult = array.split(',');
+                const freezerId = +arrayResult[0];
+                const categoryId = +arrayResult[1];
+                const itemId = +arrayResult[2];
+                const unitId = +arrayResult[3];
+                const entryDate = arrayResult[4];
+                const expDate = arrayResult[5];
+                const quantity = +arrayResult[6];
+                const description = arrayResult[7];
+                return { freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description };
+            });
+            result.shift();
+            console.log('File content:', result);
+            setInventoryFileContent(result);
+        };
+
+        reader.readAsText(file);
+    };
+
     const insertNamesToDatabase = () => {
         fileContent.forEach(async content => {
             const apiCalls = new ApiCalls(content.table);
@@ -54,6 +90,25 @@ export function InputFile() {
             }
     
             return await apiCalls.postCall(content.name);
+        });
+    };
+
+    const insertInventoryToDatabase = () => {
+        inventoryFileContent.forEach(async content => {
+            const apiCalls = new ApiCalls("inventory");
+            const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
+            // const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
+            
+            // if (checkifNameExists) {
+            //     console.log(`Name ${content.name} already exists`);
+            //     throw new Error(`Name ${content.name} already exists`);
+            // }
+
+            const {freezerId, categoryId, itemId, unitId, quantity, description} = content;
+            const entryDate: Date = new Date(content.entryDate);
+            const expDate: Date = new Date(content.expDate);
+    
+            return await apiCalls.postInventoryCall({freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description});
         });
     };
     
