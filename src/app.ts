@@ -54,11 +54,18 @@ app.use((err:Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-    const createDatabase = new CreateDatabaseTables();
-    createDatabase.createTables();
+    console.log("Test test")
     res.send('FreezerApp');
 });
 
 export const server = app.listen(port, () => {
+    const createDatabase = new CreateDatabaseTables();
+    createDatabase.createInventoryTable();
+    createDatabase.createIndividualTable("freezer");
+    createDatabase.createIndividualTable("category");
+    createDatabase.createIndividualTable("item");
+    createDatabase.createIndividualTable("unit");
+    createDatabase.createIndividualTable("test");
+    
     console.log(`Server running on port: ${port}`);
 });

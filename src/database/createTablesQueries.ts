@@ -1,35 +1,20 @@
 import { query } from "./dbConfig";
+import { IndividualTables } from "./nonInventoryDbQueries";
+
+type tableNames = IndividualTables | 'inventory' | 'test';
 
 export class CreateDatabaseTables {
-    public async createTables() {
-        const createFreezerTableQuery = `CREATE TABLE IF NOT EXISTS freezer (
+    public async createIndividualTable(tableName: tableNames) {
+        const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (
             id SERIAL,
             name varchar(30) NOT NULL UNIQUE,
             PRIMARY KEY (id)
-        );`;
-        await query(createFreezerTableQuery);
-    
-        const createCategoryTableQuery = `CREATE TABLE IF NOT EXISTS category (
-            id SERIAL,
-            name varchar(30) NOT NULL UNIQUE,
-            PRIMARY KEY (id)
-        );`;
-        await query(createCategoryTableQuery);
-    
-        const createItemTableQuery = `CREATE TABLE IF NOT EXISTS item (
-            id SERIAL,
-            name varchar(30) NOT NULL UNIQUE,
-            PRIMARY KEY (id)
-        );`;
-        await query(createItemTableQuery);
-    
-        const createUnitTableQuery = `CREATE TABLE IF NOT EXISTS unit (
-            id SERIAL,
-            name varchar(30) NOT NULL UNIQUE,
-            PRIMARY KEY (id)
-        );`;
-        await query(createUnitTableQuery);
-    
+            );`;
+
+        await query(createTableQuery);
+    }
+            
+    public async createInventoryTable() {
         const createInventoryTable = `CREATE TABLE IF NOT EXISTS inventory (
             id SERIAL,
             freezer_id integer REFERENCES freezer (id) ON DELETE CASCADE,
