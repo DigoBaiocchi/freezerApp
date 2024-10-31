@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import { Card } from "../ui/card";
 import { useState } from "react";
-import EditMenu from "../InventoryTable/EditMenu";
+// import EditMenu from "../InventoryTable/EditMenu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 export default function FavoriteItemsCard() {
