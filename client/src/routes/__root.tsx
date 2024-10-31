@@ -78,7 +78,7 @@ const Root = () => {
                                     </Link>
                                 </NavigationMenuItem>
                                 <NavigationMenuItem>
-                                    <Link to="/inventory/search">
+                                    <Link to="/inventory/search" search={undefined}>
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             Search
                                         </NavigationMenuLink>
@@ -175,7 +175,7 @@ const Root = () => {
                                         </Link>
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/inventory/search">
+                                        <Link to="/inventory/search" search={undefined}>
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Search
                                             </NavigationMenuLink>

@@ -215,7 +215,7 @@ export function ItemSearch({ freezerId, categoryId, itemName, freezerData, categ
                                 >
                                     <Button onClick={submitSearch} className="m-1">Apply Filter</Button>
                                 </Link>
-                                <Link to="/inventory/search">
+                                <Link to="/inventory/search" search={undefined}>
                                     <Button className="m-1" onClick={handleClearFilter}>Clear Filter</Button>                                
                                 </Link>
                             </div>
