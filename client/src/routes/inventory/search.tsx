@@ -9,14 +9,14 @@ type Search = {
   freezerId: number | '';
   categoryId: number | '';
   itemName: String;
-} | null;
+};
 
 export const Route = createFileRoute('/inventory/search')({
 
   validateSearch: (search: Record<string,unknown>): Search  => {
-    if (!search.freezerId || !search.categoryId) {
-      return null;
-    }
+    // if (!search.freezerId || !search.categoryId) {
+    //   return null;
+    // }
     return {
       freezerId: (search.freezerId as number) || 0,
       categoryId: (search.categoryId as number) || 0,
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/inventory/search')({
     }
   },
   component: () => {
-    const { freezerId, categoryId, itemName } = Route.useSearch() ?? {freezerId: '', categoryId: '', itemName: ''};
+    const { freezerId, categoryId, itemName } = Route.useSearch() as Search;
     
     const freezerData = useQuery({
         queryKey: [`freezerData`],
