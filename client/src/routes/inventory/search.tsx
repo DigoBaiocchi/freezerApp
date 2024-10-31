@@ -20,11 +20,11 @@ export const Route = createFileRoute('/inventory/search')({
     return {
       freezerId: (search.freezerId as number) || '',
       categoryId: (search.categoryId as number) || '',
-      itemName: search.itemName as String,
+      itemName: (search.itemName as string) || '',
     }
   },
   component: () => {
-    const { freezerId, categoryId, itemName } = Route.useSearch() ?? {};
+    const { freezerId, categoryId, itemName } = Route.useSearch() ?? {freezerId: '', categoryId: '', itemName: ''};
     
     const freezerData = useQuery({
         queryKey: [`freezerData`],
@@ -58,9 +58,9 @@ export const Route = createFileRoute('/inventory/search')({
       <>
         <MainContainer>
           <ItemSearch 
-            freezerId={freezerId as number} 
-            categoryId={categoryId as number} 
-            itemName={itemName as String} 
+            freezerId={freezerId || 0} 
+            categoryId={categoryId || 0} 
+            itemName={itemName || ''} 
             freezerData={freezerData.data}
             categoryData={categoryData.data}
           />
