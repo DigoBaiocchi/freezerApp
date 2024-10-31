@@ -18,8 +18,8 @@ export const Route = createFileRoute('/inventory/search')({
       return null;
     }
     return {
-      freezerId: (search.freezerId as number) || '',
-      categoryId: (search.categoryId as number) || '',
+      freezerId: (search.freezerId as number) || 0,
+      categoryId: (search.categoryId as number) || 0,
       itemName: (search.itemName as string) || '',
     }
   },
