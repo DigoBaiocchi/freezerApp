@@ -10,7 +10,7 @@ import categoryRouter from './routes/category';
 import itemsRouter from './routes/item';
 import unitRouter from './routes/unit';
 import inventoryRouter from './routes/inventory';
-import { CreateDatabaseTables } from "./database/createTablesQueries";
+import { DatabaseSchema } from "./database/createTablesQueries";
 
 // dotenv.config({ path: '.env.development.local' });
 
@@ -59,13 +59,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 export const server = app.listen(port, () => {
-    const createDatabase = new CreateDatabaseTables();
-    createDatabase.createInventoryTable();
-    createDatabase.createIndividualTable("freezer");
-    createDatabase.createIndividualTable("category");
-    createDatabase.createIndividualTable("item");
-    createDatabase.createIndividualTable("unit");
-    createDatabase.createIndividualTable("test");
+    const createDatabase = new DatabaseSchema();
+    createDatabase.applyDatabaseSchemaChanges();
     
     console.log(`Server running on port: ${port}`);
 });
