@@ -8,6 +8,7 @@ import { Card } from "./ui/card";
 type IndividualTablefile = {
     table: IndividualTables;
     name: string;
+    status: "Already exists" | "New" | "Pending";
 }
 
 // type InventoryFile = {
@@ -23,14 +24,15 @@ type IndividualTablefile = {
 
 export function InputFile() {
     const [file, setFile] = useState<File | null>(null);
-    const [fileContent, setFileContent] = useState<Array<IndividualTablefile>>([]);
+    const [fileContent, setFileContent] = useState<IndividualTablefile[]>([]);
+    // const [statusUpdate, setStatusUpdate] = useState(false);
     // const [inventoryFileContent, setInventoryFileContent] = useState<Array<InventoryFile>>([]);
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
         if (uploadedFile && uploadedFile.type === 'text/csv') {
             setFile(uploadedFile);
-            readFileContent(uploadedFile);            
+            readFileContent(uploadedFile);
         } else {
             alert('Please upload a valid CSV file.');
         }
@@ -38,20 +40,36 @@ export function InputFile() {
 
     const readFileContent = (file: File) => {
         const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
             const result = content.split('\r\n').map((array) => {
                 const arrayResult = array.split(',');
                 const table = arrayResult[0] as IndividualTables;
                 const name = arrayResult[1];
-                return { table, name };
+                const status = "Pending";
+                return { table, name, status } as IndividualTablefile;
             });
             result.shift();
-            console.log('File content:', result);
-            setFileContent(result);
+            const resultStatusUpdate = await Promise.all(
+                result.map(async (content: IndividualTablefile) => {
+                    const apiCalls = new ApiCalls(content.table);
+                    const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
+                    const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
+                    console.log(content)
+                    console.log(checkifNameExists)
+                    if (checkifNameExists) {
+                        return { ...content, status: "Already exists"};
+                    } else {
+                        return { ...content, status: "New"};
+                    }
+                })
+            ) 
+            console.log('File content:', resultStatusUpdate);
+            setFileContent(resultStatusUpdate as IndividualTablefile[]);
         };
 
         reader.readAsText(file);
+        // setStatusUpdate(true);
     };
 
     // const readInventoryFileContent = (file: File) => {
@@ -76,6 +94,23 @@ export function InputFile() {
     //     };
 
     //     reader.readAsText(file);
+    // };
+
+    // const updateNameStatus = async () => {
+    //     const result = await Promise.all(
+    //         fileContent.map(async (data: IndividualTablefile) => {
+    //             const apiCalls = new ApiCalls(data.table);
+    //             const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
+    //             const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === data.name.trim().toLowerCase());
+    //             if (checkifNameExists) {
+    //                 return { ...data, status: "Already exists"};
+    //             } else {
+    //                 return { ...data, status: "New"};
+    //             }
+    //         })
+    //     ) 
+        
+    //     setFileContent(result as IndividualTablefile[]);
     // };
 
     const insertNamesToDatabase = () => {
@@ -111,9 +146,14 @@ export function InputFile() {
     //         return await apiCalls.postInventoryCall({freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description});
     //     });
     // };
+
+    // useEffect(() => {
+    //     updateNameStatus();
+    // }, [statusUpdate]);
     
     useEffect(() => {
         insertNamesToDatabase();
+        // setStatusUpdate(false);
     }, [fileContent]);
     
     return (
@@ -132,7 +172,7 @@ export function InputFile() {
                                 {
                                     fileContent.map(fileData => (
                                         <pre key={fileData.name}>
-                                            {`Table: ${fileData.table} - Name: ${fileData.name}`}
+                                            {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
                                         </pre>
                                     ))
                                 }
