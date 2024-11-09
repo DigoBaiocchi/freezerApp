@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { ChangeEvent, useEffect, useState } from "react"
 import { IndividualTableData } from "./IndividualTables/Table";
 import { Card } from "./ui/card";
+import { Button } from "./ui/button";
 
 type IndividualTablefile = {
     table: IndividualTables;
@@ -25,8 +26,6 @@ type IndividualTablefile = {
 export function InputFile() {
     const [file, setFile] = useState<File | null>(null);
     const [fileContent, setFileContent] = useState<IndividualTablefile[]>([]);
-    // const [statusUpdate, setStatusUpdate] = useState(false);
-    // const [inventoryFileContent, setInventoryFileContent] = useState<Array<InventoryFile>>([]);
 
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
@@ -69,8 +68,12 @@ export function InputFile() {
         };
 
         reader.readAsText(file);
-        // setStatusUpdate(true);
     };
+
+    const csvInventoryContent = "data:text/csv;charset=utf-8,Name,Quantity";
+    const inventoryEncodeUri = encodeURI(csvInventoryContent);
+    const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
+    const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
 
     // const readInventoryFileContent = (file: File) => {
     //     const reader = new FileReader();
@@ -179,9 +182,15 @@ export function InputFile() {
                             </div>
                         )
                     }
+                    <div>
+                        <p>Templates:</p>
+                        <div>
+                            <a href={inventoryEncodeUri} download="inventory_template.csv"><Button>Inventory</Button></a>
+                            <a href={nonInventoryEncodeUri} download="non_inventory_template.csv"><Button>Non-Inventory</Button></a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </Card>
-        
+        </Card>        
     )   
 }
