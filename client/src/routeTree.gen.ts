@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as UnitImport } from './routes/unit'
 import { Route as HomeImport } from './routes/home'
 import { Route as AddInventoryImport } from './routes/addInventory'
+import { Route as SettingsUploadFileImport } from './routes/settings/uploadFile'
 import { Route as ItemListImport } from './routes/item/list'
 import { Route as ItemEditImport } from './routes/item/edit'
 import { Route as InventorySearchImport } from './routes/inventory/search'
@@ -38,6 +39,11 @@ const HomeRoute = HomeImport.update({
 
 const AddInventoryRoute = AddInventoryImport.update({
   path: '/addInventory',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SettingsUploadFileRoute = SettingsUploadFileImport.update({
+  path: '/settings/uploadFile',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -174,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ItemListImport
       parentRoute: typeof rootRoute
     }
+    '/settings/uploadFile': {
+      id: '/settings/uploadFile'
+      path: '/settings/uploadFile'
+      fullPath: '/settings/uploadFile'
+      preLoaderRoute: typeof SettingsUploadFileImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -192,6 +205,7 @@ export const routeTree = rootRoute.addChildren({
   InventorySearchRoute,
   ItemEditRoute,
   ItemListRoute,
+  SettingsUploadFileRoute,
 })
 
 /* prettier-ignore-end */
