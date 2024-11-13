@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { CirclePlus, Menu } from "lucide-react";
+import { CirclePlus, Menu, Settings } from "lucide-react";
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const Root = () => {
@@ -85,6 +85,13 @@ const Root = () => {
                                     </Link>
                                 </NavigationMenuItem>
                                 <NavigationMenuItem>
+                                    <Link to="/settings/uploadFile">
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                            <Settings />
+                                        </NavigationMenuLink>
+                                    </Link>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
                                     <Link to="/addInventory">
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             <Button className="h-8 w-45" type="submit"><CirclePlus className="m-1" />Add to inventory</Button>
@@ -140,13 +147,6 @@ const Root = () => {
                                         </Link>
                                     </SheetClose>
                                     <SheetClose asChild>
-                                        <Link to="/freezer/edit">
-                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                Freezers
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </SheetClose>
-                                    <SheetClose asChild>
                                         <Link to="/category/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Categories
@@ -178,6 +178,13 @@ const Root = () => {
                                         <Link to="/inventory/search"  search={{freezerId: '', categoryId: '', itemName: ''}}>
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                 Search
+                                            </NavigationMenuLink>
+                                        </Link>
+                                    </SheetClose>
+                                    <SheetClose asChild>
+                                        <Link to="/settings/uploadFile">
+                                            <NavigationMenuLink className={`${navigationMenuTriggerStyle()} w-full`}>
+                                                <Settings />
                                             </NavigationMenuLink>
                                         </Link>
                                     </SheetClose>

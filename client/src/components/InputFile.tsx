@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { IndividualTableData } from "./IndividualTables/Table";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
+import { Download } from "lucide-react";
 
 type IndividualTablefile = {
     table: IndividualTables;
@@ -185,8 +186,15 @@ export function InputFile() {
                     <div>
                         <p>Templates:</p>
                         <div>
-                            <a href={inventoryEncodeUri} download="inventory_template.csv"><Button>Inventory</Button></a>
-                            <a href={nonInventoryEncodeUri} download="non_inventory_template.csv"><Button>Non-Inventory</Button></a>
+                            <div className="flex">
+                                <p className="w-[200px]">Inventory</p>
+                                <a href={inventoryEncodeUri} download="inventory_template.csv"><Button><Download /></Button></a>
+                            </div>
+                            <div className="flex">
+                                <p className="w-[200px]"
+                                >Non-Inventory</p>
+                                <a href={nonInventoryEncodeUri} download="non_inventory_template.csv"><Button><Download /></Button></a>
+                            </div>
                         </div>
                     </div>
                 </div>
