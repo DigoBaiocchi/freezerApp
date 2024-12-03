@@ -161,44 +161,47 @@ export function InputFile() {
     }, [fileContent]);
     
     return (
-        <Card className="flex w-[300px] m-2">
-            <div className="flex justify-center p-2">
-                <div className="flex-row align-middle w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="picture">Select File:</Label>
-                    <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
-                    {
-                        file && (
-                            <div>
-                                <h3>Uploaded File:</h3>
-                                <p>Name: {file.name}</p>
-                                <p>Type: {file.type}</p>
-                                <p>Size: {file.size}</p>
-                                {
-                                    fileContent.map(fileData => (
-                                        <pre key={fileData.name}>
-                                            {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
-                                        </pre>
-                                    ))
-                                }
-                            </div>
-                        )
-                    }
-                    <div>
-                        <p>Templates:</p>
+        <div className="flex-col">
+            <Card className="flex w-[300px] m-2">
+                <div className="flex p-2">
+                    <div className="flex-row justify-center w-full max-w-sm items-center gap-1.5">
+                        <Label className="p-2" htmlFor="picture">Select File:</Label>
+                        <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
                         <div>
-                            <div className="flex">
-                                <p className="w-[200px]">Inventory</p>
-                                <a href={inventoryEncodeUri} download="inventory_template.csv"><Button><Download /></Button></a>
-                            </div>
-                            <div className="flex">
-                                <p className="w-[200px]"
-                                >Non-Inventory</p>
-                                <a href={nonInventoryEncodeUri} download="non_inventory_template.csv"><Button><Download /></Button></a>
+                            <p className="font-semibold p-2">Templates:</p>
+                            <div>
+                                <div className="flex">
+                                    <p className="w-[200px] p-1">Inventory</p>
+                                    <a href={inventoryEncodeUri} className="p-1" download="inventory_template.csv"><Button size={"sm"}><Download /></Button></a>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-[200px] p-1">Non-Inventory</p>
+                                    <a href={nonInventoryEncodeUri} className="p-1" download="non_inventory_template.csv"><Button size={"sm"}><Download /></Button></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </Card>        
+            </Card>        
+            <span>
+                        {
+                            file && (
+                                <div>
+                                    <h3>Uploaded File:</h3>
+                                    <p>Name: {file.name}</p>
+                                    <p>Type: {file.type}</p>
+                                    <p>Size: {file.size}</p>
+                                    {
+                                        fileContent.map(fileData => (
+                                            <pre key={fileData.name}>
+                                                {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
+                                            </pre>
+                                        ))
+                                    }
+                                </div>
+                            )
+                        }
+            </span>
+        </div>
     )   
 }
