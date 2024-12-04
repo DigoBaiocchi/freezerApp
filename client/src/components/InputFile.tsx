@@ -71,7 +71,7 @@ export function InputFile() {
         reader.readAsText(file);
     };
 
-    const csvInventoryContent = "data:text/csv;charset=utf-8,Name,Quantity";
+    const csvInventoryContent = "data:text/csv;charset=utf-8,freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description";
     const inventoryEncodeUri = encodeURI(csvInventoryContent);
     const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
     const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
