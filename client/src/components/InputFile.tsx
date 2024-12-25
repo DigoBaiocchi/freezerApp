@@ -36,6 +36,13 @@ export function InputFile({ databaseType }: InputFileProps) {
         }
     }
 
+    const getLabelData = async (labelName: IndividualTables): Promise<IndividualTableData> => {
+        const apiCalls = new ApiCalls(labelName);
+        const databaseData = await apiCalls.getCall().then(res => res.data);
+
+        return databaseData;
+    }
+
     const readFileContent = (file: File) => {
         const reader = new FileReader();
         reader.onload = async (e: ProgressEvent<FileReader>) => {
@@ -50,9 +57,9 @@ export function InputFile({ databaseType }: InputFileProps) {
             result.shift();
             const resultStatusUpdate = await Promise.all(
                 result.map(async (content: IndividualTablefile) => {
-                    const apiCalls = new ApiCalls(content.table);
-                    const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
-                    const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
+                    // const apiCalls = new ApiCalls(content.table);
+                    const databaseData = await getLabelData(content.table);
+                    const checkifNameExists = databaseData.find((data) => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
                     console.log(content)
                     console.log(checkifNameExists)
                     if (checkifNameExists) {
@@ -74,22 +81,40 @@ export function InputFile({ databaseType }: InputFileProps) {
     const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
     const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
 
-    const readInventoryFileContent = (file: File) => {
+    const readInventoryFileContent = async (file: File) => {
         const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
+        const freezerData = await getLabelData("freezer");
+        const categoryData = await getLabelData("category");
+        const itemData = await getLabelData("item");
+        const unitData = await getLabelData("unit");
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
-            const result = content.split('\r\n').map((array) => {
-                const arrayResult = array.split(',');
-                const freezerId = +arrayResult[0];
-                const categoryId = +arrayResult[1];
-                const itemId = +arrayResult[2];
-                const unitId = +arrayResult[3];
-                const entryDate = new Date(arrayResult[4]);
-                const expDate = new Date(arrayResult[5]);
-                const quantity = +arrayResult[6];
-                const description = arrayResult[7];
-                return { freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description };
-            });
+            const result = await Promise.all(
+                content.split('\r\n').map(async (array) => {
+                    const arrayResult = array.split(',');
+                    console.log("arrayResult:", arrayResult)
+                    let [freezerName, 
+                        categoryName,
+                        itemName,
+                        unitName,
+                        _entryDate,
+                        _expDate,
+                        _quantity,
+                        description] = arrayResult;
+                    const freezerId = freezerData.find(data => data.name.toLowerCase() == freezerName.toLowerCase())?.id || 0;
+                    console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
+                    const categoryId = categoryData.find(data => data.name.toLowerCase() == categoryName.toLowerCase())?.id || 0;
+                    console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
+                    const itemId = itemData.find(data => data.name.toLowerCase() == itemName.toLowerCase())?.id || 0;
+                    console.log("itemId: ", itemId, "itemName: ", itemName);
+                    const unitId = unitData.find(data => data.name.toLowerCase() == unitName.toLowerCase())?.id || 0;
+                    console.log("unitId: ", unitId, "unitName: ", unitName);
+                    const entryDate = new Date(arrayResult[4]);
+                    const expDate = new Date(arrayResult[5]);
+                    const quantity = +arrayResult[6];
+                    return { freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description };
+                })
+            );
             result.shift();
             console.log('File content:', result);
             setInventoryFileContent(result);
@@ -109,7 +134,7 @@ export function InputFile({ databaseType }: InputFileProps) {
                 throw new Error(`Name ${content.name} already exists`);
             }
     
-            return await apiCalls.postCall(content.name);
+            // return await apiCalls.postCall(content.name);
         });
     };
 

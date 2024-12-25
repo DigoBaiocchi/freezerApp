@@ -27,7 +27,7 @@ type IndividualTableNames = {
     unit: 'unit'
 };
 
-const individualTableNames: IndividualTableNames = {
+export const individualTableNames: IndividualTableNames = {
     freezer: 'freezer',
     category: 'category',
     item: 'item',
