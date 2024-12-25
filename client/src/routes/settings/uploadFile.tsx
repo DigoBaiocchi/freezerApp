@@ -6,8 +6,9 @@ export const Route = createFileRoute('/settings/uploadFile')({
   component: () => {
     return (
       <MainContainer>
-        <div className="flex justify-center m-2">
-            <InputFile />
+        <div className="flex flex-wrap justify-center m-2">
+            <InputFile databaseType='Non-Inventory' />
+            <InputFile databaseType='Inventory' />
         </div>
       </MainContainer>
     )
