@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { CirclePlus, Menu, Settings } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const Root = () => {
@@ -33,42 +34,31 @@ const Root = () => {
                                     </Link>
                                 </NavigationMenuItem>
                                 <NavigationMenuItem>
-                                    <NavigationMenuTrigger>Freezer</NavigationMenuTrigger>
+                                    <NavigationMenuTrigger>Labels</NavigationMenuTrigger>
                                     <NavigationMenuContent>
                                         <div className="w-[800px]">
                                             <Link to="/freezer/list">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                    Freezer List
+                                                    Freezer
                                                 </NavigationMenuLink>
                                             </Link>
-                                            <Link to="/freezer/edit">
+                                            <Link to="/category/edit">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                    Freezer Edit
+                                                    Categories
+                                                </NavigationMenuLink>
+                                            </Link>
+                                            <Link to="/item/edit">
+                                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                    Items
+                                                </NavigationMenuLink>
+                                            </Link>
+                                            <Link to="/unit">
+                                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                    Units
                                                 </NavigationMenuLink>
                                             </Link>
                                         </div>
                                     </NavigationMenuContent>
-                                </NavigationMenuItem>
-                                <NavigationMenuItem>
-                                    <Link to="/category/edit">
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Categories
-                                        </NavigationMenuLink>
-                                    </Link>
-                                </NavigationMenuItem>
-                                <NavigationMenuItem>
-                                    <Link to="/item/edit">
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Items
-                                        </NavigationMenuLink>
-                                    </Link>
-                                </NavigationMenuItem>
-                                <NavigationMenuItem>
-                                    <Link to="/unit">
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Units
-                                        </NavigationMenuLink>
-                                    </Link>
                                 </NavigationMenuItem>
                                 <NavigationMenuItem>
                                     <Link to="/inventory/edit">
@@ -146,27 +136,41 @@ const Root = () => {
                                             </NavigationMenuLink>
                                         </Link>
                                     </SheetClose>
-                                    <SheetClose asChild>
-                                        <Link to="/category/edit">
-                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                Categories
-                                            </NavigationMenuLink>
-                                        </Link>    
-                                    </SheetClose>
-                                    <SheetClose asChild>
-                                        <Link to="/item/edit">
-                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                Items
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </SheetClose>
-                                    <SheetClose asChild>
-                                        <Link to="/unit">
-                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                Units
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </SheetClose>
+                                    <Accordion type="single" collapsible>
+                                        <AccordionItem value="item-1">
+                                            <AccordionTrigger className="pl-4 pt-2 pb-2 decoration-transparent">Labels</AccordionTrigger>
+                                            <AccordionContent className="pl-2">
+                                                <SheetClose asChild>
+                                                    <Link to="/freezer/list">
+                                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                            Freezer
+                                                        </NavigationMenuLink>
+                                                    </Link>
+                                                </SheetClose>
+                                                <SheetClose asChild>
+                                                    <Link to="/category/edit">
+                                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                            Categories
+                                                        </NavigationMenuLink>
+                                                    </Link>    
+                                                </SheetClose>
+                                                <SheetClose asChild>
+                                                    <Link to="/item/edit">
+                                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                            Items
+                                                        </NavigationMenuLink>
+                                                    </Link>
+                                                </SheetClose>
+                                                <SheetClose asChild>
+                                                    <Link to="/unit">
+                                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                            Units
+                                                        </NavigationMenuLink>
+                                                    </Link>
+                                                </SheetClose>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
                                     <SheetClose asChild>
                                         <Link to="/inventory/edit">
                                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
