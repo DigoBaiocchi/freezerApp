@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // import TableData from "../TableData";
 import TableIndividualData from "../TableIndividualData";
 import { UpdateDeleteNameDrawerDialog } from "./UpdateDeleteName";
+import DeleteButton from "../DeleteButton";
 
 export type IndiviualTable = {
     id: number;
@@ -27,14 +28,6 @@ export function IndividualTable({ tableName }: TableProps) {
             console.log("getCall data is:", res.data)
             return res.data;
         }),
-    });
-
-    const deleteMutation = useMutation({
-        mutationFn: (id: number) => apiCalls.deleteCall(id),
-        onSuccess: () => {
-            console.log('Invalidating queries for:', [tableName]);
-            queryClient.invalidateQueries({ queryKey: [tableName] });
-        },
     });
         
     const updateMutation = useMutation<void, Error, IndiviualTable>({
@@ -81,13 +74,14 @@ export function IndividualTable({ tableName }: TableProps) {
                 const name = row.original.name;
 
                 return (
-                    <UpdateDeleteNameDrawerDialog 
-                        deleteFunction={deleteMutation} 
-                        tableName={tableName} 
-                        id={id} 
-                        name={name} 
-                        actionType="delete"
-                    />
+                    // <UpdateDeleteNameDrawerDialog 
+                    //     deleteFunction={deleteMutation} 
+                    //     tableName={tableName} 
+                    //     id={id} 
+                    //     name={name} 
+                    //     actionType="delete"
+                    // />
+                    <DeleteButton key={id} tableName={tableName} item={{id, itemname: name}} />
                 )
             }
         }),
