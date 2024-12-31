@@ -2,9 +2,9 @@ import { PencilLineIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { UpdatePropsContext } from "./InventoryTable";
-import { DrawerDialog } from "./DrawerDialog";
 import { useMediaQuery } from "usehooks-ts";
 import { ItemData } from "./InventoryCard";
+import { EditQuantityButton } from "../editButton/EditQuantityButton";
 
 export type ItemProps = {
     item: ItemData;
@@ -15,9 +15,31 @@ export default function EditMenu({ item }: ItemProps) {
 
     if (isDesktop) {
         return (
-            <Button variant={"ghost"}>
-                <PencilLineIcon color="#3859ff" />
-            </Button>
+            // <Button variant={"ghost"}>
+            //     <PencilLineIcon color="#3859ff" />
+            // </Button>
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant={"ghost"} className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <PencilLineIcon color="#3859ff" className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Edit</DropdownMenuLabel>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <UpdatePropsContext.Provider value={{ id: item.id, quantity: +item.quantity, name: item.itemname }}>
+                        {/* <DrawerDialog /> */}
+                        <EditQuantityButton />
+                    </UpdatePropsContext.Provider>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Button className="w-full" variant="outline" onClick={() => {
+                        console.log("Edit item");
+                    }}>Edit Item Data</Button>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
         );
     }
     
@@ -32,8 +54,9 @@ export default function EditMenu({ item }: ItemProps) {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Edit</DropdownMenuLabel>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <UpdatePropsContext.Provider value={{ id: item.id, quantity: +item.quantity }}>
-                        <DrawerDialog />
+                    <UpdatePropsContext.Provider value={{ id: item.id, quantity: +item.quantity, name: item.itemname }}>
+                        {/* <DrawerDialog /> */}
+                        <EditQuantityButton />
                     </UpdatePropsContext.Provider>
                 </DropdownMenuItem>
                 <DropdownMenuItem>

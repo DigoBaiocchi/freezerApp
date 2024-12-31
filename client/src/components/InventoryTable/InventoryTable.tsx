@@ -21,7 +21,7 @@ export type InventoryTableData = {
 
 export type IndividualTableData = InventoryTableData[];
 
-export const UpdatePropsContext = createContext({ id: 0, quantity: 0});
+export const UpdatePropsContext = createContext({ id: 0, quantity: 0, name: ''});
 
 export function InventoryTable() {
     // const isDesktop = useMediaQuery("(min-width: 768px)");

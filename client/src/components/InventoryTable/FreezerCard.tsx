@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardHeader, CardTitle } from "../ui/card";
-import { PencilIcon } from "lucide-react";
 import DeleteButton from "../DeleteButton";
+import { EditNameButton } from "../editButton/EditNameButton";
 
 type FreezerCategoryCardProps = {
     id: number;
@@ -19,7 +19,7 @@ export function FreezerCategoryCard({id, name}: FreezerCategoryCardProps) {
                         </div>
                     </Link>            
                         <div className="flex justify-left">
-                            <PencilIcon className="h-4 w-4" color="#3859ff"/>
+                            <EditNameButton tableName="freezer" id={id} name={name} />
                             <DeleteButton tableName="freezer" item={{id, itemname: name}} />
                         </div>
                 </CardHeader>
