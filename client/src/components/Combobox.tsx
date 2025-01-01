@@ -38,18 +38,35 @@ type ComboboxResponsiveProps = {
     tableName: IndividualTables;
     field: FieldApi<any, any, any, any, any>;
     data: IndividualTableData;
+    resetTrigger: number;
 };
 
-export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiveProps) {
+export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: ComboboxResponsiveProps) {
     const [open, setOpen] = React.useState(false)
     const isDesktop = useMediaQuery("(min-width: 768px)")
     const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(null)
 
     React.useEffect(() => {
-        if (field.state.value === '') {
-            setSelectedStatus(null);
+        if (!selectedStatus && selectedStatus) {
+            const initialStatus = data.find((status) => status.name === field.state.value)
+            if (initialStatus) {
+                console.log(initialStatus)
+                setSelectedStatus(initialStatus)
+            } else {
+                setSelectedStatus(null)
+            }
         }
-    }, [field.state.value])
+    }, [field.state.value, selectedStatus])
+
+    React.useEffect(() => {
+        setSelectedStatus(null)
+    }, [resetTrigger])
+
+    const handleSelect = (status: Data | null) => {
+        setSelectedStatus(status)
+        field.handleChange(status?.id)
+        setOpen(false)
+    }
 
     React.useEffect(() => {
         console.log(data);
@@ -66,7 +83,7 @@ export function ComboBoxResponsive({ data, tableName, field }: ComboboxResponsiv
             <PopoverContent className="w-[280px] p-0" align="start">
             <NameList 
                 setOpen={setOpen} 
-                setSelectedName={setSelectedStatus} 
+                setSelectedName={handleSelect} 
                 data={data} 
                 field={field} 
                 tableName={tableName} 

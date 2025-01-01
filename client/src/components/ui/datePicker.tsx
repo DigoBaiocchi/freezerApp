@@ -18,15 +18,20 @@ import { formatInTimeZone } from 'date-fns-tz';
 type DatePickerProps = {
     defaultDate: Date;
     handleChange: (date: Date) => void;
+    resetTrigger: number;
 }
 
-export function DatePicker({ defaultDate, handleChange }: DatePickerProps) {
+export function DatePicker({ defaultDate, handleChange, resetTrigger }: DatePickerProps) {
   const [date, setDate] = React.useState<Date | any>(defaultDate);
 
   React.useEffect(() => {
     const updatedDate = formatInTimeZone(date, 'America/New_York', 'yyyy-MM-dd HH:mm:ssXXX')
     handleChange(new Date(updatedDate));
   }, [date])
+  
+  React.useEffect(() => {
+    setDate(defaultDate)
+  }, [resetTrigger])
 
   return (
     <Popover>

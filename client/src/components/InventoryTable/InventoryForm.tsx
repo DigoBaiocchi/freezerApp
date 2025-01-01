@@ -8,6 +8,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { ComboBoxResponsive } from "../Combobox";
+import { useState } from "react";
 
 export type InventoryFields = {
   freezer: string;
@@ -27,6 +28,11 @@ type IndividualTableNames = {
     unit: 'unit'
 };
 
+type InventoryFormProps = InventoryFields & { 
+    action: "update" | "insert";
+    inventoryId: number;
+}
+
 export const individualTableNames: IndividualTableNames = {
     freezer: 'freezer',
     category: 'category',
@@ -36,21 +42,21 @@ export const individualTableNames: IndividualTableNames = {
 
 function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
     return (
-      <>
-        {field.state.meta.touchedErrors ? (
-          <em>{field.state.meta.touchedErrors}</em>
-        ) : null}
-        {field.state.meta.isValidating ? 'Validating...' : null}
-      </>
+        <>
+            {field.state.meta.touchedErrors ? (
+                <em>{field.state.meta.touchedErrors}</em>
+            ) : null}
+            {field.state.meta.isValidating ? 'Validating...' : null}
+        </>
     )
 }
 
 
-export default function InventoryForm() {
+export default function InventoryForm({ action, inventoryId, freezer, category, item, unit, entryDate, expDate, quantity, description}: InventoryFormProps) {
     const tableName: InventoryTable = 'inventory';
     const apiCalls = new ApiCalls(tableName);
     const queryClient = useQueryClient();
-    const date = new Date();
+    const [resetTrigger, setResetTrigger] = useState(0);
 
     // const setValueToNull = () => null;
 
@@ -101,14 +107,22 @@ export default function InventoryForm() {
         }
     });
 
+    const updateDataMutation = useMutation({
+        mutationFn: ({id, ...params}: InventoryPostParams & { id: number }) => apiCalls.updateInventoryCall({id, ...params}),
+        onSuccess: () => {
+            console.log('Invalidating queries for:', [tableName]);
+            queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+        }
+    });
+
     const formFactory = createFormFactory<InventoryFields>({
         defaultValues: {
             freezer: '',
             category: '',
             item: '',
             unit: '',
-            entryDate: date,
-            expDate: date,
+            entryDate: entryDate,
+            expDate: expDate,
             quantity: '0',
             description: '',
         }
@@ -116,14 +130,14 @@ export default function InventoryForm() {
 
     const form = formFactory.useForm({
         defaultValues: {
-            freezer: '',
-            category: '',
-            item: '',
-            unit: '',
-            entryDate: date,
-            expDate: date,
-            quantity: '0',
-            description: '',
+            freezer: freezer,
+            category: category,
+            item: item,
+            unit: unit,
+            entryDate: entryDate,
+            expDate: expDate,
+            quantity: quantity,
+            description: description,
         },
         onSubmit: ({ value }) => {
             console.log(`Freezer: ${value.freezer}`);
@@ -135,27 +149,42 @@ export default function InventoryForm() {
             console.log(`entrydate: ${new Date(value.entryDate)}`);
             console.log(`expdate: ${new Date(value.expDate)}`);
             console.log('Submitting form.')
-            addDataMutation.mutate({
-                freezerId: +value.freezer,
-                categoryId: +value.category,
-                itemId: +value.item,
-                unitId: +value.unit,
-                entryDate: new Date(value.entryDate),
-                expDate: new Date(value.expDate),
-                quantity: +value.quantity,
-                description: value.description
-            });
-
-            form.reset();
+            if (action === "insert") {
+                addDataMutation.mutate({
+                    freezerId: +value.freezer,
+                    categoryId: +value.category,
+                    itemId: +value.item,
+                    unitId: +value.unit,
+                    entryDate: new Date(value.entryDate),
+                    expDate: new Date(value.expDate),
+                    quantity: +value.quantity,
+                    description: value.description
+                });
+                
+                form.reset()
+                setResetTrigger(prev => prev + 1);
+            } else {
+                updateDataMutation.mutate({
+                    id: inventoryId,
+                    freezerId: +value.freezer,
+                    categoryId: +value.category,
+                    itemId: +value.item,
+                    unitId: +value.unit,
+                    entryDate: new Date(value.entryDate),
+                    expDate: new Date(value.expDate),
+                    quantity: +value.quantity,
+                    description: value.description
+                })
+            }
+            
         }
     });
 
     return (
         <>
-            
             <div className="flex-1 overflow-auto">
                 <div className="flex flex-col items-center justify-center m-2">
-                    <p className="p-1"><b>Add item to {tableName}</b></p>
+                    <p className="p-1"><b>{action === "insert" ? `Add item to ${tableName}` : `Update ${item}`}</b></p>
                     <form 
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -173,7 +202,8 @@ export default function InventoryForm() {
                                         <ComboBoxResponsive 
                                             data={freezerData.data} 
                                             tableName={individualTableNames.freezer} 
-                                            field={field} 
+                                            field={field}
+                                            resetTrigger={resetTrigger}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -190,6 +220,7 @@ export default function InventoryForm() {
                                             data={categoryData.data} 
                                             tableName={individualTableNames.category} 
                                             field={field} 
+                                            resetTrigger={resetTrigger}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -206,6 +237,7 @@ export default function InventoryForm() {
                                             data={itemData.data} 
                                             tableName={individualTableNames.item} 
                                             field={field} 
+                                            resetTrigger={resetTrigger}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -222,6 +254,7 @@ export default function InventoryForm() {
                                             data={unitData.data} 
                                             tableName={individualTableNames.unit} 
                                             field={field} 
+                                            resetTrigger={resetTrigger}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -234,7 +267,7 @@ export default function InventoryForm() {
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
-                                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                        <DatePicker resetTrigger={resetTrigger} defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
@@ -246,7 +279,7 @@ export default function InventoryForm() {
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
-                                        <DatePicker defaultDate={field.state.value} handleChange={(date: Date) => field.handleChange(date)} />
+                                        <DatePicker resetTrigger={resetTrigger} defaultDate={field.state.value} handleChange={(expDate: Date) => field.handleChange(expDate)} />
                                         <FieldInfo field={field} />
                                     </>
                                 )}
@@ -263,6 +296,7 @@ export default function InventoryForm() {
                                             value={field.state.value}
                                             onBlur={field.handleBlur}
                                             onChange={(e) => field.handleChange(e.target.value)}
+                                            disabled={action === "insert" ? false : true }
                                             type="number"
                                         />
                                         <FieldInfo field={field} />
@@ -292,7 +326,7 @@ export default function InventoryForm() {
                                 selector={(state) => [state.canSubmit, state.isSubmitting]}
                                 children={([_canSubmit, isSubmitting]) => (
                                     <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} >
-                                        {isSubmitting ? '...' : 'Add'}
+                                        {isSubmitting ? '...' : action === "insert" ? 'Add' : "Update"}
                                     </Button>
                                 )}
                             />
