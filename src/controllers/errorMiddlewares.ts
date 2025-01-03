@@ -75,7 +75,7 @@ const incorrectId = (tableName: AllTableNames): RequestHandler<{ id: number }> =
             checkIfIdExists = data.map(data => +data.id).includes(+req.params.id);
         } else if (tableName === 'inventory') {
             const database = new InventoryQueries();
-            const data = await database.getData() as DetailedInventoryData[];
+            const data = await database.getData("formated by name") as DetailedInventoryData[];
             checkIfIdExists = data.map(data => +data.id).includes(+req.params.id);
             console.log(checkIfIdExists, req.params.id)
         } else {

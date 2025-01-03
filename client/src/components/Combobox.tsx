@@ -47,16 +47,18 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
     const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(null)
 
     React.useEffect(() => {
-        if (!selectedStatus && selectedStatus) {
-            const initialStatus = data.find((status) => status.name === field.state.value)
+        if (field.state.value && data) {
+            const initialStatus = data.find((status) => status.id === +field.state.value)
+            console.log("initialStatus", initialStatus)
             if (initialStatus) {
                 console.log(initialStatus)
                 setSelectedStatus(initialStatus)
+                field.handleChange(initialStatus?.id)
             } else {
                 setSelectedStatus(null)
             }
         }
-    }, [field.state.value, selectedStatus])
+    }, [field.state.value, data, selectedStatus])
 
     React.useEffect(() => {
         setSelectedStatus(null)
@@ -68,16 +70,11 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
         setOpen(false)
     }
 
-    React.useEffect(() => {
-        console.log(data);
-    }, [data])
-
     if (isDesktop) {
-        return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
             <Button variant="outline" className="w-[280px] justify-start">
-                {selectedStatus ? <>{selectedStatus.name}</> : <>+ Select {tableName}</>}
+                {selectedStatus ? <> {selectedStatus?.name}</> : <>+ Select {tableName}</>}
             </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[280px] p-0" align="start">
@@ -90,7 +87,6 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
             />
             </PopoverContent>
         </Popover>
-        )
     }
 
     return (

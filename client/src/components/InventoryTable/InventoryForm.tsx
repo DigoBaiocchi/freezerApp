@@ -8,7 +8,8 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { ComboBoxResponsive } from "../Combobox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 export type InventoryFields = {
   freezer: string;
@@ -56,9 +57,8 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
     const tableName: InventoryTable = 'inventory';
     const apiCalls = new ApiCalls(tableName);
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const [resetTrigger, setResetTrigger] = useState(0);
-
-    // const setValueToNull = () => null;
 
     const freezerData = useQuery({
         queryKey: [`${individualTableNames.freezer}Data`],
@@ -112,6 +112,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
         onSuccess: () => {
             console.log('Invalidating queries for:', [tableName]);
             queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+            navigate({ to: "/inventory/edit" })
         }
     });
 
@@ -180,11 +181,15 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
         }
     });
 
+    useEffect(() => {
+        console.log("freezerData", freezerData.data)
+    }, [freezerData])
+
     return (
         <>
             <div className="flex-1 overflow-auto">
                 <div className="flex flex-col items-center justify-center m-2">
-                    <p className="p-1"><b>{action === "insert" ? `Add item to ${tableName}` : `Update ${item}`}</b></p>
+                    <p className="p-1"><b>{action === "insert" ? `Add item to ${tableName}` : `Edit inventory`}</b></p>
                     <form 
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -198,9 +203,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                 name={individualTableNames.freezer}
                                 children={(field)  => (
                                     <>
-                                        <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer:</Label>
+                                        <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer: {!freezerData.isPending && inventoryId ? freezerData.data[0].name : ''}</Label>
                                         <ComboBoxResponsive 
-                                            data={freezerData.data} 
+                                            data={freezerData.isPending && inventoryId ? [] :freezerData.data} 
                                             tableName={individualTableNames.freezer} 
                                             field={field}
                                             resetTrigger={resetTrigger}
@@ -325,8 +330,8 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                             <form.Subscribe 
                                 selector={(state) => [state.canSubmit, state.isSubmitting]}
                                 children={([_canSubmit, isSubmitting]) => (
-                                    <Button className="w-[280px]" type="submit" disabled={addDataMutation.isPending} >
-                                        {isSubmitting ? '...' : action === "insert" ? 'Add' : "Update"}
+                                    <Button className="w-[280px]" type="submit" disabled={action === "insert" ? addDataMutation.isPending : updateDataMutation.isPending} >
+                                        {isSubmitting ? '...' : action === "insert" ? "Add" : "Update"}
                                     </Button>
                                 )}
                             />

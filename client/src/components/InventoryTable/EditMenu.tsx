@@ -5,6 +5,7 @@ import { UpdatePropsContext } from "./InventoryTable";
 import { useMediaQuery } from "usehooks-ts";
 import { ItemData } from "./InventoryCard";
 import { EditQuantityButton } from "../editButton/EditQuantityButton";
+import { Link } from "@tanstack/react-router";
 
 export type ItemProps = {
     item: ItemData;
@@ -34,9 +35,11 @@ export default function EditMenu({ item }: ItemProps) {
                     </UpdatePropsContext.Provider>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <Button className="w-full" variant="outline" onClick={() => {
-                        console.log("Edit item");
-                    }}>Edit Item Data</Button>
+                    <Link to={`/inventory/edit-item`} search={{ inventoryId: item.id }}>
+                        <Button className="w-full" variant="outline" onClick={() => {
+                            console.log("Edit item" + item.id);
+                        }}>Edit Item Data</Button>
+                    </Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -60,9 +63,11 @@ export default function EditMenu({ item }: ItemProps) {
                     </UpdatePropsContext.Provider>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <Button className="w-full" variant="outline" onClick={() => {
-                        console.log("Edit item");
-                    }}>Edit Item Data</Button>
+                    <Link to={`/inventory/edit-item`} search={{ inventoryId: item.id }}>
+                        <Button className="w-full" variant="outline" onClick={() => {
+                            console.log("Edit item" + item.id);
+                        }}>Edit Item Data</Button>
+                    </Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

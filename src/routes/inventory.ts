@@ -9,6 +9,10 @@ router.get('/',
     successfulMiddlewares.getDataByTableName(tableName)
 );
 
+router.get('/raw-data',
+    successfulMiddlewares.getInventoryRawData()
+)
+
 router.get('/category-list/:freezerId',
     successfulMiddlewares.getCategorylistByFreezer()
 );

@@ -69,6 +69,12 @@ export class ApiCalls {
             .catch(error => console.log(error))
     }
 
+    async getInventoryRawData() {
+        return axios.get(`${this.apiUrl}/raw-data`)
+        .then(response => response.data)
+        .catch(error => console.log(error))
+    }
+
     async getCategoriesList(freezerId: number) {
         if (this.databaseTable === "inventory") {
             return axios.get(`${this.apiUrl}/category-list/${freezerId}`)

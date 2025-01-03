@@ -55,6 +55,8 @@ export type IventorySummaryData = {
     description: string;
 };
 
+type GetDataView = "raw" | "formated by name";
+
 export class InventoryQueries {
     private tableName: 'inventory';
 
@@ -62,26 +64,33 @@ export class InventoryQueries {
         this.tableName = 'inventory';
     }
 
-    public async getData() {
-        const selectDataQuery = `SELECT
-                                    inventory.id,
-                                    freezer.name as freezerName,
-                                    category.name as categoryName,
-                                    item.name as itemName,
-                                    unit.name as unitName,
-                                    inventory.quantity as quantity,
-                                    inventory.entry_date as entryDate,
-                                    inventory.exp_date as expDate,
-                                    inventory.description as description
-                                FROM inventory
-                                LEFT JOIN item
-                                    ON item.id = inventory.item_id
-                                LEFT JOIN category
-                                    ON category.id = inventory.category_id
-                                LEFT JOIN freezer
-                                    ON freezer.id = inventory.freezer_id
-                                LEFT JOIN unit
-                                    ON unit.id = inventory.unit_id;`;
+    public async getData(dataView: GetDataView) {
+        let selectDataQuery: string;
+
+        if (dataView === "formated by name") {
+            selectDataQuery = `SELECT
+                                        inventory.id,
+                                        freezer.name as freezerName,
+                                        category.name as categoryName,
+                                        item.name as itemName,
+                                        unit.name as unitName,
+                                        inventory.quantity as quantity,
+                                        inventory.entry_date as entryDate,
+                                        inventory.exp_date as expDate,
+                                        inventory.description as description
+                                    FROM inventory
+                                    LEFT JOIN item
+                                        ON item.id = inventory.item_id
+                                    LEFT JOIN category
+                                        ON category.id = inventory.category_id
+                                    LEFT JOIN freezer
+                                        ON freezer.id = inventory.freezer_id
+                                    LEFT JOIN unit
+                                        ON unit.id = inventory.unit_id;`;
+
+        } else {
+            selectDataQuery = `SELECT * FROM inventory`;
+        }
         
         return await query(selectDataQuery).then(response => response?.rows) as DetailedInventoryData[];
     }

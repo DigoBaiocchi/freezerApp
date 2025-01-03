@@ -5,7 +5,7 @@ export function EditInventory() {
         <InventoryForm 
             action='update' 
             inventoryId={0}
-            freezer='' 
+            freezer='42' 
             category='' 
             item='' 
             unit='' 
