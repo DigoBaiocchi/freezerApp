@@ -71,22 +71,24 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
     }
 
     if (isDesktop) {
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[280px] justify-start">
-                {selectedStatus ? <> {selectedStatus?.name}</> : <>+ Select {tableName}</>}
-            </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[280px] p-0" align="start">
-            <NameList 
-                setOpen={setOpen} 
-                setSelectedName={handleSelect} 
-                data={data} 
-                field={field} 
-                tableName={tableName} 
-            />
-            </PopoverContent>
-        </Popover>
+        return(
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                <Button variant="outline" className="w-[280px] justify-start">
+                    {selectedStatus ? <> {selectedStatus?.name}</> : <>+ Select {tableName}</>}
+                </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[280px] p-0" align="start">
+                <NameList 
+                    setOpen={setOpen} 
+                    setSelectedName={handleSelect} 
+                    data={data} 
+                    field={field} 
+                    tableName={tableName} 
+                />
+                </PopoverContent>
+            </Popover>
+        )
     }
 
     return (
@@ -106,7 +108,7 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
             <div className="mt-4 border-t">
             <NameList 
                 setOpen={setOpen} 
-                setSelectedName={setSelectedStatus} 
+                setSelectedName={handleSelect} 
                 data={data} 
                 field={field} 
                 tableName={tableName} 
