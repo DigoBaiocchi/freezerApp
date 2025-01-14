@@ -1,6 +1,6 @@
 import { query } from "./dbConfig";
 
-export type IndividualTables = "freezer" | "category" | "item" | 'unit';
+export type IndividualTables = "freezer" | "category" | "item" | 'unit' | 'location';
 
 type CollectionReferenceTables = "freezer" | "category";
 type CollectionTargetTables = "category" | "item";

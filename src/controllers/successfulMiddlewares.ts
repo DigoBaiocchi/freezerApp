@@ -7,7 +7,7 @@ export type AllTableNames = IndividualTables | 'inventory';
 const getDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
         let response;
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit' || tableName === 'location') {
             const freezerCategoryDb = new NonInventoryQueries(tableName);
             response = await freezerCategoryDb.getData();
         } else if (tableName === 'inventory') {
@@ -76,7 +76,7 @@ const postDataByTableName = (tableName: AllTableNames): RequestHandler => {
     return async (req, res) => {
         let newData;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit' || tableName === 'location') {
             const name: string = req.body.name;
             const addedData = name;
             const freezerCategoryDb = new NonInventoryQueries(tableName);
@@ -118,7 +118,7 @@ const updateDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: n
         const id: number = req.params.id;
         let updatedData;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit' || tableName === 'location') {
             const name: string = req.body.name;
             const freezerCategoryDb = new NonInventoryQueries(tableName);
             
@@ -169,7 +169,7 @@ const deleteDataByTableName = (tableName: AllTableNames): RequestHandler<{ id: n
     return async (req, res) => {
         const id = req.params.id;
         
-        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit') {
+        if (tableName === 'freezer' || tableName === 'category' || tableName === 'item' || tableName === 'unit' || tableName === 'location') {
             const database = new NonInventoryQueries(tableName);
 
             await database.deleteData(id);

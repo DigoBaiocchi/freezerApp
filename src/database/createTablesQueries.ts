@@ -33,6 +33,13 @@ export class DatabaseSchema {
             );`;
         await query(createUnitTable);
 
+        const createLocationTable = `CREATE TABLE IF NOT EXISTS location (
+            id SERIAL,
+            name varchar(30) NOT NULL UNIQUE,
+            PRIMARY KEY (id)
+            );`;
+        await query(createLocationTable);
+
         const createInventoryTable = `CREATE TABLE IF NOT EXISTS inventory (
             id SERIAL,
             freezer_id integer REFERENCES freezer (id) ON DELETE CASCADE,

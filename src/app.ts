@@ -9,6 +9,7 @@ import freezerRouter from './routes/freezer';
 import categoryRouter from './routes/category';
 import itemsRouter from './routes/item';
 import unitRouter from './routes/unit';
+import locationRouter from './routes/location';
 import inventoryRouter from './routes/inventory';
 import { DatabaseSchema } from "./database/createTablesQueries";
 
@@ -47,6 +48,7 @@ app.use('/freezer', freezerRouter);
 app.use('/category', categoryRouter);
 app.use('/item', itemsRouter);
 app.use('/unit', unitRouter);
+app.use('/location', locationRouter);
 app.use('/inventory', inventoryRouter);
 
 app.use((err:Error, req: Request, res: Response, next: NextFunction) => {
