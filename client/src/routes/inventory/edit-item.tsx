@@ -43,9 +43,10 @@ export const Route = createFileRoute('/inventory/edit-item')({
       if (data) {
         const findData = data.find((inventory) => +inventory.id === inventoryId);
         console.log('findData', findData);
+        console.log('inventoryId', inventoryId);
         setItemData(findData as InventoryUpdateParams);
       }
-    }, [data, inventoryId, itemData]);
+    }, [data, inventoryId]);
 
     useEffect(() => {
       // Logs itemData after it has been updated
@@ -57,7 +58,7 @@ export const Route = createFileRoute('/inventory/edit-item')({
     return (
       <>
         <MainContainer>
-          {itemData ? (
+          {itemData && inventoryId ? (
             <InventoryForm 
               action='update' 
               inventoryId={inventoryId}

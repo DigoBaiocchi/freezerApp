@@ -39,9 +39,10 @@ type ComboboxResponsiveProps = {
     field: FieldApi<any, any, any, any, any>;
     data: IndividualTableData;
     resetTrigger: number;
+    action: "update" | "insert";
 };
 
-export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: ComboboxResponsiveProps) {
+export function ComboBoxResponsive({ data, tableName, field, resetTrigger, action }: ComboboxResponsiveProps) {
     const [open, setOpen] = React.useState(false)
     const isDesktop = useMediaQuery("(min-width: 768px)")
     const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(null)
@@ -58,10 +59,12 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
                 setSelectedStatus(null)
             }
         }
-    }, [field.state.value, data, selectedStatus])
+    }, [field.state.value, data])
 
     React.useEffect(() => {
-        setSelectedStatus(null)
+        if (action === "insert") {
+            setSelectedStatus(null)
+        }
     }, [resetTrigger])
 
     const handleSelect = (status: Data | null) => {
@@ -75,7 +78,7 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger }: Com
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                 <Button variant="outline" className="w-[280px] justify-start">
-                    {selectedStatus ? <> {selectedStatus?.name}</> : <>+ Select {tableName}</>}
+                    {selectedStatus ? <> {selectedStatus?.name}</> : <>+ Select {selectedStatus}</>}
                 </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[280px] p-0" align="start">
@@ -160,21 +163,23 @@ function NameList({
                     tableName={tableName} 
                     insertFunction={addDataMutation} 
                 />
-                {data.map((status) => (
-                    <CommandItem
-                    key={status.id}
-                    value={status.name}
-                    onSelect={(value) => {
-                        setSelectedName(
-                            data.find((priority) => priority.name === value) || null
-                        )
-                        setOpen(false)
-                        field.handleChange(status.id)
-                    }}
-                    >
-                    {status.name}
-                    </CommandItem>
-                ))}
+                {
+                    data.map((status) => (
+                        <CommandItem
+                        key={status.id}
+                        value={status.name}
+                        onSelect={(value) => {
+                            setSelectedName(
+                                data.find((priority) => priority.name === value) || null
+                            )
+                            setOpen(false)
+                            field.handleChange(status.id)
+                        }}
+                        >
+                        {status.name}
+                        </CommandItem>
+                    ))
+                }
             </CommandGroup>
         </CommandList>
         </Command>

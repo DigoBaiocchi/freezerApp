@@ -118,10 +118,10 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
 
     const formFactory = createFormFactory<InventoryFields>({
         defaultValues: {
-            freezer: '',
-            category: '',
-            item: '',
-            unit: '',
+            freezer,
+            category,
+            item,
+            unit,
             entryDate: entryDate,
             expDate: expDate,
             quantity: '0',
@@ -204,13 +204,21 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                 children={(field)  => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer: {!freezerData.isPending && inventoryId ? freezerData.data[0].name : ''}</Label>
-                                        <ComboBoxResponsive 
-                                            data={freezerData.isPending && inventoryId ? [] :freezerData.data} 
-                                            tableName={individualTableNames.freezer} 
-                                            field={field}
-                                            resetTrigger={resetTrigger}
-                                        />
-                                        <FieldInfo field={field} />
+                                        {
+                                            freezerData ?
+                                            <>
+                                                <ComboBoxResponsive 
+                                                    data={freezerData.data} 
+                                                    tableName={individualTableNames.freezer} 
+                                                    field={field}
+                                                    resetTrigger={resetTrigger}
+                                                    action={action}
+                                                />
+                                                <FieldInfo field={field} />
+                                            </> :
+                                            <p>Loading...</p>
+
+                                        }
                                     </>
                                 )}
                             />
@@ -220,12 +228,13 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                 name={individualTableNames.category}
                                 children={(field) => (
                                     <>
-                                        <Label className="pb-1" htmlFor={individualTableNames.category}>Category:</Label>
+                                        <Label className="pb-1" htmlFor={individualTableNames.category}>Category: {!categoryData.isPending && inventoryId ? categoryData.data[0].name : ''}</Label>
                                         <ComboBoxResponsive 
                                             data={categoryData.data} 
                                             tableName={individualTableNames.category} 
                                             field={field} 
                                             resetTrigger={resetTrigger}
+                                            action={action}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -243,6 +252,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                             tableName={individualTableNames.item} 
                                             field={field} 
                                             resetTrigger={resetTrigger}
+                                            action={action}
                                         />
                                         <FieldInfo field={field} />
                                     </>
@@ -260,6 +270,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                             tableName={individualTableNames.unit} 
                                             field={field} 
                                             resetTrigger={resetTrigger}
+                                            action={action}
                                         />
                                         <FieldInfo field={field} />
                                     </>
