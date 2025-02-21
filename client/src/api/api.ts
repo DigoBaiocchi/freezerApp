@@ -1,7 +1,7 @@
 import { config } from "../utils/config";
 import axios from "axios";
 
-export type IndividualTables = "freezer" | "category" | "item" | 'unit';
+export type IndividualTables = "freezer" | "category" | "item" | 'unit' | 'location';
 
 export type InventoryTable = 'inventory';
 

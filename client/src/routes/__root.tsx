@@ -44,17 +44,22 @@ const Root = () => {
                                             </Link>
                                             <Link to="/category/edit">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                    Categories
+                                                    Category
+                                                </NavigationMenuLink>
+                                            </Link>
+                                            <Link to="/location/edit">
+                                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                    Location
                                                 </NavigationMenuLink>
                                             </Link>
                                             <Link to="/item/edit">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                    Items
+                                                    Item
                                                 </NavigationMenuLink>
                                             </Link>
                                             <Link to="/unit">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                    Units
+                                                    Unit
                                                 </NavigationMenuLink>
                                             </Link>
                                         </div>
@@ -150,21 +155,28 @@ const Root = () => {
                                                 <SheetClose asChild>
                                                     <Link to="/category/edit">
                                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                            Categories
+                                                            Category
+                                                        </NavigationMenuLink>
+                                                    </Link>    
+                                                </SheetClose>
+                                                <SheetClose asChild>
+                                                    <Link to="/location/edit">
+                                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                                            Location
                                                         </NavigationMenuLink>
                                                     </Link>    
                                                 </SheetClose>
                                                 <SheetClose asChild>
                                                     <Link to="/item/edit">
                                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                            Items
+                                                            Item
                                                         </NavigationMenuLink>
                                                     </Link>
                                                 </SheetClose>
                                                 <SheetClose asChild>
                                                     <Link to="/unit">
                                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                            Units
+                                                            Unit
                                                         </NavigationMenuLink>
                                                     </Link>
                                                 </SheetClose>
