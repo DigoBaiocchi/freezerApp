@@ -5,6 +5,7 @@ export type InventoryPostParams = {
     categoryId: number;
     itemId: number;
     unitId: number;
+    locationId: number;
     quantity: number;
     entryDate: Date;
     expDate: Date;
@@ -21,6 +22,7 @@ export type DetailedInventoryData = {
     categoryname: string;
     itemname: string;
     unitname: string;
+    locationname: string;
     quantity: number;
     entrydate: Date;
     expdate: Date;
@@ -74,6 +76,7 @@ export class InventoryQueries {
                                         category.name as categoryName,
                                         item.name as itemName,
                                         unit.name as unitName,
+                                        location.name as locationName,
                                         inventory.quantity as quantity,
                                         inventory.entry_date as entryDate,
                                         inventory.exp_date as expDate,
@@ -86,7 +89,9 @@ export class InventoryQueries {
                                     LEFT JOIN freezer
                                         ON freezer.id = inventory.freezer_id
                                     LEFT JOIN unit
-                                        ON unit.id = inventory.unit_id;`;
+                                        ON unit.id = inventory.unit_id
+                                    LEFT JOIN location
+                                        ON location.id = inventory.location_id;`;
 
         } else {
             selectDataQuery = `SELECT * FROM inventory`;
@@ -165,6 +170,8 @@ export class InventoryQueries {
                                     item.name as itemName,
                                     unit.id as unitid,
                                     unit.name as unitName,
+                                    location.id as locationid,
+                                    location.name as locationName,
                                     inventory.quantity as quantity,
                                     inventory.entry_date as entryDate,
                                     inventory.exp_date as expDate,
@@ -178,6 +185,8 @@ export class InventoryQueries {
                                     ON freezer.id = inventory.freezer_id
                                 LEFT JOIN unit
                                     ON unit.id = inventory.unit_id
+                                LEFT JOIN location
+                                    ON location.id = inventory.location_id
                                 WHERE freezer.id = $1 AND category.id = $2 AND item.id = $3
                                 ORDER BY expDate;`;
         
@@ -190,19 +199,20 @@ export class InventoryQueries {
         categoryId, 
         itemId, 
         unitId, 
+        locationId,
         quantity,
         entryDate, 
         expDate,
         description, 
     }: InventoryPostParams) {
         const itemInsertQuery = `INSERT INTO ${this.tableName} 
-                                (freezer_id, category_id, item_id, unit_id, entry_date, exp_date, quantity, description) 
-                                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+                                (freezer_id, category_id, item_id, unit_id, location_id, entry_date, exp_date, quantity, description) 
+                                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
                                 RETURNING *;`;
 
         const addedItem = await query(
             itemInsertQuery, 
-            [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description]
+            [freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description]
         ).then(data => data?.rows[0]);
 
         return addedItem as InventoryData;
@@ -214,6 +224,7 @@ export class InventoryQueries {
         categoryId, 
         itemId, 
         unitId, 
+        locationId,
         quantity,
         entryDate, 
         expDate,
@@ -224,16 +235,17 @@ export class InventoryQueries {
                                     category_id = $2,
                                     item_id = $3,
                                     unit_id = $4,
-                                    entry_date = $5,
-                                    exp_date = $6,
-                                    quantity = $7,
-                                    description = $8
-                                WHERE id = $9
+                                    location_id = $5,
+                                    entry_date = $6,
+                                    exp_date = $7,
+                                    quantity = $8,
+                                    description = $9
+                                WHERE id = $10
                                 RETURNING *;`;
 
         const updatedItem = await query(
             itemUpdateQuery, 
-            [freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description, id]
+            [freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description, id]
         ).then(data => data?.rows[0]);
 
         return updatedItem as InventoryData;

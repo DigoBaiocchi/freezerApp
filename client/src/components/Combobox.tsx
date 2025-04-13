@@ -48,6 +48,7 @@ export function ComboBoxResponsive({ data, tableName, field, resetTrigger, actio
     const [selectedStatus, setSelectedStatus] = React.useState<Data | null>(null)
 
     React.useEffect(() => {
+        console.log(tableName + ": " + (field.state.value && data));
         if (field.state.value && data) {
             const initialStatus = data.find((status) => status.id === +field.state.value)
             console.log("initialStatus", initialStatus)

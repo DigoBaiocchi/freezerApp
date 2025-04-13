@@ -11,6 +11,7 @@ type InventoryUpdateParams = {
   category_id: string;
   item_id: string;
   unit_id: string;
+  location_id: string;
   entry_date: string;
   exp_date: string;
   quantity: string;
@@ -66,6 +67,7 @@ export const Route = createFileRoute('/inventory/edit-item')({
               category={itemData.category_id}
               item={itemData.item_id}
               unit={itemData.unit_id}
+              location={itemData.location_id}
               entryDate={new Date(itemData.entry_date)}
               expDate={new Date(itemData.exp_date)}
               quantity={itemData.quantity}

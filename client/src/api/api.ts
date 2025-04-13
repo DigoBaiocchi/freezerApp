@@ -12,6 +12,7 @@ export type InventoryPostParams = {
     categoryId: number;
     itemId: number;
     unitId: number;
+    locationId: number;
     entryDate: Date;
     expDate: Date;
     quantity: number;
@@ -36,26 +37,8 @@ export class ApiCalls {
     }
 
     async postInventoryCall({ ...params }: InventoryPostParams) {
-        const { 
-            freezerId,
-            categoryId,
-            itemId,
-            unitId,
-            entryDate,
-            expDate,
-            quantity,
-            description,
-        } = params;
-
         return axios.post(this.apiUrl, {
-            freezerId,
-            categoryId,
-            itemId,
-            unitId,
-            entryDate,
-            expDate,
-            quantity,
-            description,
+            ...params
         })
         .then(response => console.log(response))
         .catch(error => {
@@ -124,17 +107,6 @@ export class ApiCalls {
     }
 
     async updateInventoryCall({ id, ...params }: InventoryPostParams & { id: number }) {
-        // const { 
-        //     freezerId,
-        //     categoryId,
-        //     itemId,
-        //     unitId,
-        //     entryDate,
-        //     expDate,
-        //     quantity,
-        //     description,
-        // } = params;
-        
         return axios.put(`${this.apiUrl}/${id}`, {
             ...params
         })

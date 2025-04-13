@@ -8,7 +8,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { ComboBoxResponsive } from "../Combobox";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 export type InventoryFields = {
@@ -16,6 +16,7 @@ export type InventoryFields = {
   category: string;
   item: string;
   unit: string;
+  location: string;
   entryDate: Date;
   expDate: Date;
   quantity: string;
@@ -25,6 +26,7 @@ export type InventoryFields = {
 type IndividualTableNames = {
     freezer: 'freezer',
     category: 'category',
+    location: 'location',
     item: 'item',
     unit: 'unit'
 };
@@ -37,6 +39,7 @@ type InventoryFormProps = InventoryFields & {
 export const individualTableNames: IndividualTableNames = {
     freezer: 'freezer',
     category: 'category',
+    location: 'location',
     item: 'item',
     unit: 'unit'
 };
@@ -53,7 +56,7 @@ function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
 }
 
 
-export default function InventoryForm({ action, inventoryId, freezer, category, item, unit, entryDate, expDate, quantity, description}: InventoryFormProps) {
+export default function InventoryForm({ action, inventoryId, freezer, category, item, unit, location, entryDate, expDate, quantity, description}: InventoryFormProps) {
     const tableName: InventoryTable = 'inventory';
     const apiCalls = new ApiCalls(tableName);
     const queryClient = useQueryClient();
@@ -99,6 +102,15 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
         }
     });
 
+    const locationData = useQuery({
+        queryKey: [`${individualTableNames.location}Data`],
+        queryFn: () => {
+            const apiCall = new ApiCalls(individualTableNames.location);
+
+            return  apiCall.getCall().then(res => res.data);
+        }
+    });
+
     const addDataMutation = useMutation({
         mutationFn: ({...params}: InventoryPostParams) => apiCalls.postInventoryCall({...params}),
         onSuccess: () => {
@@ -112,6 +124,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
         onSuccess: () => {
             console.log('Invalidating queries for:', [tableName]);
             queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+            queryClient.invalidateQueries({ queryKey: [`inventoryRawData`], exact: true });
             navigate({ to: "/inventory/edit" })
         }
     });
@@ -122,6 +135,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             category,
             item,
             unit,
+            location,
             entryDate: entryDate,
             expDate: expDate,
             quantity: '0',
@@ -135,6 +149,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             category: category,
             item: item,
             unit: unit,
+            location: location,
             entryDate: entryDate,
             expDate: expDate,
             quantity: quantity,
@@ -145,6 +160,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             console.log(`Category: ${value.category}`);
             console.log(`Item: ${value.item}`);
             console.log(`Unit: ${value.unit}`);
+            console.log(`Location: ${value.location}`);
             console.log(`Quantity: ${value.quantity}`);
             console.log(`description: ${value.description}`);
             console.log(`entrydate: ${new Date(value.entryDate)}`);
@@ -156,6 +172,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                     categoryId: +value.category,
                     itemId: +value.item,
                     unitId: +value.unit,
+                    locationId: +value.location,
                     entryDate: new Date(value.entryDate),
                     expDate: new Date(value.expDate),
                     quantity: +value.quantity,
@@ -171,6 +188,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                     categoryId: +value.category,
                     itemId: +value.item,
                     unitId: +value.unit,
+                    locationId: +value.location,
                     entryDate: new Date(value.entryDate),
                     expDate: new Date(value.expDate),
                     quantity: +value.quantity,
@@ -180,10 +198,6 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             
         }
     });
-
-    useEffect(() => {
-        console.log("freezerData", freezerData.data)
-    }, [freezerData])
 
     return (
         <>
@@ -268,6 +282,24 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                         <ComboBoxResponsive 
                                             data={unitData.data} 
                                             tableName={individualTableNames.unit} 
+                                            field={field} 
+                                            resetTrigger={resetTrigger}
+                                            action={action}
+                                        />
+                                        <FieldInfo field={field} />
+                                    </>
+                                )}
+                            />
+                        </div>
+                        <div className="p-1 flex flex-col justify-center">
+                            <form.Field 
+                                name={individualTableNames.location}
+                                children={(field) => (
+                                    <>
+                                        <Label className="pb-1" htmlFor={individualTableNames.location}>Location:</Label>
+                                        <ComboBoxResponsive 
+                                            data={locationData.data} 
+                                            tableName={individualTableNames.location} 
                                             field={field} 
                                             resetTrigger={resetTrigger}
                                             action={action}

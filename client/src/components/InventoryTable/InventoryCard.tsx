@@ -21,6 +21,7 @@ export type ItemData = {
     itemname: string;
     unitid: number;
     unitname: string;
+    locationname: string;
     quantity: number;
     entrydate: string;
     expdate: string;
