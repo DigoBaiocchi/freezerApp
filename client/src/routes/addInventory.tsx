@@ -7,7 +7,7 @@ export const Route = createFileRoute('/addInventory')({
     return (
       <>
         <MainContainer>
-          <InventoryForm action='insert' inventoryId={0} freezer='' category='' item='' unit='' entryDate={new Date()} expDate={new Date()} quantity='0' description='' />
+          <InventoryForm action='insert' inventoryId={0} freezer='' category='' item='' unit='' location='' entryDate={new Date()} expDate={new Date()} quantity='0' description='' />
         </MainContainer>
       </>
     )

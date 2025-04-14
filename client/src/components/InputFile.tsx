@@ -87,6 +87,7 @@ export function InputFile({ databaseType }: InputFileProps) {
         const categoryData = await getLabelData("category");
         const itemData = await getLabelData("item");
         const unitData = await getLabelData("unit");
+        const locationData = await getLabelData("location");
         reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
             const result = await Promise.all(
@@ -97,6 +98,7 @@ export function InputFile({ databaseType }: InputFileProps) {
                         categoryName,
                         itemName,
                         unitName,
+                        locationName,
                         _entryDate,
                         _expDate,
                         _quantity,
@@ -109,10 +111,12 @@ export function InputFile({ databaseType }: InputFileProps) {
                     console.log("itemId: ", itemId, "itemName: ", itemName);
                     const unitId = unitData.find(data => data.name.toLowerCase() == unitName.toLowerCase())?.id || 0;
                     console.log("unitId: ", unitId, "unitName: ", unitName);
+                    const locationId = locationData.find(data => data.name.toLowerCase() == locationName.toLowerCase())?.id || 0;
+                    console.log("locationId: ", unitId, "locationName: ", locationName);
                     const entryDate = new Date(arrayResult[4]);
                     const expDate = new Date(arrayResult[5]);
                     const quantity = +arrayResult[6];
-                    return { freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description };
+                    return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
                 })
             );
             result.shift();

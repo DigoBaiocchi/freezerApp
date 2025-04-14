@@ -9,6 +9,7 @@ export function EditInventory() {
             category='' 
             item='' 
             unit='' 
+            location=''
             entryDate={new Date()} 
             expDate={new Date()} 
             quantity='0' 
