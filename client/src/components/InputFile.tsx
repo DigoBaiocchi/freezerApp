@@ -57,7 +57,6 @@ export function InputFile({ databaseType }: InputFileProps) {
             result.shift();
             const resultStatusUpdate = await Promise.all(
                 result.map(async (content: IndividualTablefile) => {
-                    // const apiCalls = new ApiCalls(content.table);
                     const databaseData = await getLabelData(content.table);
                     const checkifNameExists = databaseData.find((data) => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
                     console.log(content)
@@ -76,7 +75,7 @@ export function InputFile({ databaseType }: InputFileProps) {
         reader.readAsText(file);
     };
 
-    const csvInventoryContent = "data:text/csv;charset=utf-8,freezerId, categoryId, itemId, unitId, entryDate, expDate, quantity, description";
+    const csvInventoryContent = "data:text/csv;charset=utf-8,freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description";
     const inventoryEncodeUri = encodeURI(csvInventoryContent);
     const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
     const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
@@ -112,10 +111,10 @@ export function InputFile({ databaseType }: InputFileProps) {
                     const unitId = unitData.find(data => data.name.toLowerCase() == unitName.toLowerCase())?.id || 0;
                     console.log("unitId: ", unitId, "unitName: ", unitName);
                     const locationId = locationData.find(data => data.name.toLowerCase() == locationName.toLowerCase())?.id || 0;
-                    console.log("locationId: ", unitId, "locationName: ", locationName);
-                    const entryDate = new Date(arrayResult[4]);
-                    const expDate = new Date(arrayResult[5]);
-                    const quantity = +arrayResult[6];
+                    console.log("locationId: ", locationId, "locationName: ", locationName);
+                    const entryDate = new Date(arrayResult[5]);
+                    const expDate = new Date(arrayResult[6]);
+                    const quantity = +arrayResult[7];
                     return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
                 })
             );
