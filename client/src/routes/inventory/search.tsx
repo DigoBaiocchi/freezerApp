@@ -18,8 +18,8 @@ export const Route = createFileRoute('/inventory/search')({
     //   return null;
     // }
     return {
-      freezerId: (search.freezerId as number) || 0,
-      categoryId: (search.categoryId as number) || 0,
+      freezerId: (search.freezerId as number) || '',
+      categoryId: (search.categoryId as number) || '',
       itemName: (search.itemName as string) || '',
     }
   },
@@ -58,8 +58,8 @@ export const Route = createFileRoute('/inventory/search')({
       <>
         <MainContainer>
           <ItemSearch 
-            freezerId={freezerId || 0} 
-            categoryId={categoryId || 0} 
+            freezerId={freezerId || null} 
+            categoryId={categoryId || null} 
             itemName={itemName || ''} 
             freezerData={freezerData.data}
             categoryData={categoryData.data}

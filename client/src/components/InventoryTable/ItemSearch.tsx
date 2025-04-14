@@ -63,50 +63,50 @@ export function ItemSearch({ freezerId, categoryId, itemName, freezerData, categ
 
     const filteredData = () => {
         return data ? data.filter((item:ItemSummaryData) => {
-                if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)) {
-                    if (search) {
-                        console.log("freezer, category and search selected")
-                        console.log(searchResult)
-                        return item.itemname.toLowerCase().includes(search as string) &&
-                        item.categoryid === selectedCategory?.id &&
-                        item.freezerid === selectedFreezer?.id
-                    }
-                    console.log("freezer and category selected")
-                    console.log(item)
-                    return item.categoryid === selectedCategory?.id &&
+            if ((selectedFreezer || freezerId) && (selectedCategory || categoryId)) {
+                if (search) {
+                    console.log("freezer, category and search selected")
+                    console.log(searchResult)
+                    return item.itemname.toLowerCase().includes(search as string) &&
+                    item.categoryid === selectedCategory?.id &&
                     item.freezerid === selectedFreezer?.id
-                } else if ((selectedFreezer || freezerId)) {
-                    if (search) {
-                        console.log("freezer and search selected")
-                        console.log(item.itemname.toLowerCase())
-                        console.log(search.toLowerCase())
-                        console.log(item.itemname.toLowerCase().includes(search.toLowerCase() as string))
-                        console.log(item.freezerid)
-                        console.log(selectedFreezer)
-                        return item.itemname.toLowerCase().includes(search.toLowerCase() as string) &&
-                        item.freezerid === selectedFreezer?.id
-                    }
-                    return item.freezerid === selectedFreezer?.id;
-                } else if ((selectedCategory || categoryId)) {
-                    if (search) {
-                        console.log("category and search selected")
-                        return item.itemname.toLowerCase().includes(search as string) &&
-                        item.categoryid === selectedCategory?.id
-                    }
-                    return item.categoryid === selectedCategory?.id
-                } else if (!search) {
-                    return item;
-                } else {
-                    console.log("only filtered by search")
-                    return item.itemname.toLowerCase().includes(search as string)
                 }
-            }) : [];
-        }
+                console.log("freezer and category selected")
+                console.log(item)
+                return item.categoryid === selectedCategory?.id &&
+                item.freezerid === selectedFreezer?.id
+            } else if ((selectedFreezer || freezerId)) {
+                if (search) {
+                    console.log("freezer and search selected")
+                    console.log(item.itemname.toLowerCase())
+                    console.log(search.toLowerCase())
+                    console.log(item.itemname.toLowerCase().includes(search.toLowerCase() as string))
+                    console.log(item.freezerid)
+                    console.log(selectedFreezer)
+                    return item.itemname.toLowerCase().includes(search.toLowerCase() as string) &&
+                    item.freezerid === selectedFreezer?.id
+                }
+                return item.freezerid === selectedFreezer?.id;
+            } else if ((selectedCategory || categoryId)) {
+                if (search) {
+                    console.log("category and search selected")
+                    return item.itemname.toLowerCase().includes(search as string) &&
+                    item.categoryid === selectedCategory?.id
+                }
+                return item.categoryid === selectedCategory?.id
+            } else if (!search) {
+                return item;
+            } else {
+                console.log("only filtered by search")
+                return item.itemname.toLowerCase().includes(search as string)
+            }
+        }) : [];
+    }
         
-        const submitSearch = () => {
-            console.log("search is", itemName)
-            console.log(`Search is ${itemName} and filtered data`, filteredData());
-            setSearchResult(filteredData());
+    const submitSearch = () => {
+        console.log("search is", itemName)
+        console.log(`Search is ${itemName} and filtered data`, filteredData());
+        setSearchResult(filteredData());
     }
     
     const handleClearFilter = () => {
@@ -117,7 +117,7 @@ export function ItemSearch({ freezerId, categoryId, itemName, freezerData, categ
     }
 
     useEffect(() => {
-        if (freezerData && categoryData) {
+        // if (freezerData && categoryData) {
             if (freezerId !== null) {
                 const initialFreezer = freezerData?.find((freezer: dropdrownData) => {
                     if (freezer.id === freezerId) {
@@ -140,19 +140,19 @@ export function ItemSearch({ freezerId, categoryId, itemName, freezerData, categ
                 setSearch(itemName);
             }
             submitSearch();
-        }
-    }, [freezerId, categoryId, itemName, freezerData, categoryData]);
+        // }
+    }, [freezerId, categoryId, itemName, freezerData, categoryData, data]);
     
-    useEffect(() => {
-        if ((selectedFreezer || selectedCategory || search) && data) {
-            submitSearch();
-        }
-        console.log("query search is", search)
-        console.log("query freezer id: ", freezerId)
-        console.log("query category id: ", categoryId)
-        console.log("selectedFreezer", selectedFreezer)
-        console.log(searchResult)
-    }, [data]);
+    // useEffect(() => {
+    //     if ((selectedFreezer || selectedCategory || search) && data) {
+    //         submitSearch();
+    //     }
+    //     console.log("query search is", search)
+    //     console.log("query freezer id: ", freezerId)
+    //     console.log("query category id: ", categoryId)
+    //     console.log("selectedFreezer", selectedFreezer)
+    //     console.log(searchResult)
+    // }, [freezerId, categoryId, itemName, freezerData, categoryData, data]);
     
     if (isPending) {
         return <FreezerCategoryCardSkeleton />;
