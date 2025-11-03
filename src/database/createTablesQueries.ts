@@ -33,12 +33,20 @@ export class DatabaseSchema {
             );`;
         await query(createUnitTable);
 
+        const createLocationTable = `CREATE TABLE IF NOT EXISTS location (
+            id SERIAL,
+            name varchar(30) NOT NULL UNIQUE,
+            PRIMARY KEY (id)
+            );`;
+        await query(createLocationTable);
+
         const createInventoryTable = `CREATE TABLE IF NOT EXISTS inventory (
             id SERIAL,
             freezer_id integer REFERENCES freezer (id) ON DELETE CASCADE,
             category_id integer REFERENCES category (id) ON DELETE CASCADE,
             item_id integer REFERENCES item (id) ON DELETE CASCADE,
             unit_id integer REFERENCES unit (id) ON DELETE CASCADE,
+            location_id integer REFERENCES location (id) ON DELETE CASCADE,
             entry_date date NOT NULL,
             exp_date date NOT NULL,
             quantity integer NOT NULL,
@@ -46,13 +54,6 @@ export class DatabaseSchema {
             PRIMARY KEY (id)
         );`;
         await query(createInventoryTable);
-
-        const createLocationTable = `CREATE TABLE IF NOT EXISTS location (
-            id SERIAL,
-            name varchar(30) NOT NULL UNIQUE,
-            PRIMARY KEY (id)
-            );`;
-        await query(createLocationTable);
 
         // const alterInventoryTable = `ALTER TABLE inventory 
         //     ADD location_id integer REFERENCES location (id) ON DELETE CASCADE`;
