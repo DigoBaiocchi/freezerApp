@@ -29,21 +29,29 @@ export class ApiCalls {
     }
 
     async postCall(name: string) {
-        return axios.post(this.apiUrl, {
+        try {
+            const res = await axios.post(this.apiUrl, {
                 name
-              })
-              .then(response => console.log(response))
-              .catch(error => console.log(error))
+            });
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
     }
 
     async postInventoryCall({ ...params }: InventoryPostParams) {
-        return axios.post(this.apiUrl, {
-            ...params
-        })
-        .then(response => console.log(response))
-        .catch(error => {
-            throw new Error(error)
-        })
+        try {
+            const res = await axios.post(this.apiUrl, {
+                ...params
+            });
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
     }
 
     async getCall() {
