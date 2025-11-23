@@ -13,7 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-import { formatInTimeZone } from 'date-fns-tz';
+// import { formatInTimeZone } from 'date-fns-tz';
 
 type DatePickerProps = {
     defaultDate: Date;
@@ -22,12 +22,13 @@ type DatePickerProps = {
 }
 
 export function DatePicker({ defaultDate, handleChange, resetTrigger }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date | any>(defaultDate);
+  const [date, setDate] = React.useState<Date | undefined>(defaultDate);
 
   React.useEffect(() => {
-    const updatedDate = formatInTimeZone(date, 'America/New_York', 'yyyy-MM-dd HH:mm:ssXXX')
-    handleChange(new Date(updatedDate));
-  }, [date])
+    if (!date) return;
+    console.log(date);
+    handleChange(date);
+  }, [date]);
   
   React.useEffect(() => {
     setDate(defaultDate)
