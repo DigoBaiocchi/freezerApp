@@ -15,6 +15,7 @@ import {
 import { CirclePlus, Menu, Settings } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { Toaster } from "@/components/ui/sonner";
 
 const Root = () => {
     const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -101,6 +102,7 @@ const Root = () => {
                     </div>
                 </div>
                 <Outlet />
+                <Toaster richColors position="bottom-center" />
                 {/* <TanStackRouterDevtools /> */}
             </>
         )
@@ -214,6 +216,7 @@ const Root = () => {
                 <hr className="mt-1.5" />
             </div>
             <Outlet />
+            <Toaster position="bottom-center" />
         </>
     );
 }

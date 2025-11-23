@@ -10,6 +10,7 @@ import { Textarea } from "../ui/textarea";
 import { ComboBoxResponsive } from "../Combobox";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export type InventoryFields = {
   freezer: string;
@@ -114,8 +115,15 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
     const addDataMutation = useMutation({
         mutationFn: ({...params}: InventoryPostParams) => apiCalls.postInventoryCall({...params}),
         onSuccess: () => {
-        console.log('Invalidating queries for:', [tableName]);
-        queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+            console.log('Invalidating queries for:', [tableName]);
+            queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
+            form.reset();
+            setResetTrigger(prev => prev + 1);
+        },
+        onError: (error) => {
+            console.log("Failed inserting data", error);
+
+            toast.warning("Unable to add item. Missing params.");
         }
     });
 
@@ -178,9 +186,6 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                     quantity: +value.quantity,
                     description: value.description
                 });
-                
-                form.reset()
-                setResetTrigger(prev => prev + 1);
             } else {
                 updateDataMutation.mutate({
                     id: inventoryId,
