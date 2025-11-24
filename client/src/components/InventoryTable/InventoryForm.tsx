@@ -49,7 +49,7 @@ function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
     return (
         <>
             {field.state.meta.touchedErrors ? (
-                <em>{field.state.meta.touchedErrors}</em>
+                <em className="text-red-400">{field.state.meta.touchedErrors}</em>
             ) : null}
             {field.state.meta.isValidating ? 'Validating...' : null}
         </>
@@ -119,11 +119,13 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             queryClient.invalidateQueries({ queryKey: [tableName], exact: true });
             form.reset();
             setResetTrigger(prev => prev + 1);
+
+            toast.warning("Item successfully added.");
         },
         onError: (error) => {
             console.log("Failed inserting data", error);
 
-            toast.warning("Unable to add item. Missing params.");
+            toast.warning("Unable to add item.");
         }
     });
 
@@ -201,6 +203,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                 })
             }
             
+        },
+        onSubmitInvalid: () => {
+            toast.warning("Unable to add item. Missing params.");
         }
     });
 
@@ -220,6 +225,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center">
                             <form.Field 
                                 name={individualTableNames.freezer}
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Freezer is required" : undefined
+                                }}
                                 children={(field)  => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.freezer}>Freezer: {!freezerData.isPending && inventoryId ? freezerData.data[0].name : ''}</Label>
@@ -233,7 +241,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                                     resetTrigger={resetTrigger}
                                                     action={action}
                                                 />
-                                                <FieldInfo field={field} />
+                                                <FieldInfo  field={field} />
                                             </> :
                                             <p>Loading...</p>
 
@@ -245,6 +253,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center">
                             <form.Field 
                                 name={individualTableNames.category}
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Category is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.category}>Category: {!categoryData.isPending && inventoryId ? categoryData.data[0].name : ''}</Label>
@@ -263,6 +274,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center">
                             <form.Field 
                                 name={individualTableNames.item}
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Item is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.item}>Item:</Label>
@@ -281,6 +295,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center">
                             <form.Field 
                                 name={individualTableNames.unit}
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Unit is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.unit}>Unit:</Label>
@@ -299,6 +316,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center">
                             <form.Field 
                                 name={individualTableNames.location}
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Location is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={individualTableNames.location}>Location:</Label>
@@ -317,6 +337,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col justify-center content-center">
                             <form.Field 
                                 name="entryDate"
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Entry Date is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={field.name}>Entry Date:</Label>
@@ -329,6 +352,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col">
                             <form.Field 
                                 name="expDate"
+                                validators={{
+                                    onSubmit: ({ value }) => !value ? "Exp Date is required" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={field.name}>Exp Date:</Label>
@@ -341,6 +367,9 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                         <div className="p-1 flex flex-col">
                             <form.Field 
                                 name="quantity"
+                                validators={{
+                                    onSubmit: ({ value }) => +value < 1 ? "Quantity needs to be more than 0" : undefined
+                                }}
                                 children={(field) => (
                                     <>
                                         <Label className="pb-1" htmlFor={field.name}>Quantity:</Label>
@@ -351,6 +380,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
                                             onChange={(e) => field.handleChange(e.target.value)}
                                             disabled={action === "insert" ? false : true }
                                             type="number"
+                                            min={0}
                                         />
                                         <FieldInfo field={field} />
                                     </>
