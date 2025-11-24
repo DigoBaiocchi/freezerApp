@@ -28,8 +28,6 @@ import { CircleX, PencilLineIcon } from "lucide-react"
 import { IndividualTables } from "@/api/api"
 import { UseMutationResult } from "@tanstack/react-query"
 import { IndiviualTable } from "./Table"
-import { AxiosResponse } from "axios"
-
 type DialogDrawerUpdateNameProps = {
     id: number;
     name: string;
@@ -37,7 +35,7 @@ type DialogDrawerUpdateNameProps = {
 
 type UpdateNameDrawerDialogProps = {
     updateFunction?: UseMutationResult<void, Error, IndiviualTable, unknown>;
-    insertFunction?: UseMutationResult<AxiosResponse<any>, Error, string, unknown>;
+    insertFunction?: UseMutationResult<void, Error, string, unknown>;
     deleteFunction?: UseMutationResult<void, Error, number, unknown>;
     tableName: IndividualTables;
     name: string;

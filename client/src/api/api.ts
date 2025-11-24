@@ -30,11 +30,9 @@ export class ApiCalls {
 
     async postCall(name: string) {
         try {
-            const res = await axios.post(this.apiUrl, {
+            await axios.post(this.apiUrl, {
                 name
             });
-            console.log(res);
-            return res;
         } catch (err) {
             console.log(err);
             throw err;
@@ -43,11 +41,9 @@ export class ApiCalls {
 
     async postInventoryCall({ ...params }: InventoryPostParams) {
         try {
-            const res = await axios.post(this.apiUrl, {
+            await axios.post(this.apiUrl, {
                 ...params
             });
-            console.log(res);
-            return res;
         } catch (err) {
             console.log(err);
             throw err;

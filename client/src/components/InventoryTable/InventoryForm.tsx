@@ -120,7 +120,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             form.reset();
             setResetTrigger(prev => prev + 1);
 
-            toast.warning("Item successfully added.");
+            toast.success("Item successfully added.");
         },
         onError: (error) => {
             console.log("Failed inserting data", error);
@@ -205,7 +205,7 @@ export default function InventoryForm({ action, inventoryId, freezer, category, 
             
         },
         onSubmitInvalid: () => {
-            toast.warning("Unable to add item. Missing params.");
+            toast.warning("Unable to add item. Missing required data.");
         }
     });
 

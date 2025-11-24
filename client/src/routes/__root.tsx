@@ -216,7 +216,7 @@ const Root = () => {
                 <hr className="mt-1.5" />
             </div>
             <Outlet />
-            <Toaster position="bottom-center" />
+            <Toaster richColors position="bottom-center" />
         </>
     );
 }
