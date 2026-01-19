@@ -12,13 +12,13 @@ export function FreezerCategoryCard({id, name}: FreezerCategoryCardProps) {
     return (
         <div className="flex m-2">
             <Card className="w-[275px]">
-                <CardHeader className="p-5">
+                <CardHeader className="p-2">
                     <Link to="/category/list" search={{ freezerId: id }} >
                         <div className="flex justify-center">
-                            <CardTitle className="">{name}</CardTitle>
+                            <CardTitle className="p-1">{name}</CardTitle>
                         </div>
                     </Link>            
-                        <div className="flex justify-left">
+                        <div className="flex justify-end">
                             <EditNameButton tableName="freezer" id={id} name={name} />
                             <DeleteButton tableName="freezer" item={{id, itemname: name}} />
                         </div>

@@ -38,7 +38,7 @@ const Root = () => {
                                     <NavigationMenuTrigger>Labels</NavigationMenuTrigger>
                                     <NavigationMenuContent>
                                         <div className="w-[800px]">
-                                            <Link to="/freezer/list">
+                                            <Link to="/freezer/edit">
                                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                     Freezer
                                                 </NavigationMenuLink>
@@ -148,7 +148,7 @@ const Root = () => {
                                             <AccordionTrigger className="pl-4 pt-2 pb-2 decoration-transparent">Labels</AccordionTrigger>
                                             <AccordionContent className="pl-2">
                                                 <SheetClose asChild>
-                                                    <Link to="/freezer/list">
+                                                    <Link to="/freezer/edit">
                                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                                             Freezer
                                                         </NavigationMenuLink>
