@@ -221,15 +221,16 @@ export function InputFile({ databaseType }: InputFileProps) {
         fileContent.forEach(async content => {
             console.log("running insertNamesToDatabase")
             const apiCalls = new ApiCalls(content.table);
-            const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
-            const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
+            // const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
+            // const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
             
-            if (checkifNameExists) {
-                console.log(`Name ${content.name} already exists`);
-                throw new Error(`Name ${content.name} already exists`);
+            // if (checkifNameExists) {
+            //     console.log(`Name ${content.name} already exists`);
+            //     throw new Error(`Name ${content.name} already exists`);
+            // }
+            if (content.status === "New") {
+                return await apiCalls.postCall(content.name);
             }
-    
-            return await apiCalls.postCall(content.name);
         });
     };
 
