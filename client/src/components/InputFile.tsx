@@ -1,8 +1,8 @@
 import { ApiCalls, IndividualTables, InventoryPostParams } from "@/api/api";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChangeEvent, useEffect, useState } from "react"
-import { IndividualTableData, IndiviualTable } from "./IndividualTables/Table";
+import { ChangeEvent, useState } from "react"
+import { IndiviualTable } from "./IndividualTables/Table";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Download } from "lucide-react";
@@ -31,22 +31,10 @@ export function InputFile({ databaseType }: InputFileProps) {
             if (databaseType == "Non-Inventory") {
                 readFileContent(uploadedFile);
             } else {
-                // readInventoryFileContent(uploadedFile);
+                readInventoryFileContent(uploadedFile);
             }
         } else {
             alert('Please upload a valid CSV file.');
-        }
-    }
-
-    const getLabelData = async (labelName: IndividualTables): Promise<IndividualTableData> => {
-        try {
-            const apiCalls = new ApiCalls(labelName);
-            const databaseData = await apiCalls.getCall().then(res => res);
-
-            return databaseData.data;
-        } catch (e) {
-            console.error("getLabelData failed for: " , labelName, e);
-            return [];
         }
     }
 
@@ -55,10 +43,7 @@ export function InputFile({ databaseType }: InputFileProps) {
         queryFn: () => {
             const apiCall = new ApiCalls(individualTableNames.freezer);
 
-            return  apiCall.getCall().then(res => {
-                console.log(res.data)
-                return res.data;
-            });
+            return  apiCall.getCall().then(res => res.data);
         }
     });
 
@@ -98,23 +83,24 @@ export function InputFile({ databaseType }: InputFileProps) {
         }
     });
     
-    const inventoryData = useQuery({
-            queryKey: [`inventoryRawData`],
-            queryFn: () => {
-                const apiCall = new ApiCalls("inventory");
-    
-                return apiCall.getInventoryRawData().then(res => {
-                    return res.data;
-                });
-            }
-        });
+    // const inventoryData = useQuery({
+    //     queryKey: [`inventoryRawData`],
+    //     queryFn: () => {
+    //         const apiCall = new ApiCalls("inventory");
+
+    //         return apiCall.getInventoryRawData().then(res => {
+    //             return res.data;
+    //         });
+    //     }
+    // });
 
     const readFileContent = (file: File) => {
 
         const reader = new FileReader();
         reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
-            const result = content.split(/\r?\n/).map((array) => {
+            const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            const result = lines.map((array) => {
                 const arrayResult = array.split(',');
                 const table = arrayResult[0] as IndividualTables;
                 const name = arrayResult[1];
@@ -124,8 +110,6 @@ export function InputFile({ databaseType }: InputFileProps) {
             result.shift();
             console.log("result", result);
             let resultStatusUpdate = result.map((content: IndividualTablefile) => {
-                // const databaseData = await getLabelData(content.table);
-                // console.log("databaseData: ", databaseData);
                 if (content.table.trim().toLocaleLowerCase() === 'freezer') {
                     const nameExists = freezerData.data.find((data: IndiviualTable) => {
                         return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
@@ -166,68 +150,58 @@ export function InputFile({ databaseType }: InputFileProps) {
         reader.readAsText(file);
     };
 
-    const csvInventoryContent = "data:text/csv;charset=utf-8,freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description";
+    const csvInventoryContent = "data:text/csv;charset=utf-8,freezer_name, category_name, item_name, unit_name, location_name, entry_date, exp_date, quantity, description";
     const inventoryEncodeUri = encodeURI(csvInventoryContent);
     const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
     const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
 
-    // const readInventoryFileContent = async (file: File) => {
-    //     const reader = new FileReader();
-    //     const freezerData = await getLabelData("freezer");
-    //     const categoryData = await getLabelData("category");
-    //     const itemData = await getLabelData("item");
-    //     const unitData = await getLabelData("unit");
-    //     const locationData = await getLabelData("location");
-    //     reader.onload = async (e: ProgressEvent<FileReader>) => {
-    //         const content = e.target?.result as string;
-    //         const result = await Promise.all(
-    //             content.split('\r\n').map(async (array) => {
-    //                 const arrayResult = array.split(',');
-    //                 console.log("arrayResult:", arrayResult)
-    //                 let [freezerName, 
-    //                     categoryName,
-    //                     itemName,
-    //                     unitName,
-    //                     locationName,
-    //                     _entryDate,
-    //                     _expDate,
-    //                     _quantity,
-    //                     description] = arrayResult;
-    //                 const freezerId = freezerData.find(data => data.name.toLowerCase() == freezerName.toLowerCase())?.id || 0;
-    //                 console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
-    //                 const categoryId = categoryData.find(data => data.name.toLowerCase() == categoryName.toLowerCase())?.id || 0;
-    //                 console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
-    //                 const itemId = itemData.find(data => data.name.toLowerCase() == itemName.toLowerCase())?.id || 0;
-    //                 console.log("itemId: ", itemId, "itemName: ", itemName);
-    //                 const unitId = unitData.find(data => data.name.toLowerCase() == unitName.toLowerCase())?.id || 0;
-    //                 console.log("unitId: ", unitId, "unitName: ", unitName);
-    //                 const locationId = locationData.find(data => data.name.toLowerCase() == locationName.toLowerCase())?.id || 0;
-    //                 console.log("locationId: ", locationId, "locationName: ", locationName);
-    //                 const entryDate = new Date(arrayResult[5]);
-    //                 const expDate = new Date(arrayResult[6]);
-    //                 const quantity = +arrayResult[7];
-    //                 return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
-    //             })
-    //         );
-    //         result.shift();
-    //         console.log('File content:', result);
-    //         setInventoryFileContent(result);
-    //     };
+    const readInventoryFileContent = async (file: File) => {
+        const reader = new FileReader();
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
+            const content = e.target?.result as string;
+            const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            const result = lines.map((array): InventoryPostParams => {
+                const arrayResult = array.split(',');
+                console.log("arrayResult:", arrayResult)
+                let [freezerName, 
+                    categoryName,
+                    itemName,
+                    unitName,
+                    locationName,
+                    _entryDate,
+                    _expDate,
+                    _quantity,
+                    description] = arrayResult;
+                console.log({ freezerName, arrayResult });
+                const freezerId = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezerName.trim().toLowerCase())?.id ?? 0;
+                console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
+                console.log({ categoryName, arrayResult });
+                const categoryId = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == categoryName.trim().toLowerCase())?.id ?? 0;
+                console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
+                const itemId = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == itemName.trim().toLowerCase())?.id ?? 0;
+                console.log("itemId: ", itemId, "itemName: ", itemName);
+                const unitId = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unitName.trim().toLowerCase())?.id ?? 0;
+                console.log("unitId: ", unitId, "unitName: ", unitName);
+                const locationId = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == locationName.trim().toLowerCase())?.id ?? 0;
+                console.log("locationId: ", locationId, "locationName: ", locationName);
+                const entryDate = new Date(arrayResult[5]);
+                const expDate = new Date(arrayResult[6]);
+                const quantity = +arrayResult[7];
+                return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
+            });
+            result.shift();
+            console.log('File content:', result);
+            setInventoryFileContent(result as InventoryPostParams[]);
+        };
 
-    //     reader.readAsText(file);
-    // };
+        reader.readAsText(file);
+    };
 
     const insertNamesToDatabase = () => {
         fileContent.forEach(async content => {
             console.log("running insertNamesToDatabase")
             const apiCalls = new ApiCalls(content.table);
-            // const databaseData: Promise<IndividualTableData> = await apiCalls.getCall().then(res => res.data);
-            // const checkifNameExists = (await databaseData).find(data => data.name.trim().toLowerCase() === content.name.trim().toLowerCase());
-            
-            // if (checkifNameExists) {
-            //     console.log(`Name ${content.name} already exists`);
-            //     throw new Error(`Name ${content.name} already exists`);
-            // }
+
             if (content.status === "New") {
                 return await apiCalls.postCall(content.name);
             }
@@ -251,14 +225,6 @@ export function InputFile({ databaseType }: InputFileProps) {
         });
     };
     
-    // useEffect(() => {
-    //     insertNamesToDatabase();
-    // }, [fileContent]);
-
-    useEffect(() => {
-        insertItemsToInventory();
-    }, [inventoryFileContent]);
-    
     return (
         <div className="flex-col">
             <Card className="flex w-[300px] m-2">
@@ -269,7 +235,11 @@ export function InputFile({ databaseType }: InputFileProps) {
                         </div>
                         <Label className="p-2" htmlFor="picture">Select File:</Label>
                         <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
-                        <Button className="m-1" onClick={insertNamesToDatabase}>Upload</Button>
+                        {
+                            databaseType === "Inventory" 
+                                ? <Button className="m-1" onClick={insertItemsToInventory}>Upload Items</Button>
+                                : <Button className="m-1" onClick={insertNamesToDatabase}>Upload Labels</Button>
+                        }
                         <div className="mt-1">
                             <hr></hr>
                             <p className="font-semibold p-2">Templates:</p>
@@ -285,22 +255,40 @@ export function InputFile({ databaseType }: InputFileProps) {
             </Card>        
             <span>
                         {
-                            file && (
-                                <div>
-                                    <h3>Uploaded File:</h3>
-                                    <p>Name: {file.name}</p>
-                                    <p>Type: {file.type}</p>
-                                    <p>Size: {file.size}</p><br/>
-                                    <h2>Results:</h2>
-                                    {
-                                        fileContent.map(fileData => (
-                                            <p key={fileData.name}>
-                                                {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
-                                            </p>
-                                        ))
-                                    }
-                                </div>
-                            )
+                            file && 
+                                databaseType !== "Inventory" 
+                                ? (
+                                    <div>
+                                        <h3>Uploaded File:</h3>
+                                        <p>Name: {file.name}</p>
+                                        <p>Type: {file.type}</p>
+                                        <p>Size: {file.size}</p><br/>
+                                        <h2>Results:</h2>
+                                        {
+                                            fileContent.map(fileData => (
+                                                <p key={fileData.name}>
+                                                    {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
+                                                </p>
+                                            ))
+                                        }
+                                    </div>
+                                )
+                                : file && (
+                                    <div>
+                                        <h3>Uploaded File:</h3>
+                                        <p>Name: {file.name}</p>
+                                        <p>Type: {file.type}</p>
+                                        <p>Size: {file.size}</p><br/>
+                                        <h2>Results:</h2>
+                                        {
+                                            inventoryFileContent.map((fileData, i) => (
+                                                <p key={i}>
+                                                    {`FreezerId: ${fileData.freezerId} - CategoryId: ${fileData.categoryId} - Status: ${"fileData.status"}`}
+                                                </p>
+                                            ))
+                                        }
+                                    </div>
+                                )
                         }
             </span>
         </div>
