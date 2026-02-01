@@ -1,4 +1,4 @@
-import { ApiCalls, IndividualTables, InventoryPostParams } from "@/api/api";
+import { ApiCalls, IndividualTables, /*InventoryPostParams*/ } from "@/api/api";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChangeEvent, useState } from "react"
@@ -8,21 +8,36 @@ import { Button } from "./ui/button";
 import { Download } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { individualTableNames } from "./InventoryTable/InventoryForm";
+import { FileDataDialog } from "./FileDataDialog";
 
-type IndividualTablefile = {
+
+export type DatabaseTypes = "Non-Inventory" | "Inventory";
+
+type InputFileProps = {
+    databaseType: DatabaseTypes;
+}
+
+export type AgGridLabelData = {
     table: IndividualTables;
-    name: string;
+    labelName: string;
     status: "Already exists" | "New" | "Pending";
 }
 
-type InputFileProps = {
-    databaseType: "Non-Inventory" | "Inventory";
-}
+export type AgGridInventoryData = {
+  freezer: string;
+  category: string;
+  item: string;
+  unit: string;
+  location: string;
+  expDate: Date;
+  quantity: Number;
+  description: string;
+};
 
 export function InputFile({ databaseType }: InputFileProps) {
     const [file, setFile] = useState<File | null>(null);
-    const [fileContent, setFileContent] = useState<IndividualTablefile[]>([]);
-    const [inventoryFileContent, setInventoryFileContent] = useState<InventoryPostParams[]>([]);
+    const [fileContent, setFileContent] = useState<AgGridLabelData[]>([]);
+    const [inventoryFileContent, setInventoryFileContent] = useState<AgGridInventoryData[]>([]);
 
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
@@ -39,7 +54,7 @@ export function InputFile({ databaseType }: InputFileProps) {
     }
 
     const freezerData = useQuery({
-    queryKey: [`${individualTableNames.freezer}Data`],
+    queryKey: [`${individualTableNames.freezer}`],
         queryFn: () => {
             const apiCall = new ApiCalls(individualTableNames.freezer);
 
@@ -92,7 +107,7 @@ export function InputFile({ databaseType }: InputFileProps) {
     //             return res.data;
     //         });
     //     }
-    // });
+    // });    
 
     const readFileContent = (file: File) => {
 
@@ -100,52 +115,53 @@ export function InputFile({ databaseType }: InputFileProps) {
         reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
             const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            const header = lines.shift();
             const result = lines.map((array) => {
                 const arrayResult = array.split(',');
                 const table = arrayResult[0] as IndividualTables;
-                const name = arrayResult[1];
+                const labelName = arrayResult[1];
                 const status = "Pending";
-                return { table, name, status } as IndividualTablefile;
+                return { table, labelName, status } as AgGridLabelData;
             });
-            result.shift();
             console.log("result", result);
-            let resultStatusUpdate = result.map((content: IndividualTablefile) => {
+            console.log("header", header?.split(','));
+            let resultStatusUpdate = result.map((content: AgGridLabelData) => {
                 if (content.table.trim().toLocaleLowerCase() === 'freezer') {
                     const nameExists = freezerData.data.find((data: IndiviualTable) => {
-                        return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
+                        return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                     });
                     return { ...content, status: nameExists ? "Already exists" : "New"};
                 }
                 if (content.table.trim().toLocaleLowerCase() === 'category') {
                     const nameExists = categoryData.data.find((data: IndiviualTable) => {
-                        return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
+                        return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                     });
                     return { ...content, status: nameExists ? "Already exists" : "New"};
                 }
                 if (content.table.trim().toLocaleLowerCase() === 'item') {
                     const nameExists = itemData.data.find((data: IndiviualTable) => {
-                        return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
+                        return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                     });
                     return { ...content, status: nameExists ? "Already exists" : "New"};
                 }
                 if (content.table.trim().toLocaleLowerCase() === 'unit') {
                     const nameExists = unitData.data.find((data: IndiviualTable) => {
-                        return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
+                        return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                     });
                     return { ...content, status: nameExists ? "Already exists" : "New"};
                 }
                 if (content.table.trim().toLocaleLowerCase() === 'location') {
                     const nameExists = locationData.data.find((data: IndiviualTable) => {
-                        return data.name.trim().toLowerCase() === content.name.trim().toLowerCase()
+                        return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                     });
                     return { ...content, status: nameExists ? "Already exists" : "New"};
                 }
                 else {
                     return undefined;
                 }
-            }).filter((x): x is IndividualTablefile => x !== undefined);
+            }).filter((x): x is AgGridLabelData => x !== undefined);
             console.log('File content:', resultStatusUpdate);
-            setFileContent(resultStatusUpdate as IndividualTablefile[]);
+            setFileContent(resultStatusUpdate as AgGridLabelData[]);
         };
         reader.readAsText(file);
     };
@@ -153,77 +169,118 @@ export function InputFile({ databaseType }: InputFileProps) {
     const csvInventoryContent = "data:text/csv;charset=utf-8,freezer_name, category_name, item_name, unit_name, location_name, entry_date, exp_date, quantity, description";
     const inventoryEncodeUri = encodeURI(csvInventoryContent);
     const csvNonInventoryContent = "data:text/csv;charset=utf-8,Table,Name";
-    const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);
+    const nonInventoryEncodeUri = encodeURI(csvNonInventoryContent);    
 
     const readInventoryFileContent = async (file: File) => {
         const reader = new FileReader();
         reader.onload = async (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result as string;
             const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-            const result = lines.map((array): InventoryPostParams => {
+            const result = lines.map((array): AgGridInventoryData => {
                 const arrayResult = array.split(',');
                 console.log("arrayResult:", arrayResult)
-                let [freezerName, 
-                    categoryName,
-                    itemName,
-                    unitName,
-                    locationName,
-                    _entryDate,
+                let [freezer, 
+                    category,
+                    item,
+                    unit,
+                    location,
                     _expDate,
                     _quantity,
                     description] = arrayResult;
-                console.log({ freezerName, arrayResult });
-                const freezerId = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezerName.trim().toLowerCase())?.id ?? 0;
-                console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
-                console.log({ categoryName, arrayResult });
-                const categoryId = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == categoryName.trim().toLowerCase())?.id ?? 0;
-                console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
-                const itemId = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == itemName.trim().toLowerCase())?.id ?? 0;
-                console.log("itemId: ", itemId, "itemName: ", itemName);
-                const unitId = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unitName.trim().toLowerCase())?.id ?? 0;
-                console.log("unitId: ", unitId, "unitName: ", unitName);
-                const locationId = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == locationName.trim().toLowerCase())?.id ?? 0;
-                console.log("locationId: ", locationId, "locationName: ", locationName);
-                const entryDate = new Date(arrayResult[5]);
+                // console.log({ freezerName, arrayResult });
+                // const freezerId = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezerName.trim().toLowerCase())?.id ?? 0;
+                // console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
+                // console.log({ categoryName, arrayResult });
+                // const categoryId = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == categoryName.trim().toLowerCase())?.id ?? 0;
+                // console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
+                // const itemId = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == itemName.trim().toLowerCase())?.id ?? 0;
+                // console.log("itemId: ", itemId, "itemName: ", itemName);
+                // const unitId = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unitName.trim().toLowerCase())?.id ?? 0;
+                // console.log("unitId: ", unitId, "unitName: ", unitName);
+                // const locationId = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == locationName.trim().toLowerCase())?.id ?? 0;
+                // console.log("locationId: ", locationId, "locationName: ", locationName);
+                // const entryDate = new Date(arrayResult[5]);
                 const expDate = new Date(arrayResult[6]);
                 const quantity = +arrayResult[7];
-                return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
+                return { freezer, category, item, unit, location, expDate, quantity, description };
             });
             result.shift();
             console.log('File content:', result);
-            setInventoryFileContent(result as InventoryPostParams[]);
+            setInventoryFileContent(result as AgGridInventoryData[]);
         };
 
         reader.readAsText(file);
-    };
+    }
 
-    const insertNamesToDatabase = () => {
-        fileContent.forEach(async content => {
-            console.log("running insertNamesToDatabase")
-            const apiCalls = new ApiCalls(content.table);
+    // const _readInventoryFileContent = async (file: File) => {
+    //     const reader = new FileReader();
+    //     reader.onload = async (e: ProgressEvent<FileReader>) => {
+    //         const content = e.target?.result as string;
+    //         const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    //         const result = lines.map((array): InventoryPostParams => {
+    //             const arrayResult = array.split(',');
+    //             console.log("arrayResult:", arrayResult)
+    //             let [freezerName, 
+    //                 categoryName,
+    //                 itemName,
+    //                 unitName,
+    //                 locationName,
+    //                 _entryDate,
+    //                 _expDate,
+    //                 _quantity,
+    //                 description] = arrayResult;
+    //             console.log({ freezerName, arrayResult });
+    //             const freezerId = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezerName.trim().toLowerCase())?.id ?? 0;
+    //             console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
+    //             console.log({ categoryName, arrayResult });
+    //             const categoryId = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == categoryName.trim().toLowerCase())?.id ?? 0;
+    //             console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
+    //             const itemId = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == itemName.trim().toLowerCase())?.id ?? 0;
+    //             console.log("itemId: ", itemId, "itemName: ", itemName);
+    //             const unitId = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unitName.trim().toLowerCase())?.id ?? 0;
+    //             console.log("unitId: ", unitId, "unitName: ", unitName);
+    //             const locationId = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == locationName.trim().toLowerCase())?.id ?? 0;
+    //             console.log("locationId: ", locationId, "locationName: ", locationName);
+    //             const entryDate = new Date(arrayResult[5]);
+    //             const expDate = new Date(arrayResult[6]);
+    //             const quantity = +arrayResult[7];
+    //             return { freezerId, categoryId, itemId, unitId, locationId, entryDate, expDate, quantity, description };
+    //         });
+    //         result.shift();
+    //         console.log('File content:', result);
+    //         setInventoryFileContent(result as InventoryPostParams[]);
+    //     };
 
-            if (content.status === "New") {
-                return await apiCalls.postCall(content.name);
-            }
-        });
-    };
+    //     reader.readAsText(file);
+    // };
 
-    const insertItemsToInventory = () => {
-        const apiCalls = new ApiCalls("inventory");
-        inventoryFileContent.forEach(async content => {
-            try {
-                const params: InventoryPostParams = {
-                    ...content
-                };
-                console.log({params});
-                await apiCalls.postInventoryCall(params);
-            } catch (error) {
-                const err = error as Error;
-                console.error(`Error adding item: ${err.message}`);
-            }
+    // const insertNamesToDatabase = () => {
+    //     fileContent.forEach(async content => {
+    //         console.log("running insertNamesToDatabase")
+    //         const apiCalls = new ApiCalls(content.table);
+
+    //         if (content.status === "New") {
+    //             return await apiCalls.postCall(content.labelName);
+    //         }
+    //     });
+    // };
+
+    // const insertItemsToInventory = () => {
+    //     const apiCalls = new ApiCalls("inventory");
+    //     inventoryFileContent.forEach(async content => {
+    //         try {
+    //             const params: InventoryPostParams = {
+    //                 ...content
+    //             };
+    //             console.log({params});
+    //             await apiCalls.postInventoryCall(params);
+    //         } catch (error) {
+    //             const err = error as Error;
+    //             console.error(`Error adding item: ${err.message}`);
+    //         }
             
-        });
-    };
+    //     });
+    // };
     
     return (
         <div className="flex-col">
@@ -235,11 +292,11 @@ export function InputFile({ databaseType }: InputFileProps) {
                         </div>
                         <Label className="p-2" htmlFor="picture">Select File:</Label>
                         <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
-                        {
+                        {/* {
                             databaseType === "Inventory" 
                                 ? <Button className="m-1" onClick={insertItemsToInventory}>Upload Items</Button>
                                 : <Button className="m-1" onClick={insertNamesToDatabase}>Upload Labels</Button>
-                        }
+                        } */}
                         <div className="mt-1">
                             <hr></hr>
                             <p className="font-semibold p-2">Templates:</p>
@@ -266,12 +323,16 @@ export function InputFile({ databaseType }: InputFileProps) {
                                         <h2>Results:</h2>
                                         {
                                             fileContent.map(fileData => (
-                                                <p key={fileData.name}>
-                                                    {`Table: ${fileData.table} - Name: ${fileData.name} - Status: ${fileData.status}`}
+                                                <p key={fileData.labelName}>
+                                                    {`Table: ${fileData.table} - Name: ${fileData.labelName} - Status: ${fileData.status}`}
                                                 </p>
                                             ))
                                         }
+                                        <div>
+                                            <FileDataDialog data={fileContent} databaseType={databaseType} />
+                                        </div>
                                     </div>
+                                    
                                 )
                                 : file && (
                                     <div>
@@ -283,10 +344,13 @@ export function InputFile({ databaseType }: InputFileProps) {
                                         {
                                             inventoryFileContent.map((fileData, i) => (
                                                 <p key={i}>
-                                                    {`FreezerId: ${fileData.freezerId} - CategoryId: ${fileData.categoryId} - Status: ${"fileData.status"}`}
+                                                    {`FreezerId: ${fileData.freezer} - CategoryId: ${fileData.category} - Status: ${"fileData.status"}`}
                                                 </p>
                                             ))
                                         }
+                                        <div>
+                                            <FileDataDialog data={inventoryFileContent} databaseType={databaseType} />
+                                        </div>
                                     </div>
                                 )
                         }

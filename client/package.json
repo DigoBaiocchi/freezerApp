@@ -27,6 +27,7 @@
     "@tanstack/react-query-devtools": "^5.37.1",
     "@tanstack/react-router": "^1.32.5",
     "@tanstack/react-table": "^8.17.3",
+    "ag-grid-react": "^35.0.1",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
