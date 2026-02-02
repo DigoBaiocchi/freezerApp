@@ -187,21 +187,16 @@ export function InputFile({ databaseType }: InputFileProps) {
                     _expDate,
                     _quantity,
                     description] = arrayResult;
-                // console.log({ freezerName, arrayResult });
-                // const freezerId = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezerName.trim().toLowerCase())?.id ?? 0;
-                // console.log("FreezerId: ", freezerId, "Freezer Name: ", freezerName);
-                // console.log({ categoryName, arrayResult });
-                // const categoryId = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == categoryName.trim().toLowerCase())?.id ?? 0;
-                // console.log("categoryId: ", categoryId, "categoryName: ", categoryName);
-                // const itemId = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == itemName.trim().toLowerCase())?.id ?? 0;
-                // console.log("itemId: ", itemId, "itemName: ", itemName);
-                // const unitId = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unitName.trim().toLowerCase())?.id ?? 0;
-                // console.log("unitId: ", unitId, "unitName: ", unitName);
-                // const locationId = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == locationName.trim().toLowerCase())?.id ?? 0;
-                // console.log("locationId: ", locationId, "locationName: ", locationName);
-                // const entryDate = new Date(arrayResult[5]);
-                const expDate = new Date(arrayResult[6]);
-                const quantity = +arrayResult[7];
+                
+                freezer = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezer.trim().toLowerCase())?.name ?? "";
+                category = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == category.trim().toLowerCase())?.name ?? "";
+                item = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == item.trim().toLowerCase())?.name ?? "";
+                unit = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unit.trim().toLowerCase())?.name ?? "";
+                location = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == location.trim().toLowerCase())?.name ?? "";
+                
+                const expDate = new Date(arrayResult[5] + "T00:00:00");
+                console.log("expDate", expDate);
+                const quantity = +arrayResult[6];
                 return { freezer, category, item, unit, location, expDate, quantity, description };
             });
             result.shift();

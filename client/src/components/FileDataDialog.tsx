@@ -46,7 +46,7 @@ export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
   const colLabelsDefs = useMemo<ColDef[]>(() => [
     {field: "table"},
     {field: "labelName"},
-    {field: "status"},
+    {field: "status", editable: false},
   ], []);
 
   const colInventoryDefs = useMemo<ColDef[]>(() => [
@@ -100,7 +100,15 @@ export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
     return {
       flex: 1,
       editable: true,
-
+      cellStyle: (params) => {
+        if (!params.value && params.colDef.field !== "description") {
+          return { backgroundColor: "#fca5a5" };
+        }
+        if (params.value === "Already exists" && params.colDef.field === "status") {
+          return { backgroundColor: "#fca5a5" };
+        }
+        return null;
+      }
     };
   }, []);
 
