@@ -25,10 +25,11 @@ ModuleRegistry.registerModules([ AllCommunityModule ]);
 
 type FileDataDialogProps = {
   data: AgGridInventoryData[] | AgGridLabelData[];
-  databaseType: DatabaseTypes;
+  databaseType: DatabaseTypes | null;
+  onClose: () => void;
 };
 
-export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
+export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogProps) {
   const freezerData = getDatabaseData(individualTableNames.freezer);
   const categoryData = getDatabaseData(individualTableNames.category);
   const itemData = getDatabaseData(individualTableNames.item);
@@ -38,8 +39,9 @@ export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
   const [rowData, setRowData] = useState<AgGridInventoryData[] | AgGridLabelData[]>(data);
 
   useEffect(() => {
+    console.log("FileDataDialog received data:", data);
+    console.log("Data length:", data.length);
     setRowData(data);
-    console.log("data", data);
   }, [data]);
 
   // Column Definitions: Defines the columns to be displayed.
@@ -125,7 +127,9 @@ export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
   }, []);
 
   return (
-    <Dialog defaultOpen>
+    <Dialog defaultOpen onOpenChange={(open) => {
+      if (!open) onClose();
+    }}>
       <DialogContent className="max-w-none w-screen h-screen m-0 p-6 flex flex-col">
         <DialogHeader>
           <DialogTitle>CSV Data</DialogTitle>
@@ -144,7 +148,7 @@ export function FileDataDialog({ data, databaseType }: FileDataDialogProps) {
           />
         </div>
         <DialogFooter>
-          <DialogClose asChild>
+          <DialogClose asChild onClick={onClose}>
             <Button variant="outline">Close</Button>
           </DialogClose>
         </DialogFooter>
