@@ -9,10 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, themeBalham, RowSelectionOptions, CellSelectionOptions } from 'ag-grid-community';
-import { useEffect, useMemo, useState } from "react";
+import { ColDef, themeBalham, RowSelectionOptions, CellSelectionOptions, CellValueChangedEvent } from 'ag-grid-community';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-// import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
@@ -30,19 +29,57 @@ type FileDataDialogProps = {
 };
 
 export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogProps) {
+  const [rowData, setRowData] = useState<AgGridInventoryData[] | AgGridLabelData[]>(data);
+
   const freezerData = getDatabaseData(individualTableNames.freezer);
   const categoryData = getDatabaseData(individualTableNames.category);
   const itemData = getDatabaseData(individualTableNames.item);
   const unitData = getDatabaseData(individualTableNames.unit);
   const locationData = getDatabaseData(individualTableNames.location);
 
-  const [rowData, setRowData] = useState<AgGridInventoryData[] | AgGridLabelData[]>(data);
+  const gridRef = useRef<AgGridReact>(null);
+
+
+  // const gridApi: GridApi = 
+
+  const onCellValueChanged = (event: CellValueChangedEvent) => {
+    console.log("Row changed: ", event.data);
+    console.log("Event: ", event);
+
+    setRowData(prevData => {
+      const newData = [...prevData];
+      const rowIndex = event.rowIndex;
+      if (rowIndex !== null && rowIndex !== undefined) {
+        newData[rowIndex] = event.data;
+      }
+      return newData as AgGridInventoryData[] | AgGridLabelData[];
+    });
+  }
+
+  const deleteSelectedRows = () => {
+    const selectedNodes = gridRef.current?.api.getSelectedNodes();
+    const rowIds = selectedNodes?.map(node => +node.id!).sort((a, b) => b - a);
+    console.log("selectedNodes", selectedNodes);
+    console.log("rowIds", rowIds);
+    let updatedData = [...rowData];
+    rowIds?.forEach((element) => {
+      console.log(element);
+      updatedData?.splice(+element!, 1);
+      
+    });
+    console.log("updatedData", updatedData);
+    setRowData(updatedData as AgGridInventoryData[] | AgGridLabelData[]);
+  }
 
   useEffect(() => {
     console.log("FileDataDialog received data:", data);
     console.log("Data length:", data.length);
     setRowData(data);
   }, [data]);
+
+  // useEffect(() => {
+  //   console.log("rowData:", rowData);
+  // }, [rowData]);
 
   // Column Definitions: Defines the columns to be displayed.
   const colLabelsDefs = useMemo<ColDef[]>(() => [
@@ -56,35 +93,35 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
         field: "freezer",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: freezerData?.data?.map((data: IndiviualTable) => data.name).sort() ?? []
+          values: ['', ...(freezerData?.data?.map((data: IndiviualTable) => data.name).sort() ?? [])]
         },
       },
       { 
         field: "category",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: categoryData?.data?.map((data: IndiviualTable) => data.name).sort() ?? []
-        }, 
+          values: ['', ...(categoryData?.data?.map((data: IndiviualTable) => data.name).sort() ?? [])]
+        },
       },
       { 
         field: "item",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: itemData?.data?.map((data: IndiviualTable) => data.name).sort() ?? []
+          values: ['', ...(itemData?.data?.map((data: IndiviualTable) => data.name).sort() ?? [])]
         }, 
       },
       { 
         field: "unit",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: unitData?.data?.map((data: IndiviualTable) => data.name).sort() ?? []
+          values: ['', ...(unitData?.data?.map((data: IndiviualTable) => data.name).sort() ?? [])]
         }, 
       },
       { 
         field: "location",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: locationData?.data?.map((data: IndiviualTable) => data.name).sort() ?? []
+          values: ['', ...(locationData?.data?.map((data: IndiviualTable) => data.name).sort() ?? [])]
         }, 
       },
       { 
@@ -110,7 +147,7 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
           return { backgroundColor: "#fca5a5" };
         }
         return null;
-      }
+      },
     };
   }, []);
 
@@ -139,15 +176,19 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
         </DialogHeader>
         <div className="ag-theme-quartz h-screen w-100%">
           <AgGridReact 
+          ref={gridRef}
             rowData={rowData} 
             columnDefs={databaseType == "Inventory" ? colInventoryDefs : colLabelsDefs} 
             theme={themeBalham} 
             rowSelection={rowSelection}
             cellSelection={cellSelection}
             defaultColDef={defaultColDef}
+            onCellValueChanged={onCellValueChanged}
           />
         </div>
         <DialogFooter>
+          <Button variant="default">Upload Data</Button>
+          <Button variant="destructive" onClick={deleteSelectedRows}>Delete Selected Row(s)</Button>
           <DialogClose asChild onClick={onClose}>
             <Button variant="outline">Close</Button>
           </DialogClose>

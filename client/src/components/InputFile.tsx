@@ -1,14 +1,14 @@
-import { ApiCalls, IndividualTables, /*InventoryPostParams*/ } from "@/api/api";
+import { IndividualTables, /*InventoryPostParams*/ } from "@/api/api";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { IndiviualTable } from "./IndividualTables/Table";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Download } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { individualTableNames } from "./InventoryTable/InventoryForm";
 import { FileDataDialog } from "./FileDataDialog";
+import { getDatabaseData } from "@/lib/utils";
 
 
 export type DatabaseTypes = "Non-Inventory" | "Inventory";
@@ -34,6 +34,7 @@ export function InputFile() {
     const [file, setFile] = useState<File | null>(null);
     const [databaseType, setDatabaseType] = useState<DatabaseTypes | null>(null);
     const [fileContent, setFileContent] = useState<AgGridLabelData[] | AgGridInventoryData[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0] || null;
@@ -50,56 +51,21 @@ export function InputFile() {
     const resetFileCallback = () => {
         setFile(null);
         setFileContent([]);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
 
     useEffect(() => {
         console.log(file);
     }, [file]);
 
-    const freezerData = useQuery({
-    queryKey: [`${individualTableNames.freezer}`],
-        queryFn: () => {
-            const apiCall = new ApiCalls(individualTableNames.freezer);
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    const categoryData = useQuery({
-        queryKey: [`${individualTableNames.category}Data`],
-        queryFn: () => {
-            const apiCall = new ApiCalls(individualTableNames.category);
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    const itemData = useQuery({
-        queryKey: [`${individualTableNames.item}Data`],
-        queryFn: () => {
-            const apiCall = new ApiCalls(individualTableNames.item);
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    const unitData = useQuery({
-        queryKey: [`${individualTableNames.unit}Data`],
-        queryFn: () => {
-            const apiCall = new ApiCalls(individualTableNames.unit);
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
-
-    const locationData = useQuery({
-        queryKey: [`${individualTableNames.location}Data`],
-        queryFn: () => {
-            const apiCall = new ApiCalls(individualTableNames.location);
-
-            return  apiCall.getCall().then(res => res.data);
-        }
-    });
+    const freezerData = getDatabaseData(individualTableNames.freezer);
+    const categoryData = getDatabaseData(individualTableNames.category);
+    const itemData = getDatabaseData(individualTableNames.item);
+    const unitData = getDatabaseData(individualTableNames.unit);
+    const locationData = getDatabaseData(individualTableNames.location);
     
     // const inventoryData = useQuery({
     //     queryKey: [`inventoryRawData`],
@@ -284,8 +250,8 @@ export function InputFile() {
                         <div className="flex justify-center">
                             <h2 className="font-bold p-1">Upload Data</h2>
                         </div>
-                        <Label className="p-2" htmlFor="picture">Select File:</Label>
-                        <Input id="picture" type="file" accept=".csv" onChange={handleFileChange} />
+                        <Label className="p-2" htmlFor="csvFile">Select File:</Label>
+                        <Input id="csvFile" type="file" accept=".csv" onChange={handleFileChange} ref={fileInputRef} />
                         {/* {
                             databaseType === "Inventory" 
                                 ? <Button className="m-1" onClick={insertItemsToInventory}>Upload Items</Button>
