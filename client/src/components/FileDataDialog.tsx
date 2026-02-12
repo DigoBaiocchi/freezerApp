@@ -19,6 +19,7 @@ import { individualTableNames } from "./InventoryTable/InventoryForm";
 import { IndiviualTable } from "./IndividualTables/Table";
 import { getDatabaseData } from "@/lib/utils";
 import { AgGridInventoryData, AgGridLabelData, DatabaseTypes } from "./InputFile";
+import { IndividualTables } from "@/api/api";
     
 ModuleRegistry.registerModules([ AllCommunityModule ]);
 
@@ -36,6 +37,22 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
   const itemData = getDatabaseData(individualTableNames.item);
   const unitData = getDatabaseData(individualTableNames.unit);
   const locationData = getDatabaseData(individualTableNames.location);
+
+  const allTableData = {
+    [individualTableNames.freezer]: freezerData.data,
+    [individualTableNames.category]: categoryData.data,
+    [individualTableNames.item]: itemData.data,
+    [individualTableNames.unit]: unitData.data,
+    [individualTableNames.location]: locationData.data,
+  };
+
+  const checkIfLabelTableExists = (tableName: IndividualTables, labelName: string) => {
+    const databaseData = allTableData[tableName];
+
+    return databaseData?.find((data: IndiviualTable) => {
+        return data.name.trim().toLowerCase() === labelName.trim().toLowerCase()
+    });  
+  }
 
   const gridRef = useRef<AgGridReact>(null);
 
@@ -77,16 +94,42 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
     setRowData(data);
   }, [data]);
 
-  // useEffect(() => {
-  //   console.log("rowData:", rowData);
-  // }, [rowData]);
+  useEffect(() => {
+    console.log("rowData:", rowData);
+  }, [rowData]);
 
   // Column Definitions: Defines the columns to be displayed.
   const colLabelsDefs = useMemo<ColDef[]>(() => [
-    {field: "table"},
-    {field: "labelName"},
+    {
+      field: "table",
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: ['', 'freezer', 'category', 'item', 'location', 'unit']
+      }
+    },
+    {
+      field: "labelName", 
+      onCellValueChanged: (event) => {
+        const tableName: IndividualTables = event.data.table;
+        const existingTable = checkIfLabelTableExists(tableName, event.newValue);
+        console.log("table exists", existingTable);
+        console.log("event", event.node?.rowIndex);
+
+        setRowData(prevData => {
+          const newData = [...prevData];
+          const rowIndex = event.node?.rowIndex;
+          if (rowIndex !== null && rowIndex !== undefined) {
+            newData[rowIndex] = {
+              ...event.data,
+              status: existingTable ? "Already exists" : "New"
+            };
+          }
+          return newData as AgGridInventoryData[] | AgGridLabelData[];
+        });
+      },
+    },
     {field: "status", editable: false},
-  ], []);
+  ], [rowData]);
 
   const colInventoryDefs = useMemo<ColDef[]>(() => [
       { 
@@ -183,7 +226,7 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
             rowSelection={rowSelection}
             cellSelection={cellSelection}
             defaultColDef={defaultColDef}
-            onCellValueChanged={onCellValueChanged}
+            onCellValueChanged={ databaseType == "Inventory" ? onCellValueChanged : undefined }
           />
         </div>
         <DialogFooter>
