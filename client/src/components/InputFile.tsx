@@ -14,9 +14,9 @@ import { getDatabaseData } from "@/lib/utils";
 export type DatabaseTypes = "Non-Inventory" | "Inventory";
 
 export type AgGridLabelData = {
-    table: IndividualTables;
+    labelType: IndividualTables;
     labelName: string;
-    status: "Already exists" | "New" | "Pending";
+    status: "Label name already exists for this label type" | "New Label" | "Pending" | "Incorrect label type";
 }
 
 export type AgGridInventoryData = {
@@ -89,45 +89,45 @@ export function InputFile() {
                 if (header[0].toLocaleLowerCase() == "table") {
                     const result = lines.map((array) => {
                         const arrayResult = array.split(',');
-                        const table = arrayResult[0] as IndividualTables;
+                        const labelType = arrayResult[0] as IndividualTables;
                         const labelName = arrayResult[1];
                         const status = "Pending";
-                        return { table, labelName, status } as AgGridLabelData;
+                        return { labelType, labelName, status } as AgGridLabelData;
                     });
                     console.log("result", result);
                     let resultStatusUpdate = result.map((content: AgGridLabelData) => {
-                        if (content.table.trim().toLocaleLowerCase() === 'freezer') {
+                        if (content.labelType.trim().toLocaleLowerCase() === 'freezer') {
                             const nameExists = freezerData.data.find((data: IndiviualTable) => {
                                 return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                             });
-                            return { ...content, status: nameExists ? "Already exists" : "New"};
+                            return { ...content, status: nameExists ? "Label name already exists for this label type" : "New label"};
                         }
-                        if (content.table.trim().toLocaleLowerCase() === 'category') {
+                        if (content.labelType.trim().toLocaleLowerCase() === 'category') {
                             const nameExists = categoryData.data.find((data: IndiviualTable) => {
                                 return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                             });
-                            return { ...content, status: nameExists ? "Already exists" : "New"};
+                            return { ...content, status: nameExists ? "Label name already exists for this label type" : "New label"};
                         }
-                        if (content.table.trim().toLocaleLowerCase() === 'item') {
+                        if (content.labelType.trim().toLocaleLowerCase() === 'item') {
                             const nameExists = itemData.data.find((data: IndiviualTable) => {
                                 return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                             });
-                            return { ...content, status: nameExists ? "Already exists" : "New"};
+                            return { ...content, status: nameExists ? "Label name already exists for this label type" : "New label"};
                         }
-                        if (content.table.trim().toLocaleLowerCase() === 'unit') {
+                        if (content.labelType.trim().toLocaleLowerCase() === 'unit') {
                             const nameExists = unitData.data.find((data: IndiviualTable) => {
                                 return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                             });
-                            return { ...content, status: nameExists ? "Already exists" : "New"};
+                            return { ...content, status: nameExists ? "Label name already exists for this label type" : "New label"};
                         }
-                        if (content.table.trim().toLocaleLowerCase() === 'location') {
+                        if (content.labelType.trim().toLocaleLowerCase() === 'location') {
                             const nameExists = locationData.data.find((data: IndiviualTable) => {
                                 return data.name.trim().toLowerCase() === content.labelName.trim().toLowerCase()
                             });
-                            return { ...content, status: nameExists ? "Already exists" : "New"};
+                            return { ...content, status: nameExists ? "Label name already exists for this label type" : "New label"};
                         }
                         else {
-                            return undefined;
+                            return { ...content, table: "", status: "Incorrect label type" };
                         }
                     }).filter((x): x is AgGridLabelData => x !== undefined);
                     console.log('File content:', resultStatusUpdate);

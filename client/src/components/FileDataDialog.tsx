@@ -31,6 +31,10 @@ type FileDataDialogProps = {
 
 export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogProps) {
   const [rowData, setRowData] = useState<AgGridInventoryData[] | AgGridLabelData[]>(data);
+  const backgroundColorError = "#f7c5c4";
+  const labelExistsError = "Label name already exists for this label type";
+  const labelNameError = "Incorrect label type";
+  const newLabelMessage = "New label";
 
   const freezerData = getDatabaseData(individualTableNames.freezer);
   const categoryData = getDatabaseData(individualTableNames.category);
@@ -101,18 +105,43 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
   // Column Definitions: Defines the columns to be displayed.
   const colLabelsDefs = useMemo<ColDef[]>(() => [
     {
-      field: "table",
+      field: "labelType",
       cellEditor: "agSelectCellEditor",
       cellEditorParams: {
         values: ['', 'freezer', 'category', 'item', 'location', 'unit']
+      },
+      onCellValueChanged: (event) => {
+        const selectedTableName = event.newValue;
+
+        setRowData(prevData => {
+          const newData = [...prevData];
+          const rowIndex = event.node?.rowIndex;
+          if (rowIndex !== null && rowIndex !== undefined) {
+            if (selectedTableName !== '') {
+              const tableName: IndividualTables = event.data.labelType;
+              const existingLabel = checkIfLabelTableExists(tableName, event.data.labelName);
+              newData[rowIndex] = {
+                ...event.data,
+                status: existingLabel ? labelExistsError : newLabelMessage
+              }
+            }
+            else {
+              newData[rowIndex] = {
+                ...event.data,
+                status: labelNameError
+              }
+            }
+          }
+          return newData as AgGridLabelData[];
+        })
       }
     },
     {
       field: "labelName", 
       onCellValueChanged: (event) => {
-        const tableName: IndividualTables = event.data.table;
-        const existingTable = checkIfLabelTableExists(tableName, event.newValue);
-        console.log("table exists", existingTable);
+        const tableName: IndividualTables = event.data.labelType;
+        const existingLabel = checkIfLabelTableExists(tableName, event.newValue);
+        console.log("table exists", existingLabel);
         console.log("event", event.node?.rowIndex);
 
         setRowData(prevData => {
@@ -121,10 +150,10 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
           if (rowIndex !== null && rowIndex !== undefined) {
             newData[rowIndex] = {
               ...event.data,
-              status: existingTable ? "Already exists" : "New"
+              status: existingLabel ? labelExistsError : tableName ? newLabelMessage : labelNameError
             };
           }
-          return newData as AgGridInventoryData[] | AgGridLabelData[];
+          return newData as AgGridLabelData[];
         });
       },
     },
@@ -184,10 +213,10 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
       editable: true,
       cellStyle: (params) => {
         if (!params.value && params.colDef.field !== "description") {
-          return { backgroundColor: "#fca5a5" };
+          return { backgroundColor: backgroundColorError };
         }
-        if (params.value === "Already exists" && params.colDef.field === "status") {
-          return { backgroundColor: "#fca5a5" };
+        if ((params.value === labelExistsError || params.value === labelNameError) && params.colDef.field === "status") {
+          return { backgroundColor: backgroundColorError };
         }
         return null;
       },
@@ -214,7 +243,7 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
         <DialogHeader>
           <DialogTitle>CSV Data</DialogTitle>
           <DialogDescription>
-            Double check the data below before uploading
+            Double check the data below before uploading. File status: Fix issues before uploading
           </DialogDescription>
         </DialogHeader>
         <div className="ag-theme-quartz h-screen w-100%">
