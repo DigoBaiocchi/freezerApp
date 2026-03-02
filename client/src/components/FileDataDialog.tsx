@@ -20,6 +20,7 @@ import { IndiviualTable } from "./IndividualTables/Table";
 import { getDatabaseData } from "@/lib/utils";
 import { AgGridInventoryData, AgGridLabelData, DatabaseTypes } from "./InputFile";
 import { IndividualTables } from "@/api/api";
+import { UploadButton } from "./UploadFile/UploadButton";
     
 ModuleRegistry.registerModules([ AllCommunityModule ]);
 
@@ -54,14 +55,11 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
     const databaseData = allTableData[tableName];
 
     return databaseData?.find((data: IndiviualTable) => {
-        return data.name.trim().toLowerCase() === labelName.trim().toLowerCase()
+        return data.name.trim().toLowerCase() === labelName.trim().toLowerCase();
     });  
   }
 
   const gridRef = useRef<AgGridReact>(null);
-
-
-  // const gridApi: GridApi = 
 
   const onCellValueChanged = (event: CellValueChangedEvent) => {
     console.log("Row changed: ", event.data);
@@ -82,19 +80,19 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
     const rowIds = selectedNodes?.map(node => +node.id!).sort((a, b) => b - a);
     console.log("selectedNodes", selectedNodes);
     console.log("rowIds", rowIds);
-    let updatedData = [...rowData];
-    rowIds?.forEach((element) => {
-      console.log(element);
-      updatedData?.splice(+element!, 1);
-      
-    });
-    console.log("updatedData", updatedData);
-    setRowData(updatedData as AgGridInventoryData[] | AgGridLabelData[]);
+    if (rowData) {
+      let updatedData = [...rowData];
+      rowIds?.forEach((element) => {
+        console.log(element);
+        updatedData?.splice(+element!, 1);
+        
+      });
+      console.log("updatedData", updatedData);
+      setRowData(updatedData as AgGridInventoryData[] | AgGridLabelData[]);
+    }
   }
 
   useEffect(() => {
-    console.log("FileDataDialog received data:", data);
-    console.log("Data length:", data.length);
     setRowData(data);
   }, [data]);
 
@@ -259,7 +257,7 @@ export function FileDataDialog({ data, databaseType, onClose }: FileDataDialogPr
           />
         </div>
         <DialogFooter>
-          <Button variant="default">Upload Data</Button>
+          <UploadButton inputData={rowData} databaseType={databaseType} />
           <Button variant="destructive" onClick={deleteSelectedRows}>Delete Selected Row(s)</Button>
           <DialogClose asChild onClick={onClose}>
             <Button variant="outline">Close</Button>

@@ -16,18 +16,24 @@ export type DatabaseTypes = "Non-Inventory" | "Inventory";
 export type AgGridLabelData = {
     labelType: IndividualTables;
     labelName: string;
-    status: "Label name already exists for this label type" | "New Label" | "Pending" | "Incorrect label type";
+    status: "Label name already exists for this label type" | "New label" | "Pending" | "Incorrect label type";
 }
 
 export type AgGridInventoryData = {
+  freezerId: number;
   freezer: string;
+  categoryId: number;
   category: string;
+  itemId: number;
   item: string;
+  unitId: number;
   unit: string;
+  locationId: number;
   location: string;
   expDate: Date;
-  quantity: Number;
+  quantity: number;
   description: string;
+  status: "Valid" | "Invalid";
 };
 
 export function InputFile() {
@@ -147,16 +153,50 @@ export function InputFile() {
                             _quantity,
                             description] = arrayResult;
                         
-                        freezer = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezer.trim().toLowerCase())?.name ?? "";
-                        category = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == category.trim().toLowerCase())?.name ?? "";
-                        item = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == item.trim().toLowerCase())?.name ?? "";
-                        unit = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unit.trim().toLowerCase())?.name ?? "";
-                        location = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == location.trim().toLowerCase())?.name ?? "";
+                        const foundFreezerData = freezerData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == freezer.trim().toLowerCase());
+                        const foundCategoryData = categoryData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == category.trim().toLowerCase());
+                        const foundItemData = itemData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == item.trim().toLowerCase());
+                        const foundUnitData = unitData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == unit.trim().toLowerCase());
+                        const foundLocationData = locationData.data.find((data: IndiviualTable) => data.name.trim().toLowerCase() == location.trim().toLowerCase());
                         
                         const expDate = new Date(arrayResult[5] + "T00:00:00");
                         console.log("expDate", expDate);
                         const quantity = +arrayResult[6];
-                        return { freezer, category, item, unit, location, expDate, quantity, description };
+                        if (!foundFreezerData?.name || !foundCategoryData?.name || !foundItemData?.name || !foundUnitData?.name || !foundLocationData?.name) {
+                            return { 
+                                freezerId: (foundFreezerData?.id ?? 0),
+                                freezer: (foundFreezerData?.name ?? ""), 
+                                categoryId: (foundCategoryData?.id ?? 0),
+                                category: (foundCategoryData?.name ?? ""),
+                                itemId: (foundItemData?.id ?? 0),
+                                item: (foundItemData?.name ?? ""), 
+                                unitId: (foundUnitData?.id ?? 0),
+                                unit: (foundUnitData?.name ?? ""), 
+                                locationId: (foundLocationData?.id ?? 0),
+                                location: (foundLocationData?.name ?? ""), 
+                                expDate, 
+                                quantity, 
+                                description, 
+                                status: "Invalid" 
+                            };
+                        }
+
+                        return { 
+                            freezerId: (foundFreezerData?.id ?? 0),
+                            freezer: (foundFreezerData?.name ?? ""), 
+                            categoryId: (foundCategoryData?.id ?? 0),
+                            category: (foundCategoryData?.name ?? ""),
+                            itemId: (foundItemData?.id ?? 0),
+                            item: (foundItemData?.name ?? ""), 
+                            unitId: (foundUnitData?.id ?? 0),
+                            unit: (foundUnitData?.name ?? ""), 
+                            locationId: (foundLocationData?.id ?? 0),
+                            location: (foundLocationData?.name ?? ""), 
+                            expDate, 
+                            quantity, 
+                            description, 
+                            status: "Valid" 
+                        };
                     });
                     console.log('File content:', result);
                     setFileContent(result as AgGridInventoryData[]);

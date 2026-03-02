@@ -19,7 +19,7 @@ export type InventoryTableData = {
     description: string;
 };
 
-export type IndividualTableData = InventoryTableData[];
+// export type IndividualTableData = InventoryTableData[];
 
 export const UpdatePropsContext = createContext({ id: 0, quantity: 0, name: ''});
 
