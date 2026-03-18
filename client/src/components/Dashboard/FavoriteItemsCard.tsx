@@ -5,9 +5,12 @@ import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 export default function FavoriteItemsCard() {
-    const [clicked, setClicked] = useState(false);
+    const [starFill, setStarFill] = useState<"#ffffff" | "#fef08a">("#ffffff");
+
     const handleClick = () => {
-        setClicked(!clicked);
+        setStarFill((prev) => {
+            return prev === "#fef08a" ? "#ffffff" : "#fef08a";
+        });
     }
 
 
@@ -25,7 +28,7 @@ export default function FavoriteItemsCard() {
                     </TableHeader> 
                     <TableBody>
                         <TableRow>
-                            <TableCell><Star onClick={handleClick}  fill="#fef08a" /></TableCell>
+                            <TableCell><Star onClick={handleClick}  fill={starFill} /></TableCell>
                             <TableCell>Sausage</TableCell>
                             <TableCell>25</TableCell>
                             <TableCell>Edit</TableCell>
