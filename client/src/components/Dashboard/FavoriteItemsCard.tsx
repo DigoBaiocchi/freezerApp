@@ -4,15 +4,21 @@ import { useState } from "react";
 // import EditMenu from "../InventoryTable/EditMenu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
+type FavoriteItemData = {
+    favorite: boolean;
+    name: string;
+    quantity: number;
+}
+
 export default function FavoriteItemsCard() {
-    const [starFill, setStarFill] = useState<"#ffffff" | "#fef08a">("#ffffff");
+    const whiteColor = "#ffffff";
+    const favoriteColor = "#fef08a";
+    const [data, setData] = useState<FavoriteItemData[]>([{favorite: false, name: "Sausage", quantity: 25}, {favorite: false, name: "Steak", quantity: 15}])
 
-    const handleClick = () => {
-        setStarFill((prev) => {
-            return prev === "#fef08a" ? "#ffffff" : "#fef08a";
-        });
+    const handleClick = (index: number) => {
+        console.log(index);
+        setData(prev => prev.map((row, i) => i === index ? { ...row, favorite: !row.favorite } : row))
     }
-
 
     return (
         <div className="grid justify-center">
@@ -27,13 +33,31 @@ export default function FavoriteItemsCard() {
                         </TableRow>
                     </TableHeader> 
                     <TableBody>
-                        <TableRow>
+                        {
+                            data.map((row, i) => (
+                                <TableRow>
+                                    <TableCell><Star onClick={() => handleClick(i)}  fill={row.favorite ? favoriteColor : whiteColor } name={row.name} /></TableCell>
+                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell>{row.quantity}</TableCell>
+                                    <TableCell>Edit</TableCell>
+                                    <TableCell>Delete</TableCell>
+                                </TableRow>        
+                            ))
+                        }
+                        {/* <TableRow>
                             <TableCell><Star onClick={handleClick}  fill={starFill} /></TableCell>
                             <TableCell>Sausage</TableCell>
                             <TableCell>25</TableCell>
                             <TableCell>Edit</TableCell>
                             <TableCell>Delete</TableCell>
                         </TableRow>
+                        <TableRow>
+                            <TableCell><Star onClick={handleClick}  fill={starFill} /></TableCell>
+                            <TableCell>Sausage</TableCell>
+                            <TableCell>25</TableCell>
+                            <TableCell>Edit</TableCell>
+                            <TableCell>Delete</TableCell>
+                        </TableRow> */}
                     </TableBody>   
                 </Table>
             </Card>
